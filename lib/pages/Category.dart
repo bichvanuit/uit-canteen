@@ -9,6 +9,7 @@ import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:uit_cantin/models/FoodType.dart';
 import 'package:uit_cantin/compoments/CategoryView.dart';
+import 'package:uit_cantin/compoments/CategoryItem.dart';
 
 List<Category> _parseCategory(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -28,24 +29,6 @@ Future<List<Category>> _fetchCategory() async {
   return listCategory;
 }
 
-List<FoodType> _parseFoodType(String responseBody) {
-  final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
-  return parsed.map<FoodType>((json) => FoodType.fromJson(json)).toList();
-}
-
-Future<List<FoodType>> _fetchFoodType(categoryId) async {
-  Token token = new Token();
-  final tokenValue = await token.getMobileToken();
-  Map<String, String> requestHeaders = {
-    "Authorization": "Bearer " + tokenValue,
-  };
-  final response = await http.get(
-      '$SERVER_NAME/food/get-food-type?food_category_id=' +
-          categoryId.toString(),
-      headers: requestHeaders);
-  return _parseFoodType(response.body);
-}
-
 class CategoryScreen extends StatefulWidget {
   final Function callBack;
 
@@ -58,11 +41,20 @@ class _CategoryState extends State<CategoryScreen>
     with TickerProviderStateMixin {
   AnimationController animationController;
   int selectCategory;
+  var count = 9;
+  Widget foodType;
 
   @override
   initState() {
     animationController = AnimationController(
         duration: Duration(milliseconds: 2000), vsync: this);
+
+    if (selectCategory == null) {
+      _fetchCategory().then((data) =>
+          setState(() {
+            selectCategory = data[0].foodCategoryId;
+          }));
+    }
     super.initState();
   }
 
@@ -104,71 +96,38 @@ class _CategoryState extends State<CategoryScreen>
 //                              highlightColor: Colors.white,
 //                              child: _createItemList(null, false)),
 //                        );
-
-                          default:
-                            if (snapshot.hasError)
+                          case ConnectionState.done:
+                            if (snapshot.hasError) {
                               return new Text('Error: ${snapshot.error}');
-                            else
+                            } else {
+                              if (selectCategory == null) {
+                                List<Category> listCategory = snapshot.data;
+
+                              }
                               return createListView(context, snapshot);
+                            }
+                            break;
+                          default:
+                            return null;
                         }
                       },
                     )),
-                new Container(
-                  height: 120.0,
-                  margin: const EdgeInsets.only(top: 10.0),
-                  child: selectCategory != null
-                      ? _createFoodType(selectCategory)
-                      : null,
-                )
+                new SizedBox(
+                  height: 15.0,
+                ),
+                selectCategory != null ? new CategoryItem(
+                  mainScreenAnimation: Tween(begin: 0.0, end: 1.0)
+                      .animate(CurvedAnimation(
+                      parent: animationController,
+                      curve: Interval((1 / count) * 3, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+                  mainScreenAnimationController: animationController,
+                  categoryId: selectCategory,
+                ): new Container(),
               ],
             )
           ],
         ));
-  }
-
-  Widget _createFoodType(int foodCategoryId) {
-//    return new Text(foodCategoryId.toString());
-    return FutureBuilder(
-      future: _fetchFoodType(foodCategoryId),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-          case ConnectionState.waiting:
-          default:
-            if (snapshot.hasError)
-              return new Text('Error: ${snapshot.error}');
-            else
-              return createListViewFoodType(context, snapshot);
-        }
-      },
-    );
-  }
-
-  Widget createListViewFoodType(BuildContext context, AsyncSnapshot snapshot) {
-    List<FoodType> listFoodType = snapshot.data;
-    return ListView.builder(
-      padding: const EdgeInsets.only(top: 0, bottom: 0, right: 16),
-      itemCount: listFoodType.length,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (context, index) {
-        var count = listFoodType.length > 10 ? 10 : listFoodType.length;
-        var animation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: animationController,
-            curve: Interval((1 / count) * index, 1.0,
-                curve: Curves.fastOutSlowIn)));
-        animationController.forward();
-        return null;
-
-//        return CategoryView(
-//          foodInfo: listFoodType[index],
-//          animation: animation,
-//          animationController: animationController,
-//          callback: () {
-//            widget.callBack();
-//          },
-//        );
-      },
-    );
   }
 
   Widget _createItemList(Category category) {
@@ -188,7 +147,7 @@ class _CategoryState extends State<CategoryScreen>
                 borderRadius: BorderRadius.all(Radius.circular(24.0)),
                 onTap: () {
                   setState(() {
-                    //  categoryType = categoryTypeData;
+                    selectCategory = category.foodCategoryId;
                   });
                 },
                 child: Padding(
@@ -207,6 +166,23 @@ class _CategoryState extends State<CategoryScreen>
                             )))))));
   }
 
+  createFoodType(int selectCategory) {
+    setState(() {
+      foodType =  selectCategory == null ? Container() :
+      new CategoryItem(
+        mainScreenAnimation: Tween(begin: 0.0, end: 1.0)
+            .animate(CurvedAnimation(
+            parent: animationController,
+            curve: Interval((1 / count) * 3, 1.0,
+                curve: Curves.fastOutSlowIn))),
+        mainScreenAnimationController: animationController,
+        categoryId: selectCategory,
+      );
+    });
+
+
+  }
+
   Widget createListView(BuildContext context, AsyncSnapshot snapshot) {
     List<Category> listCategory = snapshot.data;
     return new ListView.builder(
@@ -214,8 +190,7 @@ class _CategoryState extends State<CategoryScreen>
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, position) {
           if (selectCategory == null) {
-            selectCategory = listCategory[position].foodCategoryId;
-            _createFoodType(selectCategory);
+              selectCategory = listCategory[position].foodCategoryId;
           }
           return _createItemList(listCategory[position]);
         });
