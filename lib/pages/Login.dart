@@ -50,7 +50,7 @@ class LoginScreenState extends State<LoginScreen>
   }
 
   Future<Null> _playAnimation() async {
-
+    Navigator.pushNamed(context, "/home");
     userInfo.username = _controllerUsername.text;
     userInfo.password = _controllerPassword.text;
     var url = '$SERVER_NAME/login';
@@ -62,10 +62,7 @@ class LoginScreenState extends State<LoginScreen>
       if (status == STATUS_SUCCESS) {
         Token token = new Token();
         await token.setMobileToken(responseBody["data"]);
-        try {
-          await _loginButtonController.forward();
-          await _loginButtonController.reverse();
-        } on TickerCanceled {}
+        Navigator.pushNamed(context, "/home");
       } else {
         _showDialog();
       }
@@ -235,25 +232,16 @@ class LoginScreenState extends State<LoginScreen>
                               )
                             ]
                           ),
-                          animationStatus == 0
-                              ? new Padding(
-                                  padding: const EdgeInsets.only(top: 50.0),
+                          new Positioned(
+                            child: new Align(
+                                alignment: FractionalOffset.bottomCenter,
+                                child: new Padding(
+                                  padding: const EdgeInsets.only(bottom: 30.0),
                                   child: new InkWell(
                                       onTap: () {
-                                       /* if (_formKey.currentState.validate()) {
-                                          setState(() {
-                                            animationStatus = 1;
-                                            //  animationStatus = 1;
-
-                                          });
+                                         if (_formKey.currentState.validate()) {
                                           _playAnimation();
-                                        }*/
-                                        setState(() {
-                                          animationStatus = 1;
-                                          //  animationStatus = 1;
-
-                                        });
-                                        _playAnimation();
+                                        }
                                       },
                                       child: new Container(
                                         width: 320.0,
@@ -276,9 +264,8 @@ class LoginScreenState extends State<LoginScreen>
                                         ),
                                       )),
                                 )
-                              : new StaggerAnimation(
-                                  buttonController:
-                                      _loginButtonController.view),
+                            ),
+                          )
                         ],
                       ),
                     ],

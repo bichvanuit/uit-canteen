@@ -3,6 +3,7 @@ import 'package:carousel_pro/carousel_pro.dart';
 import 'package:uit_cantin/compoments/SpecialOffer.dart';
 import 'package:uit_cantin/pages/Category.dart';
 import 'package:uit_cantin/compoments/TodayOrder.dart';
+import 'package:uit_cantin/test.dart';
 
 
 class HomeMainScreen extends StatefulWidget {
@@ -44,14 +45,14 @@ class _OrderState extends State<HomeMainScreen> {
                           )
                       ),
                       new InkWell(
-                          /*onTap: () {
-                            setState(() {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => CartOnePage()));
-                            });
-                          },*/
+//                          onTap: () {
+//                            setState(() {
+//                              Navigator.push(
+//                                  context,
+//                                  MaterialPageRoute(
+//                                      builder: (context) => CategoryListView()));
+//                            });
+//                          },
                        //   onTap: _playAnimation,
                           child: new Center(
                             child: new Container(

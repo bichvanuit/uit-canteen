@@ -1,5 +1,14 @@
-import 'package:uit_cantin/routers.dart';
+import 'package:flutter/material.dart';
+import 'package:uit_cantin/pages/Login.dart';
+import 'package:uit_cantin/pages/Home.dart';
 
 void main() {
-  new Routes();
+  runApp(MaterialApp(
+    title: 'UIT Canteen App',
+    initialRoute: '/',
+    routes: {
+      '/': (context) => LoginScreen(),
+      '/home': (context) => HomeScreen(),
+    },
+  ));
 }

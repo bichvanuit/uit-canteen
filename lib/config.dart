@@ -1,5 +1,5 @@
-const SERVER_NAME = 'http://ec2-18-221-196-32.us-east-2.compute.amazonaws.com/api';
-const ROOT_IMAGE = 'http://ec2-18-221-196-32.us-east-2.compute.amazonaws.com';
+const SERVER_NAME = 'http://ec2-3-14-130-125.us-east-2.compute.amazonaws.com/api';
+const ROOT_IMAGE = 'http://ec2-3-14-130-125.us-east-2.compute.amazonaws.com';
 
 const STATUS_CODE_SUCCESS = 200;
 const STATUS_SUCCESS = 1;
