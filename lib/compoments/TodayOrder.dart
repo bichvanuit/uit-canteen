@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
+import 'package:uit_cantin/compoments/CategoryView.dart';
 
 // A function that converts a response body into a List<Photo>
 List<FoodList> _parseFoodToday(String responseBody) {
@@ -28,10 +29,14 @@ Future<List<FoodList>> _fetchFoodToday() async {
 }
 
 class TodayOffer extends StatefulWidget {
+  final Function callBack;
+
+  const TodayOffer({Key key, this.callBack}) : super(key: key);
+
   _TodayOffer createState() => _TodayOffer();
 }
 
-class _TodayOffer extends State<TodayOffer> {
+class _TodayOffer extends State<TodayOffer>{
   @override
   initState() {
     super.initState();
@@ -76,6 +81,7 @@ class _TodayOffer extends State<TodayOffer> {
 
   Widget createListView(BuildContext context, AsyncSnapshot snapshot) {
     List<FoodList> listFood = snapshot.data;
+
     return new ListView.builder(
         shrinkWrap: true,
         physics: BouncingScrollPhysics(),
@@ -83,7 +89,7 @@ class _TodayOffer extends State<TodayOffer> {
         scrollDirection: Axis.vertical,
         itemBuilder: (context, position) {
           return Container(
-              padding: EdgeInsets.only(right: 10, top: 20),
+              padding: EdgeInsets.only(top: 20),
               child: new Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,10 +109,11 @@ class _TodayOffer extends State<TodayOffer> {
                         itemBuilder: (context, position1) {
                           return Container(
                               padding:
-                              EdgeInsets.only(right: 10, top: 20),
-                              child: new ItemFoodWidget(
-                                  food: listFood[position]
-                                      .listFood[position1]));
+                              EdgeInsets.only(top: 20),
+                              child: CategoryView(
+                                foodInfo: listFood[position].listFood[position1],
+                              )
+                          );
                         }),
                   )
                 ],

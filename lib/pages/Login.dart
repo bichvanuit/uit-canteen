@@ -50,7 +50,6 @@ class LoginScreenState extends State<LoginScreen>
   }
 
   Future<Null> _playAnimation() async {
-    Navigator.pushNamed(context, "/home");
     userInfo.username = _controllerUsername.text;
     userInfo.password = _controllerPassword.text;
     var url = '$SERVER_NAME/login';

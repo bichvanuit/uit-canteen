@@ -48,7 +48,9 @@ Future<List<FoodType>> _fetchFoodType(categoryId) async {
 
 class CategoryScreen extends StatefulWidget {
   final Function callBack;
+
   const CategoryScreen({Key key, this.callBack}) : super(key: key);
+
   _CategoryState createState() => _CategoryState();
 }
 
@@ -112,8 +114,11 @@ class _CategoryState extends State<CategoryScreen>
                       },
                     )),
                 new Container(
-                  height: 200.0,
-                  child: selectCategory != null ? _createFoodType(selectCategory) : null,
+                  height: 120.0,
+                  margin: const EdgeInsets.only(top: 10.0),
+                  child: selectCategory != null
+                      ? _createFoodType(selectCategory)
+                      : null,
                 )
               ],
             )
@@ -142,29 +147,26 @@ class _CategoryState extends State<CategoryScreen>
   Widget createListViewFoodType(BuildContext context, AsyncSnapshot snapshot) {
     List<FoodType> listFoodType = snapshot.data;
     return ListView.builder(
-      padding: const EdgeInsets.only(
-          top: 0, bottom: 0, right: 16, left: 16),
+      padding: const EdgeInsets.only(top: 0, bottom: 0, right: 16),
       itemCount: listFoodType.length,
       scrollDirection: Axis.horizontal,
       itemBuilder: (context, index) {
-        var count = listFoodType.length > 10
-            ? 10
-            : listFoodType.length;
-        var animation = Tween(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: animationController,
-                curve: Interval((1 / count) * index, 1.0,
-                    curve: Curves.fastOutSlowIn)));
+        var count = listFoodType.length > 10 ? 10 : listFoodType.length;
+        var animation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: animationController,
+            curve: Interval((1 / count) * index, 1.0,
+                curve: Curves.fastOutSlowIn)));
         animationController.forward();
+        return null;
 
-        return CategoryView(
-          foodType: listFoodType[index],
-          animation: animation,
-          animationController: animationController,
-          callback: () {
-            widget.callBack();
-          },
-        );
+//        return CategoryView(
+//          foodInfo: listFoodType[index],
+//          animation: animation,
+//          animationController: animationController,
+//          callback: () {
+//            widget.callBack();
+//          },
+//        );
       },
     );
   }
