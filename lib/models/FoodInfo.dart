@@ -28,7 +28,6 @@ class FoodInfo {
     this.price = json["price"];
     this.discountPrice = json["price_discount"];
     this.image = json["image"] == null ? IMAGE_DEFAULT : ROOT_IMAGE + json["image"];
-//    this.image = "https://img-global.cpcdn.com/005_recipes/5a67e00d7af9225a/1200x630cq70/photo.jpg";
     this.star = json["star"];
   }
 

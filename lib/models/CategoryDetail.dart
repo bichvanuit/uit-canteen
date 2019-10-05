@@ -1,3 +1,4 @@
+import 'package:uit_cantin/config.dart';
 class CategoryDetail{
   int categoryId;
   int foodType;
@@ -17,7 +18,7 @@ class CategoryDetail{
     this.categoryId = json["food_category_id"];
     this.foodType = json["food_type"];
     this.foodTypeName = json["food_type_name"];
-    this.image = json["image"];
+    this.image = json["image"] == null ? IMAGE_DEFAULT : ROOT_IMAGE + json["image"];
     this.amount = json["amount"];
   }
 

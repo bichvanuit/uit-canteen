@@ -1,3 +1,5 @@
+import 'package:uit_cantin/config.dart';
+
 class NotificationInfo{
   int notificationId;
   String title;
@@ -15,7 +17,7 @@ class NotificationInfo{
     this.notificationId = json["notification_id"];
     this.title = json["title"];
     this.subTitle = json["subtitle"];
-    this.image = json["image"];
+    this.image = json["image"] == null ? IMAGE_DEFAULT : ROOT_IMAGE + json["image"];
   }
 
   Map toMap() {

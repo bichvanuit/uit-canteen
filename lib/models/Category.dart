@@ -10,11 +10,10 @@ class Category {
     this.foodCategoryName,
     this.image,
   });
-
   Category.fromJson(Map<String, dynamic> json) {
     this.foodCategoryId = json["food_category_id"];
     this.foodCategoryName = json["food_category_name"];
-    this.image = ROOT_IMAGE + json["image"];
+    this.image = json["image"] == null? IMAGE_DEFAULT :ROOT_IMAGE + json["image"];
   }
 
   Map toMap() {

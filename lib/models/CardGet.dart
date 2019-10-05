@@ -1,5 +1,4 @@
 import 'package:uit_cantin/config.dart';
-import 'package:uit_cantin/services/FormatPrice.dart';
 
 class CardGet {
   int foodId;
@@ -19,7 +18,7 @@ class CardGet {
   CardGet.fromJson(Map<String, dynamic> json) {
     this.foodId = json["food_id"];
     this.foodName = json["food_name"];
-    this.image = ROOT_IMAGE + json["image"];
+    this.image = json["image"] == null ? IMAGE_DEFAULT : ROOT_IMAGE + json["image"];
     this.amount = json["amount"];
     this.isPublished = json["is_published"];
   }

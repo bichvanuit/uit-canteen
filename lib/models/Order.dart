@@ -1,3 +1,4 @@
+import 'package:uit_cantin/config.dart';
 
 class Order{
   int foodId;
@@ -29,7 +30,7 @@ class Order{
         this.foodName = json['food_name'];
         this.price = json['price'];
         this.discountPrice = json['discount_price'];
-        this.image = json['image'];
+        this.image = json['image'] == null ? IMAGE_DEFAULT : ROOT_IMAGE + json['image'];
         this.amount = json['amount'];
         this.star = json['star'];
   }

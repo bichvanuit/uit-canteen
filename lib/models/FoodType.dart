@@ -21,7 +21,7 @@ class FoodType {
     this.foodCategoryId = json["food_category_id"];
     this.foodTypeId = json["food_type_id"];
     this.foodTypeName = json["food_type_name"];
-    this.image = ROOT_IMAGE + json["image"];
+    this.image = json["image"] == null ? IMAGE_DEFAULT : ROOT_IMAGE + json["image"];
     this.amount = json["amount"];
     this.amountDiscount = json["amount_discount"];
   }
