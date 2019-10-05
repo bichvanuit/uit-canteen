@@ -39,14 +39,13 @@ class LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     timeDilation = 0.4;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     return new Scaffold(
-        body: isLoading == true ? _createProgress() : _createBody());
+        body: isLoading == true ? _createProgress() : _createBody(),
+    );
   }
 
   Future<Null> _login() async {
@@ -58,12 +57,12 @@ class LoginScreenState extends State<LoginScreen> {
     if (statusCode == STATUS_CODE_SUCCESS) {
       var responseBody = json.decode(response.body);
       var status = responseBody["status"];
+      isLoading = false;
       if (status == STATUS_SUCCESS) {
         Token token = new Token();
         await token.setMobileToken(responseBody["data"]);
         Navigator.pushNamed(context, "/home");
       } else {
-        isLoading = false;
         _showDialog();
       }
     }
