@@ -29,17 +29,10 @@ class OrderScreen extends StatefulWidget {
   _OrderState createState() => _OrderState();
 }
 
-getHotProduct() async {
-  final response =
-      await http.get('https://uit-canteen-api.herokuapp.com/public/api/test');
-  print(json.decode(response.body));
-}
-
 
 class _OrderState extends State<OrderScreen> {
   @override
   void initState() {
-    getHotProduct();
     super.initState();
   }
 

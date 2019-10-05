@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:uit_cantin/models/FoodInfo.dart';
 import 'package:uit_cantin/services/FormatPrice.dart';
+import 'package:uit_cantin/pages/ItemDetails.dart';
 
 class CategoryView extends StatelessWidget {
   final FoodInfo foodInfo;
@@ -15,6 +16,10 @@ class CategoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Container(
         child: InkWell(
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ItemDetails(food: foodInfo)));
+          },
           splashColor: Colors.transparent,
             child: Stack(
               children: <Widget>[
