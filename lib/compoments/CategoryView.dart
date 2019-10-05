@@ -15,6 +15,10 @@ class CategoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Container(
+//        width: MediaQuery.of(context).size.width,
+//        decoration: BoxDecoration(
+//          color: CanteenAppTheme.shimmer
+//        ),
         child: InkWell(
           onTap: () {
             Navigator.push(context,
@@ -42,7 +46,7 @@ class CategoryView extends StatelessWidget {
                                     blurRadius: 5.0),
                               ]
                           ),
-                          child: Row(
+                          child: foodInfo != null ? Row(
                             children: <Widget>[
                               SizedBox(
                                 width: 48 + 35.0,
@@ -74,7 +78,7 @@ class CategoryView extends StatelessWidget {
                                           CrossAxisAlignment.center,
                                           children: <Widget>[
                                             Text(
-                                              FormatPrice.getFormatPrice(foodInfo.price),
+                                              foodInfo.discountPrice == foodInfo.price ? "" : FormatPrice.getFormatPrice(foodInfo.price),
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w200,
@@ -87,17 +91,6 @@ class CategoryView extends StatelessWidget {
                                             Container(
                                               child: Row(
                                                 children: <Widget>[
-//                                                  Text(
-//                                                    foodInfo.foodType.toString(),
-////                                                        "${category.rating}",
-//                                                    textAlign: TextAlign.left,
-//                                                    style: TextStyle(
-//                                                      fontWeight: FontWeight.w200,
-//                                                      fontSize: 18,
-//                                                      letterSpacing: 0.27,
-//                                                      color: CanteenAppTheme.grey,
-//                                                    ),
-//                                                  ),
                                                   Icon(
                                                     Icons.star,
                                                     color:
@@ -152,7 +145,7 @@ class CategoryView extends StatelessWidget {
                                 )
                               )
                             ]
-                          )
+                          ) : null
                         )
                       )
                     ]
@@ -163,10 +156,11 @@ class CategoryView extends StatelessWidget {
                     height: 80.0,
                     width: 110.0,
                     decoration: new BoxDecoration(
-                      image: new DecorationImage(
+                    //  color: CanteenAppTheme.shimmer,
+                      image: foodInfo != null ? new DecorationImage(
                           image: new NetworkImage(
                               foodInfo.image),
-                          fit: BoxFit.cover),
+                          fit: BoxFit.cover) : null,
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     )),
               ],

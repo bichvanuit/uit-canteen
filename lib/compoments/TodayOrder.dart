@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/compoments/CategoryView.dart';
+import 'package:uit_cantin/canteenAppTheme.dart';
 
 // A function that converts a response body into a List<Photo>
 List<FoodList> _parseFoodToday(String responseBody) {
@@ -68,6 +69,16 @@ class _TodayOffer extends State<TodayOffer>{
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                     case ConnectionState.waiting:
+                    return ListView.builder(
+                      itemCount: 10,
+                      scrollDirection: Axis.vertical,
+                      // Important code
+                      itemBuilder: (context, index) =>
+                          Shimmer.fromColors(
+                              baseColor: CanteenAppTheme.shimmer,
+                              highlightColor: Colors.white,
+                              child: CategoryView(foodInfo: null)),
+                    );
                     default:
                       if (snapshot.hasError)
                         return new Text('Error: ${snapshot.error}');
@@ -111,6 +122,7 @@ class _TodayOffer extends State<TodayOffer>{
                               padding:
                               EdgeInsets.only(top: 20),
                               child: CategoryView(
+                              //  foodInfo: null,
                                 foodInfo: listFood[position].listFood[position1],
                               )
                           );

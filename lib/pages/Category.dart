@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:uit_cantin/models/Category.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:uit_cantin/pages/Menu.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
-import 'package:uit_cantin/models/FoodType.dart';
-import 'package:uit_cantin/compoments/CategoryView.dart';
 import 'package:uit_cantin/compoments/CategoryItem.dart';
 
 List<Category> _parseCategory(String responseBody) {
@@ -50,8 +47,7 @@ class _CategoryState extends State<CategoryScreen>
         duration: Duration(milliseconds: 2000), vsync: this);
 
     if (selectCategory == null) {
-      _fetchCategory().then((data) =>
-          setState(() {
+      _fetchCategory().then((data) => setState(() {
             selectCategory = data[0].foodCategoryId;
           }));
     }
@@ -87,43 +83,39 @@ class _CategoryState extends State<CategoryScreen>
                         switch (snapshot.connectionState) {
                           case ConnectionState.none:
                           case ConnectionState.waiting:
-//                        return ListView.builder(
-//                          itemCount: 3,
-//                          scrollDirection: Axis.horizontal,
-//                          // Important code
-//                          itemBuilder: (context, index) => Shimmer.fromColors(
-//                              baseColor: Colors.grey[400],
-//                              highlightColor: Colors.white,
-//                              child: _createItemList(null, false)),
-//                        );
-                          case ConnectionState.done:
+                            return ListView.builder(
+                              itemCount: 3,
+                              scrollDirection: Axis.horizontal,
+                              // Important code
+                              itemBuilder: (context, index) =>
+                                  Shimmer.fromColors(
+                                      baseColor: CanteenAppTheme.shimmer,
+                                      highlightColor: Colors.white,
+                                      child: _createItemList(null)),
+                            );
+                          default:
                             if (snapshot.hasError) {
                               return new Text('Error: ${snapshot.error}');
                             } else {
-                              if (selectCategory == null) {
-                                List<Category> listCategory = snapshot.data;
-
-                              }
                               return createListView(context, snapshot);
                             }
-                            break;
-                          default:
-                            return null;
                         }
                       },
                     )),
                 new SizedBox(
                   height: 15.0,
                 ),
-                selectCategory != null ? new CategoryItem(
-                  mainScreenAnimation: Tween(begin: 0.0, end: 1.0)
-                      .animate(CurvedAnimation(
-                      parent: animationController,
-                      curve: Interval((1 / count) * 3, 1.0,
-                          curve: Curves.fastOutSlowIn))),
-                  mainScreenAnimationController: animationController,
-                  categoryId: selectCategory,
-                ): new Container(),
+                selectCategory != null
+                    ? new CategoryItem(
+                        mainScreenAnimation: Tween(begin: 0.0, end: 1.0)
+                            .animate(CurvedAnimation(
+                                parent: animationController,
+                                curve: Interval((1 / count) * 3, 1.0,
+                                    curve: Curves.fastOutSlowIn))),
+                        mainScreenAnimationController: animationController,
+                        categoryId: selectCategory,
+                      )
+                    : new Container(),
               ],
             )
           ],
@@ -131,56 +123,48 @@ class _CategoryState extends State<CategoryScreen>
   }
 
   Widget _createItemList(Category category) {
-    return Container(
-        margin: const EdgeInsets.only(right: 10.0),
-        height: 20.0,
-        decoration: new BoxDecoration(
-            color: selectCategory == category.foodCategoryId
-                ? CanteenAppTheme.main
-                : CanteenAppTheme.nearlyWhite,
-            borderRadius: BorderRadius.all(Radius.circular(24.0)),
-            border: new Border.all(color: CanteenAppTheme.main)),
-        child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-                splashColor: Colors.white24,
+    return category != null
+        ? Container(
+            margin: const EdgeInsets.only(right: 10.0),
+            height: 20.0,
+            decoration: new BoxDecoration(
+                color: selectCategory == category.foodCategoryId
+                    ? CanteenAppTheme.main
+                    : CanteenAppTheme.nearlyWhite,
                 borderRadius: BorderRadius.all(Radius.circular(24.0)),
-                onTap: () {
-                  setState(() {
-                    selectCategory = category.foodCategoryId;
-                  });
-                },
-                child: Padding(
-                    padding: EdgeInsets.only(
-                        top: 12, bottom: 12, left: 18, right: 18),
-                    child: Center(
-                        child: Text(category.foodCategoryName,
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                              letterSpacing: 0.27,
-                              color: selectCategory == category.foodCategoryId
-                                  ? CanteenAppTheme.nearlyWhite
-                                  : CanteenAppTheme.main,
-                            )))))));
-  }
-
-  createFoodType(int selectCategory) {
-    setState(() {
-      foodType =  selectCategory == null ? Container() :
-      new CategoryItem(
-        mainScreenAnimation: Tween(begin: 0.0, end: 1.0)
-            .animate(CurvedAnimation(
-            parent: animationController,
-            curve: Interval((1 / count) * 3, 1.0,
-                curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: animationController,
-        categoryId: selectCategory,
-      );
-    });
-
-
+                border: new Border.all(color: CanteenAppTheme.main)),
+            child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                    splashColor: Colors.white24,
+                    borderRadius: BorderRadius.all(Radius.circular(24.0)),
+                    onTap: () {
+                      setState(() {
+                        selectCategory = category.foodCategoryId;
+                      });
+                    },
+                    child: Padding(
+                        padding: EdgeInsets.only(
+                            top: 12, bottom: 12, left: 18, right: 18),
+                        child: Center(
+                            child: Text(category.foodCategoryName,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                  letterSpacing: 0.27,
+                                  color:
+                                      selectCategory == category.foodCategoryId
+                                          ? CanteenAppTheme.nearlyWhite
+                                          : CanteenAppTheme.main,
+                                )))))))
+        : new Container(
+            margin: const EdgeInsets.only(right: 10.0),
+            width: 100.0,
+            decoration: new BoxDecoration(
+                color: CanteenAppTheme.main,
+                borderRadius: BorderRadius.all(Radius.circular(24.0))),
+          );
   }
 
   Widget createListView(BuildContext context, AsyncSnapshot snapshot) {
@@ -190,7 +174,7 @@ class _CategoryState extends State<CategoryScreen>
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, position) {
           if (selectCategory == null) {
-              selectCategory = listCategory[position].foodCategoryId;
+            selectCategory = listCategory[position].foodCategoryId;
           }
           return _createItemList(listCategory[position]);
         });
