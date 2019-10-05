@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:uit_cantin/models/Order.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:uit_cantin/pages/ConfirmOrder.dart';
 import 'package:uit_cantin/models/CardGet.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/config.dart';
-
+import 'package:uit_cantin/canteenAppTheme.dart';
+import 'package:uit_cantin/services/FormatPrice.dart';
+import 'package:uit_cantin/compoments/LoadingWidget.dart';
 
 List<CardGet> _parseCard(String responseBody) {
-  final parsed = json.decode(responseBody)["data"]["list_food"].cast<Map<String, dynamic>>();
+  final parsed = json
+      .decode(responseBody)["data"]
+      .cast<Map<String, dynamic>>();
   return parsed.map<CardGet>((json) => CardGet.fromJson(json)).toList();
 }
 
@@ -29,14 +32,25 @@ class OrderScreen extends StatefulWidget {
   _OrderState createState() => _OrderState();
 }
 
-
 class _OrderState extends State<OrderScreen> {
+  double totalOrder;
+  List<CardGet> listCard;
+
   @override
   void initState() {
+    totalOrder = 0;
+    _fetchCard().then((data) => setState(() {
+      setState(() {
+        listCard = data;
+      });
+          totalOrder = data
+              .map<double>((m) => double.parse(m.discountPrice) * m.amount)
+              .reduce((a, b) => a + b);
+        }));
+
     super.initState();
   }
 
-  static final String path = "lib/src/pages/ecommerce/cart1.dart";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,53 +61,55 @@ class _OrderState extends State<OrderScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-                padding: EdgeInsets.symmetric(horizontal:16.0, vertical: 30.0),
-                child: Text("ĐƠN HÀNG CỦA BẠN", style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade700
-                ),)),
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 30.0),
+                child: Text(
+                  "ĐƠN HÀNG CỦA BẠN",
+                  style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade700),
+                )),
             Expanded(
-                child: new FutureBuilder(
-                  future: _fetchCard(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.none:
-                      case ConnectionState.waiting:
-                        return new Container();
-                      default:
-                        if (snapshot.hasError)
-                          return new Text('Error: ${snapshot.error}');
-                        else
-                          return createListView(context, snapshot);
-                    }
+                child: listCard != null ? ListView.builder(
+                  padding: EdgeInsets.all(16.0),
+                  itemCount: listCard.length,
+                  itemBuilder: (BuildContext context, int position) {
+                    return _createItemList(listCard[position]);
                   },
-                )
-            ),
+                ): new LoadingWidget()),
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  Text("Tổng cộng     50000", style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0
-                  ),),
-                  SizedBox(height: 20.0,),
+                  Text(
+                    "Tổng cộng     " +
+                        FormatPrice.getFormatPrice(totalOrder.toString()),
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
                   SizedBox(
                     width: double.infinity,
                     child: MaterialButton(
                       height: 50.0,
-                      color: Color.fromRGBO(229, 32, 32, 1.0),
-                      child: Text("Thanh toán".toUpperCase(), style: TextStyle(
-                          color: Colors.white
-                      ),),
-                      onPressed: (){
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ConfirmOrderScreen()));
+                      color: totalOrder == 0 ? Colors.grey :Color.fromRGBO(229, 32, 32, 1.0),
+                      child: Text(
+                        "Thanh toán".toUpperCase(),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        if (totalOrder == 0) {
+
+                        } else {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ConfirmOrderScreen(totalOrder: totalOrder)));
+                        }
                       },
                     ),
                   )
@@ -106,69 +122,143 @@ class _OrderState extends State<OrderScreen> {
     );
   }
 
-  Widget createListView(BuildContext context, AsyncSnapshot snapshot) {
-    List<CardGet> listOrder = snapshot.data;
-    return ListView.builder(
-      padding: EdgeInsets.all(16.0),
-      itemCount: listOrder.length,
-      itemBuilder: (BuildContext context, int index){
-        return Stack(
-          children: <Widget>[
-            Container(
-              width: double.infinity,
-              margin: EdgeInsets.only(right: 30.0, bottom: 10.0),
-              child: Material(
-                borderRadius: BorderRadius.circular(5.0),
-                elevation: 3.0,
-                child: Container(
-                  padding: EdgeInsets.all(16.0),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        height: 80,
-                        child: Image.network(listOrder[index].image),
-                      ),
-                      SizedBox(width: 10.0,),
-                      Expanded(
-                        child: Column(
+  Widget _createItemList(CardGet card) {
+    return Stack(
+      children: <Widget>[
+        Container(
+            height: 120,
+            width: double.infinity,
+            margin: EdgeInsets.only(right: 10.0, bottom: 10.0),
+            padding: EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+                color: CanteenAppTheme.white,
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                      color: CanteenAppTheme.grey.withOpacity(0.2),
+                      offset: Offset(1.1, 1.1),
+                      blurRadius: 5.0),
+                ]),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  height: 100.0,
+                  width: 100.0,
+                  child: card != null
+                      ? Image.network(card.image, fit: BoxFit.cover)
+                      : null,
+                ),
+                SizedBox(width: 10.0),
+                Expanded(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      card.foodName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    Text(
+                      FormatPrice.getFormatPrice(card.discountPrice),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                          color: Colors.grey),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 20.0),
+                      child: new Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(listOrder[index].foodName, style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold
-                            ),),
-                            SizedBox(height: 20.0,),
-                            Text('15.000', style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18.0
-                            ),),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                            new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (card.amount > 0) {
+                                    card.amount = card.amount - 1;
+                                    totalOrder = totalOrder - int.parse(card.discountPrice);
+                                  }
+                                });
+                              },
+                              child: new Container(
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.black, width: 1.5),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0)),
+                                ),
+                                child: new Center(
+                                  child: new Icon(Icons.remove, size: 18),
+                                ),
+                              ),
+                            ),
+                            new Container(
+                                width: 30,
+                                height: 30,
+                                child: Center(
+                                  child: new Text(
+                                    card.amount.toString(),
+                                    //   '$intCount',
+                                    textAlign: TextAlign.center,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                )),
+                            new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  card.amount++;
+                                  totalOrder = totalOrder + int.parse(card.discountPrice);
+                                });
+                              },
+                              child: new Container(
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  border:
+                                  Border.all(color: Colors.black, width: 1.5),
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0)),
+                                ),
+                                child: new Center(
+                                  child: new Icon(Icons.add, size: 18),
+                                ),
+                              ),
+                            )
+                          ]),
+                    )
+                  ],
+                )),
+              ],
+            )),
+        Positioned(
+          top: 20,
+          right: 0,
+          child: Container(
+            height: 30,
+            width: 30,
+            alignment: Alignment.center,
+            child: MaterialButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0)),
+              padding: EdgeInsets.all(0.0),
+              color: Color.fromRGBO(229, 32, 32, 1.0),
+              child: Icon(
+                Icons.edit,
+                color: Colors.white,
               ),
+              onPressed: () {},
             ),
-            Positioned(
-              top: 20,
-              right: 15,
-              child: Container(
-                height: 30,
-                width: 30,
-                alignment: Alignment.center,
-                child: MaterialButton(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-                  padding: EdgeInsets.all(0.0),
-                  color:  Color.fromRGBO(229, 32, 32, 1.0),
-                  child: Icon(Icons.clear, color: Colors.white,),
-                  onPressed: () {},
-                ),
-              ),
-            )
-          ],
-        );
-      },
+          ),
+        )
+      ],
     );
   }
 }

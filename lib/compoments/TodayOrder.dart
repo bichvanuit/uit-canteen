@@ -69,16 +69,16 @@ class _TodayOffer extends State<TodayOffer>{
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                     case ConnectionState.waiting:
-                    return ListView.builder(
-                      itemCount: 10,
-                      scrollDirection: Axis.vertical,
-                      // Important code
-                      itemBuilder: (context, index) =>
-                          Shimmer.fromColors(
-                              baseColor: CanteenAppTheme.shimmer,
-                              highlightColor: Colors.white,
-                              child: CategoryView(foodInfo: null)),
-                    );
+//                    return ListView.builder(
+//                      itemCount: 10,
+//                      scrollDirection: Axis.vertical,
+//                      // Important code
+//                      itemBuilder: (context, index) =>
+//                          Shimmer.fromColors(
+//                              baseColor: CanteenAppTheme.shimmer,
+//                              highlightColor: Colors.white,
+//                              child: CategoryView(foodInfo: null)),
+//                    );
                     default:
                       if (snapshot.hasError)
                         return new Text('Error: ${snapshot.error}');

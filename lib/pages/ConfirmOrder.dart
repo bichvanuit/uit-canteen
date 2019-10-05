@@ -4,34 +4,137 @@ import 'dart:async';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 import 'package:uit_cantin/pages/OrderSuccess.dart';
+import 'package:uit_cantin/services/FormatPrice.dart';
 
-List<PaymentMethod> listMethod = <PaymentMethod>[
-  new PaymentMethod(1, 'Tiền mặt',
-      'https://benhviendongho.com/wp-content/uploads/2018/05/Tienmat_Icon_big-2-300x140.png'),
-  new PaymentMethod(
-      2, 'Zalopay', 'https://img1.apk.tools/150/1/f/9/vn.com.vng.zalopay.png'),
-  new PaymentMethod(3, 'Momo', 'https://static.mservice.io/img/logo-momo.png')
-];
+import 'package:uit_cantin/models/CheckOut.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:uit_cantin/config.dart';
+import 'package:uit_cantin/services/Token.dart';
+import 'package:uit_cantin/models/UserInfo.dart';
+import 'package:uit_cantin/models/DeliveryPlace.dart';
+import 'package:uit_cantin/canteenAppTheme.dart';
+
+List<PaymentMethod> _parseMethod(String responseBody) {
+  final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
+  return parsed
+      .map<PaymentMethod>((json) => PaymentMethod.fromJson(json))
+      .toList();
+}
+
+Future<List<PaymentMethod>> _fetchMethod() async {
+  Token token = new Token();
+  final tokenValue = await token.getMobileToken();
+  Map<String, String> requestHeaders = {
+    "Authorization": "Bearer " + tokenValue,
+  };
+  final response = await http.get('$SERVER_NAME/common/get-payment-methods',
+      headers: requestHeaders);
+  return _parseMethod(response.body);
+}
+
+List<DeliveryPlace> _parsePlace(String responseBody) {
+  final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
+  return parsed
+      .map<DeliveryPlace>((json) => DeliveryPlace.fromJson(json))
+      .toList();
+}
+
+Future<List<DeliveryPlace>> _fetchPlace() async {
+  Token token = new Token();
+  final tokenValue = await token.getMobileToken();
+  Map<String, String> requestHeaders = {
+    "Authorization": "Bearer " + tokenValue,
+  };
+  final response = await http.get(
+      '$SERVER_NAME/common/get-delivery-place-types',
+      headers: requestHeaders);
+  return _parsePlace(response.body);
+}
+
+Future<UserInfo> _fetchUserInfo() async {
+  Token token = new Token();
+  final tokenValue = await token.getMobileToken();
+  Map<String, String> requestHeaders = {
+    "Authorization": "Bearer " + tokenValue,
+  };
+  final response = await http.get('$SERVER_NAME/user/get-detail-user',
+      headers: requestHeaders);
+  final parsed = json.decode(response.body)["data"];
+  return UserInfo.fromJson(parsed);
+}
 
 class ConfirmOrderScreen extends StatefulWidget {
+  final double totalOrder;
+
+  ConfirmOrderScreen({Key key, this.totalOrder}) : super(key: key);
+
   @override
   _ConfirmOrder createState() => _ConfirmOrder();
 }
 
 class _ConfirmOrder extends State<ConfirmOrderScreen> {
-  static final String path = "lib/src/pages/ecommerce/confirm_order1.dart";
-  final String address = "Chabahil, Kathmandu";
-  final String phone = "9818522122";
-  final double total = 500;
-  final double delivery = 100;
   int paymentId = 1;
   String result = "Quét mã";
+  int role;
+  List<PaymentMethod> listMethod;
+  List<DeliveryPlace> listPlace;
 
+  CheckOut checkOutInfo = new CheckOut();
+
+  @override
+  void initState() {
+    _fetchUserInfo().then((data) => setState(() {
+          setState(() {
+            UserInfo userInfo = data;
+            role = userInfo.userGroupId;
+          });
+        }));
+    _fetchMethod().then((data) => setState(() {
+        listMethod = data;
+        checkOutInfo.methodId = listMethod[0].methodId;
+    }));
+
+    _fetchPlace().then((data) => setState(() {
+        listPlace = data;
+        checkOutInfo.deliveryPlaceId = listPlace[0].placeId;
+    }));
+
+    super.initState();
+  }
+
+  _checkout() async {
+
+    var url = '$SERVER_NAME/cart/add-cart-item';
+    Token token = new Token();
+    final tokenValue = await token.getMobileToken();
+    Map<String, String> requestHeaders = {
+      "Authorization": "Bearer " + tokenValue,
+    };
+
+    var response =
+        await http.post(url, body: checkOutInfo.toMap(), headers: requestHeaders);
+    var statusCode = response.statusCode;
+    if (statusCode == STATUS_CODE_SUCCESS) {
+      var responseBody = json.decode(response.body);
+    //  isLoading = false;
+      var status = responseBody["status"];
+      if (status == STATUS_SUCCESS) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => OrderSuccessScreen()));
+      } else {
+    //    _showDialogSuccess();
+      }
+    }
+  }
   Future _scanQR() async {
     try {
       String qrResult = await BarcodeScanner.scan();
       setState(() {
         result = qrResult;
+        checkOutInfo.deliveryValue = qrResult;
       });
     } on PlatformException catch (ex) {
       if (ex.code == BarcodeScanner.CameraAccessDenied) {
@@ -55,11 +158,6 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -73,7 +171,7 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
   Widget _buildBody(BuildContext context) {
     return SingleChildScrollView(
       padding:
-      EdgeInsets.only(left: 20.0, right: 20.0, top: 40.0, bottom: 10.0),
+          EdgeInsets.only(left: 20.0, right: 20.0, top: 40.0, bottom: 10.0),
       child: Column(
         children: <Widget>[
           Row(
@@ -81,15 +179,10 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
             children: <Widget>[
               Text(
                 "Tổng cộng",
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .title,
+                style: Theme.of(context).textTheme.title,
               ),
-              Text("20000", style: Theme
-                  .of(context)
-                  .textTheme
-                  .title),
+              Text(FormatPrice.getFormatPrice(widget.totalOrder.toString()),
+                  style: Theme.of(context).textTheme.title),
             ],
           ),
           SizedBox(
@@ -101,38 +194,66 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
               width: double.infinity,
               child: Text("Phương thức thanh toán".toUpperCase())),
           Container(
-            width: double.infinity,
-            child: new ListView.builder(
-                shrinkWrap: true,
-                itemCount: listMethod.length,
-                scrollDirection: Axis.vertical,
-                physics: BouncingScrollPhysics(),
-                itemBuilder: (context, position) {
-                  return RadioListTile(
-                    groupValue: true,
-                    value: listMethod[position].methodId == paymentId
-                        ? true
-                        : false,
-                    title: Text(listMethod[position].methodName),
-                    onChanged: (value) {
-                      setState(() {
-                        paymentId = listMethod[position].methodId;
-                      });
-                    },
-                  );
-                }),
-          ),
+              width: double.infinity,
+              child: listMethod != null ? new ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: listMethod.length,
+                  scrollDirection: Axis.vertical,
+                  physics: BouncingScrollPhysics(),
+                  itemBuilder: (context, position) {
+                    return RadioListTile(
+                      groupValue: true,
+                      value:
+                      listMethod[position].methodId == checkOutInfo.methodId
+                          ? true
+                          : false,
+                      title: Text(listMethod[position].methodName),
+                      onChanged: (value) {
+                        setState(() {
+                          checkOutInfo.methodId = listMethod[position].methodId;
+                        });
+                      },
+                    );
+                  }): new Container()),
           Container(
               color: Colors.grey.shade200,
               padding: EdgeInsets.all(8.0),
               width: double.infinity,
               child: Text("Vị trí".toUpperCase())),
           Container(
-              padding: EdgeInsets.all(8.0),
+              width: double.infinity,
+              child: listPlace != null ? new ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: listPlace.length,
+                  scrollDirection: Axis.vertical,
+                  physics: BouncingScrollPhysics(),
+                  itemBuilder: (context, position) {
+                    return RadioListTile(
+                      groupValue: true,
+                      value: listPlace[position].placeId == checkOutInfo.deliveryPlaceId
+                          ? true
+                          : false,
+                      title: Text(listPlace[position].placeName),
+
+                      onChanged:
+                      listPlace[position].placeId == 2 && role == 1
+                          ? null
+                          : (val) {
+                        setState(() {
+                          checkOutInfo.deliveryPlaceId =
+                              listPlace[position].placeId;
+                          checkOutInfo.deliveryValue = "";
+                        });
+                      },
+                    );
+                  }): new Container()),
+          checkOutInfo.deliveryPlaceId == 1 ?
+          Container(
+              padding: const EdgeInsets.only(top: 10.0, left: 10.0),
               child: new Row(
                 children: <Widget>[
                   new Expanded(
-                    child: new Text(result),
+                    child: new Text(result, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
                   ),
                   new Expanded(
                     child: Container(
@@ -150,25 +271,43 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
                     ),
                   )
                 ],
+              )) :
+          Container(
+              padding: EdgeInsets.all(8.0),
+              child: new Row(
+                children: <Widget>[
+                  new Expanded(
+                    flex: 1,
+                    child: new Text("Nhập nơi giao: ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  ),
+                  new Expanded(
+                    flex: 2,
+                    child: new Container(
+                      child: new TextField(
+                          autofocus: false,
+                          decoration: const InputDecoration(
+                            hintText: 'Ví dụ: Phòng E.4',
+                            hintStyle: const TextStyle(color: Colors.grey),
+                          ),
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 16.0),
+                          onChanged: (String value) {
+                            setState(() {
+                              checkOutInfo.deliveryValue = value;
+                            });
+                          }),
+                    ),
+                  ),
+                ],
               )),
           Container(
             width: double.infinity,
             height: 50.0,
             margin:
-            EdgeInsets.only(top: MediaQuery
-                .of(context)
-                .size
-                .height * 0.2),
+                EdgeInsets.only(top: 50),
             child: RaisedButton(
-              color: Color.fromRGBO(229, 32, 32, 1.0),
-              onPressed: () {
-                setState(() {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => OrderSuccessScreen()));
-                });
-              },
+              color: checkOutInfo.deliveryValue != null && checkOutInfo.deliveryValue != "" ? Color.fromRGBO(229, 32, 32, 1.0) : Colors.grey,
+              onPressed: _checkout,
               child: Text(
                 "Xác nhận".toUpperCase(),
                 style: TextStyle(color: Colors.white),

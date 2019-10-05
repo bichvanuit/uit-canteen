@@ -5,12 +5,11 @@ import 'package:uit_cantin/pages/Home.dart';
 import 'package:uit_cantin/models/CartInfo.dart';
 
 import 'package:uit_cantin/services/Token.dart';
-
-import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/FormatPrice.dart';
+import 'package:uit_cantin/compoments/LoadingWidget.dart';
 
 class ItemDetails extends StatefulWidget {
   final FoodInfo food;
@@ -23,9 +22,11 @@ class ItemDetails extends StatefulWidget {
 class _ItemDetails extends State<ItemDetails> {
   var intCount = 1;
   var note;
+  bool isLoading;
 
   @override
   initState() {
+    isLoading = false;
     super.initState();
   }
 
@@ -34,6 +35,7 @@ class _ItemDetails extends State<ItemDetails> {
     super.dispose();
     intCount = 1;
     note = "";
+    isLoading = false;
   }
 
   void _postOrder() async {
@@ -54,6 +56,7 @@ class _ItemDetails extends State<ItemDetails> {
     var statusCode = response.statusCode;
     if (statusCode == STATUS_CODE_SUCCESS) {
       var responseBody = json.decode(response.body);
+      isLoading = false;
       var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
         _showDialogSuccess();
@@ -108,15 +111,9 @@ class _ItemDetails extends State<ItemDetails> {
         });
   }
 
-  Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: new AppBar(
-            backgroundColor: Color.fromRGBO(229, 32, 32, 1.0),
-            iconTheme: new IconThemeData(color: Colors.white),
-            title: Text("Chi tiết"),
-            actions: _buildActions()),
-        body: SingleChildScrollView(
-            child: Stack(children: <Widget>[
+  Widget _createBody() {
+    return SingleChildScrollView(
+        child: Stack(children: <Widget>[
           new Container(
               height: MediaQuery.of(context).size.width,
               width: MediaQuery.of(context).size.height,
@@ -129,205 +126,229 @@ class _ItemDetails extends State<ItemDetails> {
               child: new Container(
                   decoration: new BoxDecoration(
                       gradient: new LinearGradient(
-                colors: <Color>[
-                  const Color.fromRGBO(0, 0, 0, 0.5),
-                  const Color.fromRGBO(51, 51, 63, 0.1),
-                ],
-                stops: [0.2, 1.0],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(0.0, 1.0),
-              )))),
+                        colors: <Color>[
+                          const Color.fromRGBO(0, 0, 0, 0.5),
+                          const Color.fromRGBO(51, 51, 63, 0.1),
+                        ],
+                        stops: [0.2, 1.0],
+                        begin: const FractionalOffset(0.0, 0.0),
+                        end: const FractionalOffset(0.0, 1.0),
+                      )))),
           new SafeArea(
               child: new Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                new Padding(
-                    padding: EdgeInsets.all(20),
-                    child: new Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          new Expanded(
-                            child: new Text(widget.food.foodName,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 45)),
-                          ),
-                          new Expanded(
-                              child: new Align(
-                                alignment: Alignment.topRight,
-                                child: new Text(
-                                    FormatPrice.getFormatPrice(widget.food.discountPrice),
+                    new Padding(
+                        padding: EdgeInsets.all(20),
+                        child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              new Expanded(
+                                child: new Text(widget.food.foodName,
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 30)),
+                                        fontSize: 45)),
                               ),
-                              flex: 2),
-                        ]))
-              ])),
-        new Positioned(
-            child: new Align(
-                alignment: FractionalOffset.bottomCenter,
-              child: new Container(
-              //    height: 290.0,
-                  child: Container(
-                      margin: EdgeInsets.only(top: 330.0),
+                              new Expanded(
+                                  child: new Align(
+                                    alignment: Alignment.topRight,
+                                    child: new Text(
+                                        FormatPrice.getFormatPrice(widget.food.discountPrice),
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 30)),
+                                  ),
+                                  flex: 2),
+                            ]))
+                  ])),
+          new Positioned(
+              child: new Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: new Container(
+                    //    height: 290.0,
                       child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(40.0),
-                                topRight: Radius.circular(40.0),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.orange[100].withOpacity(0.3),
-                                    offset: Offset(0.0, -10.0),
-                                    blurRadius: 8.0)
-                              ]),
-                          child: new Padding(
-                            padding: EdgeInsets.only(
-                                bottom: MediaQuery.of(context).viewInsets.bottom),
-                            child:
-                            Column(mainAxisSize: MainAxisSize.min, children: <
-                                Widget>[
-                              new Container(
-                                padding: const EdgeInsets.only(
-                                    left: 20, top: 25, right: 25, bottom: 15),
-                                alignment: Alignment.centerLeft,
-                                decoration: BoxDecoration(
+                          margin: EdgeInsets.only(top: 330.0),
+                          child: Container(
+                              decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(30.0),
-                                    topRight: Radius.circular(30.0),
+                                    topLeft: Radius.circular(40.0),
+                                    topRight: Radius.circular(40.0),
                                   ),
-                                ),
-                                child: new Text(
-                                  'Lưu ý đặt biệt',
-                                  style: TextStyle(
-                                      fontSize: 20, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              new Container(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, bottom: 15),
-                                  decoration: BoxDecoration(color: Colors.white),
-                                  child: new TextField(
-                                      autofocus: false,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Ví dụ: không rau.....',
-                                        hintStyle:
-                                        const TextStyle(color: Colors.grey),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.orange[100].withOpacity(0.3),
+                                        offset: Offset(0.0, -10.0),
+                                        blurRadius: 8.0)
+                                  ]),
+                              child: new Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                                child:
+                                Column(mainAxisSize: MainAxisSize.min, children: <
+                                    Widget>[
+                                  new Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, top: 25, right: 25, bottom: 15),
+                                    alignment: Alignment.centerLeft,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(30.0),
+                                        topRight: Radius.circular(30.0),
                                       ),
-                                      style: const TextStyle(
-                                          color: Colors.black, fontSize: 16.0),
-                                      onChanged: (String value) {
-                                        note = value;
-                                      })),
-                              new Container(
-                                width: MediaQuery.of(context).size.width,
-                                padding: const EdgeInsets.only(
-                                    left: 20, right: 20, bottom: 15),
-                                decoration: BoxDecoration(color: Colors.white),
-                                child: new Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      new Container(
-                                          width: 40,
-                                          height: 40,
-                                          margin:
-                                          const EdgeInsets.only(right: 20.0),
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Color.fromRGBO(
-                                                      229, 32, 32, 1.0),
-                                                  width: 1.0)),
-                                          child: new FlatButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  if (intCount > 0) {
-                                                    intCount = intCount - 1;
-                                                  }
-                                                });
-                                              },
-                                              child: new Icon(
-                                                Icons.remove,
-                                                size: 15,
-                                                color: Color.fromRGBO(
-                                                    229, 32, 32, 1.0),
-                                              ),
-                                              color: Colors.white)),
-                                      new Container(
-                                          width: 30,
-                                          height: 30,
-                                          child: Center(
-                                            child: new Text(
-                                              '$intCount',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          )),
-                                      new Container(
-                                          width: 40,
-                                          height: 40,
-                                          margin: const EdgeInsets.only(left: 20.0),
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Color.fromRGBO(
-                                                      229, 32, 32, 1.0),
-                                                  width: 1.0)),
-                                          child: new FlatButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  intCount = intCount + 1;
-                                                });
-                                              },
-                                              child: new Icon(
-                                                Icons.add,
-                                                size: 15,
-                                                color: Color.fromRGBO(
-                                                    229, 32, 32, 1.0),
-                                              ),
-                                              color: Colors.white)),
-                                    ]),
-                              ),
-                              new GestureDetector(
-                                onTap: _postOrder,
-                                child: new Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20, bottom: 20),
-                                  decoration: BoxDecoration(color: Colors.white),
-                                  child: new Container(
-                                      width:
-                                      MediaQuery.of(context).size.width * 0.8,
-                                      height: 38.0,
-                                      alignment: FractionalOffset.center,
-                                      decoration: new BoxDecoration(
-                                          color: intCount > 0
-                                              ? const Color.fromRGBO(
-                                              229, 32, 32, 1.0)
-                                              : Colors.grey,
-                                          borderRadius: new BorderRadius.all(
-                                              const Radius.circular(5.0))),
-                                      child: new Text("Thêm vào giỏ hàng",
-                                          style: new TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w300,
-                                            letterSpacing: 0.3,
-                                          ))),
-                                ),
-                              )
-                            ]),
-                          ))))
-            )
-        ),
+                                    ),
+                                    child: new Text(
+                                      'Lưu ý đặt biệt',
+                                      style: TextStyle(
+                                          fontSize: 20, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  new Container(
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 20, bottom: 15),
+                                      decoration: BoxDecoration(color: Colors.white),
+                                      child: new TextField(
+                                          autofocus: false,
+                                          decoration: const InputDecoration(
+                                            hintText: 'Ví dụ: không rau.....',
+                                            hintStyle:
+                                            const TextStyle(color: Colors.grey),
+                                          ),
+                                          style: const TextStyle(
+                                              color: Colors.black, fontSize: 16.0),
+                                          onChanged: (String value) {
+                                            note = value;
+                                          })),
+                                  new Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 20, bottom: 15),
+                                    decoration: BoxDecoration(color: Colors.white),
+                                    child: new Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          new Container(
+                                              width: 40,
+                                              height: 40,
+                                              margin:
+                                              const EdgeInsets.only(right: 20.0),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Color.fromRGBO(
+                                                          229, 32, 32, 1.0),
+                                                      width: 1.0)),
+                                              child: new FlatButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      if (intCount > 0) {
+                                                        intCount = intCount - 1;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: new Icon(
+                                                    Icons.remove,
+                                                    size: 15,
+                                                    color: Color.fromRGBO(
+                                                        229, 32, 32, 1.0),
+                                                  ),
+                                                  color: Colors.white)),
+                                          new Container(
+                                              width: 30,
+                                              height: 30,
+                                              child: Center(
+                                                child: new Text(
+                                                  '$intCount',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.bold),
+                                                ),
+                                              )),
+                                          new Container(
+                                              width: 40,
+                                              height: 40,
+                                              margin: const EdgeInsets.only(left: 20.0),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Color.fromRGBO(
+                                                          229, 32, 32, 1.0),
+                                                      width: 1.0)),
+                                              child: new FlatButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      intCount = intCount + 1;
+                                                    });
+                                                  },
+                                                  child: new Icon(
+                                                    Icons.add,
+                                                    size: 15,
+                                                    color: Color.fromRGBO(
+                                                        229, 32, 32, 1.0),
+                                                  ),
+                                                  color: Colors.white)),
+                                        ]),
+                                  ),
+                                  new GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        isLoading = true;
+                                        _postOrder();
+                                      });
+                                    },
+                                    child: new Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 20, bottom: 20),
+                                      decoration: BoxDecoration(color: Colors.white),
+                                      child: new Container(
+                                          width:
+                                          MediaQuery.of(context).size.width * 0.8,
+                                          height: 38.0,
+                                          alignment: FractionalOffset.center,
+                                          decoration: new BoxDecoration(
+                                              color: intCount > 0
+                                                  ? const Color.fromRGBO(
+                                                  229, 32, 32, 1.0)
+                                                  : Colors.grey,
+                                              borderRadius: new BorderRadius.all(
+                                                  const Radius.circular(5.0))),
+                                          child: new Text("Thêm vào giỏ hàng",
+                                              style: new TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.w300,
+                                                letterSpacing: 0.3,
+                                              ))),
+                                    ),
+                                  )
+                                ]),
+                              ))))
+              )
+          ),
 
-        ])));
+        ]));
+  }
+
+  Widget _createProgress() {
+    return new Container(
+      child: new Stack(
+        children: <Widget>[_createBody(), new LoadingWidget()],
+      ),
+    );
+  }
+
+  Widget build(BuildContext context) {
+    return new Scaffold(
+        appBar: new AppBar(
+            backgroundColor: Color.fromRGBO(229, 32, 32, 1.0),
+            iconTheme: new IconThemeData(color: Colors.white),
+            title: Text("Chi tiết"),
+            actions: _buildActions()),
+        body: isLoading == true ? _createProgress() : _createBody()
+    );
   }
 }
