@@ -74,6 +74,7 @@ flutter:
     - assets/online-menu.png
     - assets/order-success.png
     - assets/fitness_app/
+    - assets/atm.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

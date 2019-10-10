@@ -5,6 +5,7 @@ import 'package:uit_cantin/pages/User.dart';
 import 'package:uit_cantin/pages/Notification.dart';
 import 'package:uit_cantin/compoments/BottomBarView.dart';
 import 'package:uit_cantin/models/TabIconData.dart';
+import 'package:uit_cantin/pages/Wallet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -33,6 +34,10 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         title: new Text('Đơn hàng'),
       ),
       BottomNavigationBarItem(
+        icon: new Icon(Icons.payment),
+        title: new Text('Liên kết'),
+      ),
+      BottomNavigationBarItem(
           icon: Icon(Icons.supervised_user_circle),
           title: Text('Người dùng')
       )
@@ -54,6 +59,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         HomeMainScreen(),
         NotificationScreen(),
         OrderScreen(),
+        WalletScreen(),
         UserScreen(),
       ],
     );
