@@ -79,9 +79,13 @@ class LoginScreenState extends State<LoginScreen> {
               new FlatButton(
                 child: new Text("Thử lại"),
                 onPressed: () {
+                  setState(() {
+                    isLoading = false;
+                  });
                   _controllerUsername.clear();
                   _controllerPassword.clear();
                   Navigator.of(context).pop();
+
                 },
               ),
               new FlatButton(

@@ -59,7 +59,7 @@ class _UserState extends State<UserScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             new GestureDetector(
-              onTap: _getImage(1),
+            //  onTap: _getImage(1),
               child: new Container(
                 padding: const EdgeInsets.all(10),
                 child: new Text(
@@ -69,7 +69,7 @@ class _UserState extends State<UserScreen> {
               ),
             ),
             new GestureDetector(
-                onTap: _getImage(2),
+            //    onTap: _getImage(2),
                 child: new Container(
                   padding: const EdgeInsets.all(10),
                   child: new Text(

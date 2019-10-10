@@ -103,7 +103,7 @@ class _CategoryState extends State<CategoryScreen>
                       },
                     )),
                 new SizedBox(
-                  height: 15.0,
+                  height: 10.0,
                 ),
                 selectCategory != null
                     ? new CategoryItem(

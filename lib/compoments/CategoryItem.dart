@@ -6,6 +6,7 @@ import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/models/FoodType.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:uit_cantin/pages/MenuDetail.dart';
 
 List<FoodType> _parseFoodType(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -91,35 +92,39 @@ class _CategoryItemState extends State<CategoryItem>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        height: 230.0,
-        child: new FutureBuilder(
-          future: _fetchFoodType(widget.categoryId),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-              case ConnectionState.waiting:
-                return ListView.builder(
-                  itemCount: 3,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => Shimmer.fromColors(
-                      baseColor: CanteenAppTheme.shimmer,
-                      highlightColor: Colors.white,
-                      child: CategoryItemDetail(
-                          foodType: null,
-                          animation: null,
-                          animationController: animationController,
-                          color: null)),
-                );
+    return new GestureDetector(
+      onTap: () {
+      },
+      child: Container(
+          height: 230.0,
+          child: new FutureBuilder(
+            future: _fetchFoodType(widget.categoryId),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return ListView.builder(
+                    itemCount: 3,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) => Shimmer.fromColors(
+                        baseColor: CanteenAppTheme.shimmer,
+                        highlightColor: Colors.white,
+                        child: CategoryItemDetail(
+                            foodType: null,
+                            animation: null,
+                            animationController: animationController,
+                            color: null)),
+                  );
 
-              default:
-                if (snapshot.hasError)
-                  return new Text('Error: ${snapshot.error}');
-                else
-                  return createListView(context, snapshot);
-            }
-          },
-        ));
+                default:
+                  if (snapshot.hasError)
+                    return new Text('Error: ${snapshot.error}');
+                  else
+                    return createListView(context, snapshot);
+              }
+            },
+          )),
+    );
   }
 }
 
@@ -176,122 +181,132 @@ class CategoryItemDetail extends StatelessWidget {
               child: new Transform(
                   transform: new Matrix4.translationValues(
                       100 * (1.0 - animation.value), 0.0, 0.0),
-                  child: SizedBox(
-                      width: 145,
-                      child: Stack(children: <Widget>[
-                        Container(
-                            margin: const EdgeInsets.only(
-                                top: 32, bottom: 16, left: 10.0, right: 10.0),
-                            padding: const EdgeInsets.only(
-                                top: 70, left: 10.0, bottom: 8, right: 10.0),
-                            decoration: BoxDecoration(
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                      color: Color(0XFF002020).withOpacity(0.6),
-                                      offset: Offset(1.1, 4.0),
-                                      blurRadius: 8.0),
-                                ],
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Color(0xFFD62231),
-                                    Color(0XFF002020),
+                  child: new GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => new MenuDetailScreen(
+                                  categoryId: foodType.foodCategoryId,
+                                  foodType: foodType.foodTypeId)));
+                    },
+                    child: SizedBox(
+                        width: 145,
+                        child: Stack(children: <Widget>[
+                          Container(
+                              margin: const EdgeInsets.only(
+                                  top: 32, bottom: 16, left: 10.0, right: 10.0),
+                              padding: const EdgeInsets.only(
+                                  top: 70, left: 10.0, bottom: 8, right: 10.0),
+                              decoration: BoxDecoration(
+                                  boxShadow: <BoxShadow>[
+                                    BoxShadow(
+                                        color: Color(0XFF002020).withOpacity(0.6),
+                                        offset: Offset(1.1, 4.0),
+                                        blurRadius: 8.0),
                                   ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.only(
-                                  bottomRight: Radius.circular(8.0),
-                                  bottomLeft: Radius.circular(8.0),
-                                  topLeft: Radius.circular(8.0),
-                                  topRight: Radius.circular(54.0),
-                                )),
-                            child: Stack(children: <Widget>[
-                              Align(
-                                alignment: FractionalOffset.topLeft,
-                                child: Text(foodType.foodTypeName,
-                                    textAlign: TextAlign.left,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      letterSpacing: 0.2,
-                                      color: CanteenAppTheme.white,
-                                    )),
-                              ),
-                              Positioned(
-                                  bottom: 0,
-                                  child: new Column(
-                                    children: <Widget>[
-                                      new Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            new Image.asset(
-                                                'assets/cutlery.png',
-                                                height: 15.0),
-                                            new Text(
-                                                foodType.amount.toString() +
-                                                    " sản phẩm",
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 15.0,
-                                                    fontStyle:
-                                                        FontStyle.italic)),
-                                          ]),
-                                      new SizedBox(
-                                        height: 7.0,
-                                      ),
-                                      new Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            new Image.asset('assets/sale.png',
-                                                height: 15.0),
-                                            new Text(
-                                                foodType.amountDiscount
-                                                        .toString() +
-                                                    " giảm giá",
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 15.0,
-                                                    fontStyle:
-                                                        FontStyle.italic)),
-                                          ]),
-
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xFFD62231),
+                                      Color(0XFF002020),
                                     ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.only(
+                                    bottomRight: Radius.circular(8.0),
+                                    bottomLeft: Radius.circular(8.0),
+                                    topLeft: Radius.circular(8.0),
+                                    topRight: Radius.circular(54.0),
                                   )),
-                            ])),
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          child: Container(
-                            width: 86,
-                            height: 86,
-                            decoration: BoxDecoration(
-                              color:
-                                  CanteenAppTheme.nearlyWhite.withOpacity(0.2),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                        Positioned(
+                              child: Stack(children: <Widget>[
+                                Align(
+                                  alignment: FractionalOffset.topLeft,
+                                  child: Text(foodType.foodTypeName,
+                                      textAlign: TextAlign.left,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        letterSpacing: 0.2,
+                                        color: CanteenAppTheme.white,
+                                      )),
+                                ),
+                                Positioned(
+                                    bottom: 0,
+                                    child: new Column(
+                                      children: <Widget>[
+                                        new Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              new Image.asset(
+                                                  'assets/cutlery.png',
+                                                  height: 15.0),
+                                              new Text(
+                                                  foodType.amount.toString() +
+                                                      " sản phẩm",
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 15.0,
+                                                      fontStyle:
+                                                      FontStyle.italic)),
+                                            ]),
+                                        new SizedBox(
+                                          height: 7.0,
+                                        ),
+                                        new Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              new Image.asset('assets/sale.png',
+                                                  height: 15.0),
+                                              new Text(
+                                                  foodType.amountDiscount
+                                                      .toString() +
+                                                      " giảm giá",
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 15.0,
+                                                      fontStyle:
+                                                      FontStyle.italic)),
+                                            ]),
+
+                                      ],
+                                    )),
+                              ])),
+                          Positioned(
                             top: 0,
                             left: 0,
                             child: Container(
-                                width: 70,
-                                height: 70,
-                                margin:
-                                    const EdgeInsets.only(left: 8.0, top: 8.0),
-                                decoration: BoxDecoration(
-                                  image: new DecorationImage(
-                                      image: new NetworkImage(foodType.image),
-                                      fit: BoxFit.cover),
-                                  shape: BoxShape.circle,
-                                )))
-                      ]))));
+                              width: 86,
+                              height: 86,
+                              decoration: BoxDecoration(
+                                color:
+                                CanteenAppTheme.nearlyWhite.withOpacity(0.2),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                              top: 0,
+                              left: 0,
+                              child: Container(
+                                  width: 70,
+                                  height: 70,
+                                  margin:
+                                  const EdgeInsets.only(left: 8.0, top: 8.0),
+                                  decoration: BoxDecoration(
+                                    image: new DecorationImage(
+                                        image: new NetworkImage(foodType.image),
+                                        fit: BoxFit.cover),
+                                    shape: BoxShape.circle,
+                                  )))
+                        ])),
+                  )));
         });
   }
 }

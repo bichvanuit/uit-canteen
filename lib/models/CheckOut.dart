@@ -1,6 +1,6 @@
 class CheckOut {
-  int methodId;
-  int deliveryPlaceId;
+  String methodId;
+  String deliveryPlaceId;
   String deliveryValue;
 
   CheckOut({

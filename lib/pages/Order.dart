@@ -51,6 +51,36 @@ class _OrderState extends State<OrderScreen> {
     super.initState();
   }
 
+  _checkOut() async {
+    var url = '$SERVER_NAME/cart/update-cart-item';
+    Token token = new Token();
+    final tokenValue = await token.getMobileToken();
+    Map<String, String> requestHeaders = {
+      "Authorization": "Bearer " + tokenValue,
+    };
+
+    var requestBody = new Map<String, dynamic>();
+    requestBody["list_food"] = listCard;
+
+    var response =
+        await http.post(url, body: requestBody, headers: requestHeaders);
+    var statusCode = response.statusCode;
+    if (statusCode == STATUS_CODE_SUCCESS) {
+      var responseBody = json.decode(response.body);
+      //  isLoading = false;
+      var status = responseBody["status"];
+      print(status);
+      if (status == STATUS_SUCCESS) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ConfirmOrderScreen(totalOrder: totalOrder,)));
+      } else {
+        //    _showDialogSuccess();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,10 +135,7 @@ class _OrderState extends State<OrderScreen> {
                         if (totalOrder == 0) {
 
                         } else {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ConfirmOrderScreen(totalOrder: totalOrder)));
+                          _checkOut();
                         }
                       },
                     ),

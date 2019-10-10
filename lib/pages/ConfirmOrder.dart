@@ -92,12 +92,12 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
         }));
     _fetchMethod().then((data) => setState(() {
         listMethod = data;
-        checkOutInfo.methodId = listMethod[0].methodId;
+        checkOutInfo.methodId = listMethod[0].methodId.toString();
     }));
 
     _fetchPlace().then((data) => setState(() {
         listPlace = data;
-        checkOutInfo.deliveryPlaceId = listPlace[0].placeId;
+        checkOutInfo.deliveryPlaceId = listPlace[0].placeId.toString();
     }));
 
     super.initState();
@@ -105,7 +105,7 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
 
   _checkout() async {
 
-    var url = '$SERVER_NAME/cart/add-cart-item';
+    var url = '$SERVER_NAME/order/check-out';
     Token token = new Token();
     final tokenValue = await token.getMobileToken();
     Map<String, String> requestHeaders = {
@@ -119,6 +119,7 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
       var responseBody = json.decode(response.body);
     //  isLoading = false;
       var status = responseBody["status"];
+      print(status);
       if (status == STATUS_SUCCESS) {
         Navigator.push(
             context,
@@ -204,13 +205,13 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
                     return RadioListTile(
                       groupValue: true,
                       value:
-                      listMethod[position].methodId == checkOutInfo.methodId
+                      listMethod[position].methodId.toString() == checkOutInfo.methodId
                           ? true
                           : false,
                       title: Text(listMethod[position].methodName),
                       onChanged: (value) {
                         setState(() {
-                          checkOutInfo.methodId = listMethod[position].methodId;
+                          checkOutInfo.methodId= listMethod[position].methodId.toString();
                         });
                       },
                     );
@@ -230,7 +231,7 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
                   itemBuilder: (context, position) {
                     return RadioListTile(
                       groupValue: true,
-                      value: listPlace[position].placeId == checkOutInfo.deliveryPlaceId
+                      value: listPlace[position].placeId.toString() == checkOutInfo.deliveryPlaceId
                           ? true
                           : false,
                       title: Text(listPlace[position].placeName),
@@ -241,13 +242,13 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
                           : (val) {
                         setState(() {
                           checkOutInfo.deliveryPlaceId =
-                              listPlace[position].placeId;
+                              listPlace[position].placeId.toString();
                           checkOutInfo.deliveryValue = "";
                         });
                       },
                     );
                   }): new Container()),
-          checkOutInfo.deliveryPlaceId == 1 ?
+          checkOutInfo.deliveryPlaceId == "1" ?
           Container(
               padding: const EdgeInsets.only(top: 10.0, left: 10.0),
               child: new Row(
