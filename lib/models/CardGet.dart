@@ -30,7 +30,7 @@ class CardGet {
     this.price = json["price"];
     this.discountPrice = json["price_discount"];
     this.note = json["note"];
-    this.amount = json["amount"];
+    this.amount = json["quantity"];
   }
 
   Map toMap() {
@@ -42,7 +42,19 @@ class CardGet {
     map["price"] = price;
     map["price_discount"] = discountPrice;
     map["note"] = note;
-    map["amount"] = amount;
+    map["quantity"] = amount;
+    return map;
+  }
+  static toMapObject (CardGet card) {
+    var map = new Map<String, dynamic>();
+    map["food_id"] = card.foodId;
+    map["food_name"] = card.foodName;
+    map["image"] = card.image;
+    map["is_published"] = card.isPublished;
+    map["price"] = card.price;
+    map["price_discount"] = card.discountPrice;
+    map["note"] = card.note;
+    map["quantity"] = card.amount;
     return map;
   }
 }
