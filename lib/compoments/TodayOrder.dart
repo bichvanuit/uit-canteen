@@ -62,23 +62,14 @@ class _TodayOffer extends State<TodayOffer>{
                       color: Colors.grey))),
           // Menu name
           new Container(
-              margin: const EdgeInsets.only(top: 10.0),
+              margin: const EdgeInsets.only(top: 5.0),
               child: new FutureBuilder(
                 future: _fetchFoodToday(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                     case ConnectionState.waiting:
-//                    return ListView.builder(
-//                      itemCount: 10,
-//                      scrollDirection: Axis.vertical,
-//                      // Important code
-//                      itemBuilder: (context, index) =>
-//                          Shimmer.fromColors(
-//                              baseColor: CanteenAppTheme.shimmer,
-//                              highlightColor: Colors.white,
-//                              child: CategoryView(foodInfo: null)),
-//                    );
+                    return new Text("loading");
                     default:
                       if (snapshot.hasError)
                         return new Text('Error: ${snapshot.error}');
@@ -100,7 +91,6 @@ class _TodayOffer extends State<TodayOffer>{
         scrollDirection: Axis.vertical,
         itemBuilder: (context, position) {
           return Container(
-              padding: EdgeInsets.only(top: 20),
               child: new Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,11 +102,13 @@ class _TodayOffer extends State<TodayOffer>{
                             fontSize: 18.0)),
                   ),
                   new Container(
+                    height: 130.0,
+                    margin: const EdgeInsets.only(bottom: 20.0),
                     child: new ListView.builder(
                         physics: BouncingScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: listFood[position].listFood.length,
-                        scrollDirection: Axis.vertical,
+                        scrollDirection: Axis.horizontal,
                         itemBuilder: (context, position1) {
                           return Container(
                               padding:

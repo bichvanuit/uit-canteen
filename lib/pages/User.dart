@@ -40,10 +40,36 @@ class _UserState extends State<UserScreen> {
     } else {
       image = await ImagePicker.pickImage(source: ImageSource.gallery);
     }
-    setState(() {
 
+    setState(() async {
       _image = image;
+
+      List<int> imageBytes = _image.readAsBytesSync();
+      print(base64Encode(imageBytes));
+      print("-------------------");
+
+      var url = '$SERVER_NAME/user/edit-avatar';
+      Token token = new Token();
+      final tokenValue = await token.getMobileToken();
+      Map<String, String> requestHeaders = {
+        "Authorization": "Bearer " + tokenValue,
+      };
+
+      var requestBody = new Map<String, dynamic>();
+      requestBody["image"] = base64Encode(imageBytes);
+
+      var response =
+      await http.post(url, body: requestBody, headers: requestHeaders);
+      var statusCode = response.statusCode;
+      if (statusCode == STATUS_CODE_SUCCESS) {
+        var responseBody = json.decode(response.body);
+        var status = responseBody["status"];
+        print(responseBody);
+      }
+
     });
+
+
   }
 
   void _showDialogEditAvatar() {
@@ -59,7 +85,9 @@ class _UserState extends State<UserScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             new GestureDetector(
-            //  onTap: _getImage(1),
+              onTap: () {
+                _getImage(1);
+              },
               child: new Container(
                 padding: const EdgeInsets.all(10),
                 child: new Text(
@@ -69,7 +97,9 @@ class _UserState extends State<UserScreen> {
               ),
             ),
             new GestureDetector(
-            //    onTap: _getImage(2),
+                onTap: () {
+                  _getImage(2);
+                },
                 child: new Container(
                   padding: const EdgeInsets.all(10),
                   child: new Text(
@@ -114,147 +144,151 @@ class _UserState extends State<UserScreen> {
           }
       );
     }
-    return FutureBuilder<UserInfo>(
-      future: _fetchUserInfo(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          UserInfo userInfo = snapshot.data;
-          return new Column(
-            children: <Widget>[
-              new Stack(
-                children: <Widget>[
-                  new Container(
-                    height: 250.0,
-                    child: Diagonal(
-                      child: new Container(
-                        color: const Color.fromRGBO(229, 32, 32, 1.0),
-                      ),
-                      clipHeight: 90.0,
-                    ),
-                  ),
-                  new Container(
-                    margin: const EdgeInsets.only(top: 155.0),
-                    child: new InkWell(
-                      onTap: _showDialogEditAvatar,
-                      child: new Container(
-                          alignment: Alignment.center,
-                          child: new Stack(
-                            children: <Widget>[
-                              new Container(
-                                height: 120,
-                                width: 120,
-                                child: ClipOval(
-                                  child: Image.network(
-                                    userInfo.avatar,
-                                    fit: BoxFit.cover,
-                                  )
-                                ),
-                                decoration: new BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: new Border.all(
-                                    color: Colors.white,
-                                    width: 5.0,
-                                  ),
-                                ),
-                              ),
-                              new Container(
-                                margin: const EdgeInsets.only(left: 90, top: 65),
-                                child: ClipOval(
-                                  child: Container(
-                                    color: Colors.grey,
-                                    height: 30, // height of the button
-                                    width: 30, // width of the button
-                                    child: Center(
-                                        child: Icon(
-                                          Icons.add_a_photo,
-                                          color: Colors.white,
-                                          size: 20.0,
-                                        )),
-                                  ),
-                                ),
-                                decoration: new BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: new Border.all(
-                                    color: Colors.white,
-                                    width: 5.0,
-                                  ),
-                                ),
-                              )
-                            ],
-                          )),
-                    ),
-                  ),
-                ],
-              ),
-              new Container(
-                margin: const EdgeInsets.only(top: 7.0),
-                alignment: Alignment.center,
-                child: new Text(
-                  userInfo.fullName,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19.0),
-                ),
-              ),
-              new Container(
-                alignment: Alignment.bottomCenter,
-                height: 250.0,
-                child: ListView(
+    return new Scaffold(
+      body: FutureBuilder<UserInfo>(
+        future: _fetchUserInfo(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            UserInfo userInfo = snapshot.data;
+            return new Column(
+              children: <Widget>[
+                new Stack(
                   children: <Widget>[
-                    ListTile(
-                      title: Text('Thiết lập tài khoản',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      trailing: Icon(Icons.keyboard_arrow_right),
+                    new Container(
+                      height: 250.0,
+                      child: Diagonal(
+                        child: new Container(
+                          color: const Color.fromRGBO(229, 32, 32, 1.0),
+                        ),
+                        clipHeight: 90.0,
+                      ),
+                    ),
+                    new GestureDetector(
                       onTap: () {
-                        setState(() {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AccountSettingScreen(fullName: userInfo.fullName)));
-                        });
-                      },
-                    ),
-                    ListTile(
-                      title: Text('Thông tin app',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      trailing: Icon(Icons.keyboard_arrow_right),
-                      onTap: () {
-                        setState(() {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AppInfoScreen()));
-                        });
-                      },
-                    ),
-                    ListTile(
-                      title: Text('Liên hệ với chúng tôi',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      trailing: Icon(Icons.keyboard_arrow_right),
-                      onTap: () {
-                        setState(() {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ContactUsScreen()));
-                        });
-                      },
-                    ),
-                    ListTile(
-                        title: Text('Đăng xuất',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        onTap: _showDialog
-                    ),
+                        _showDialogEditAvatar();
+                      } ,
+                      child: new Container(
+                        margin: const EdgeInsets.only(top: 155.0),
+                        child: new Container(
+                            alignment: Alignment.center,
+                            child: new Stack(
+                              children: <Widget>[
+                                new Container(
+                                  height: 120,
+                                  width: 120,
+                                  child: ClipOval(
+                                      child: Image.network(
+                                        userInfo.avatar,
+                                        fit: BoxFit.cover,
+                                      )
+                                  ),
+                                  decoration: new BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: new Border.all(
+                                      color: Colors.white,
+                                      width: 5.0,
+                                    ),
+                                  ),
+                                ),
+                                new Container(
+                                  margin: const EdgeInsets.only(left: 90, top: 65),
+                                  child: ClipOval(
+                                    child: Container(
+                                      color: Colors.grey,
+                                      height: 30, // height of the button
+                                      width: 30, // width of the button
+                                      child: Center(
+                                          child: Icon(
+                                            Icons.add_a_photo,
+                                            color: Colors.white,
+                                            size: 20.0,
+                                          )),
+                                    ),
+                                  ),
+                                  decoration: new BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: new Border.all(
+                                      color: Colors.white,
+                                      width: 5.0,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )),
+                      ),
+                    )
                   ],
                 ),
-              ),
-            ],
-          );
-        } else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
+                new Container(
+                  margin: const EdgeInsets.only(top: 7.0),
+                  alignment: Alignment.center,
+                  child: new Text(
+                    userInfo.fullName,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19.0),
+                  ),
+                ),
+                new Container(
+                  alignment: Alignment.bottomCenter,
+                  height: 250.0,
+                  child: ListView(
+                    children: <Widget>[
+                      ListTile(
+                        title: Text('Thiết lập tài khoản',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        trailing: Icon(Icons.keyboard_arrow_right),
+                        onTap: () {
+                          setState(() {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AccountSettingScreen(fullName: userInfo.fullName)));
+                          });
+                        },
+                      ),
+                      ListTile(
+                        title: Text('Thông tin app',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        trailing: Icon(Icons.keyboard_arrow_right),
+                        onTap: () {
+                          setState(() {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AppInfoScreen()));
+                          });
+                        },
+                      ),
+                      ListTile(
+                        title: Text('Liên hệ với chúng tôi',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        trailing: Icon(Icons.keyboard_arrow_right),
+                        onTap: () {
+                          setState(() {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ContactUsScreen()));
+                          });
+                        },
+                      ),
+                      ListTile(
+                          title: Text('Đăng xuất',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          onTap: _showDialog
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
 
-        // By default, show a loading spinner.
-        return new Container();
-      },
+          // By default, show a loading spinner.
+          return new Container();
+        },
+      ),
     );
   }
 }

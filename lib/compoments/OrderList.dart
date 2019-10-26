@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:uit_cantin/models/Order.dart';
-import 'package:stepper_touch/stepper_touch.dart';
 
 class OrderWidget extends StatelessWidget {
   final Order order;
@@ -8,13 +7,6 @@ class OrderWidget extends StatelessWidget {
   final double widthContainer = 100;
 
   OrderWidget({Key key, this.order}) : super(key: key);
-
-  _removeProduct() {
-
-  }
-
-  _addProduct() {
-  }
 
   Widget build(BuildContext context) {
     return new Container(

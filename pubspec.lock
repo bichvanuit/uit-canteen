@@ -57,13 +57,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
-  fancy_bottom_navigation:
-    dependency: "direct main"
+  eva_icons_flutter:
+    dependency: transitive
     description:
-      name: fancy_bottom_navigation
+      name: eva_icons_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.2"
+    version: "2.0.0"
+  extended_navbar_scaffold:
+    dependency: "direct main"
+    description:
+      name: extended_navbar_scaffold
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   fluro:
     dependency: "direct main"
     description:
@@ -83,6 +90,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.8.3"
+  flutter_multi_carousel:
+    dependency: "direct main"
+    description:
+      name: flutter_multi_carousel
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   flutter_rating:
     dependency: "direct main"
     description:
@@ -97,6 +111,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.5.3"
+  flutter_speed_dial:
+    dependency: "direct main"
+    description:
+      name: flutter_speed_dial
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -219,13 +240,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.9.3"
-  stepper_touch:
-    dependency: "direct main"
-    description:
-      name: stepper_touch
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.1"
   stream_channel:
     dependency: transitive
     description:

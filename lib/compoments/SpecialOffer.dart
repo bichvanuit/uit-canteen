@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter_multi_carousel/carousel.dart';
 
 // A function that converts a response body into a List<Photo>
 List<FoodInfo> _parseFoodDiscount(String responseBody) {
@@ -29,6 +30,7 @@ class SpecialOffer extends StatefulWidget {
 }
 
 class _SpecialOffer extends State<SpecialOffer> {
+
   @override
   initState() {
     super.initState();
@@ -52,7 +54,6 @@ class _SpecialOffer extends State<SpecialOffer> {
                       fontWeight: FontWeight.bold,
                       color: Colors.grey))),
           new Container(
-              height: 240,
               child: new FutureBuilder(
                 future: _fetchFoodDiscout(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -83,15 +84,38 @@ class _SpecialOffer extends State<SpecialOffer> {
 
   Widget createListView(BuildContext context, AsyncSnapshot snapshot) {
     List<FoodInfo> listFoodInfo = snapshot.data;
-    return new ListView.builder(
-        shrinkWrap: true,
-        physics: BouncingScrollPhysics(),
-        itemCount: listFoodInfo.length,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, position) {
-          return Container(
-              padding: EdgeInsets.only(right: 10, top: 20),
-              child: new ItemWidget(food: listFoodInfo[position]));
-        });
+    return Carousel(
+        height: 500.0,
+        width: MediaQuery.of(context).size.width,
+        type: "slideswiper",
+        indicatorType: "bubble",
+        arrowColor: Colors.white,
+        axis: Axis.horizontal,
+        showArrow: false,
+        showIndicator: false,
+
+        children: listFoodInfo.map((item) => Container(
+       //     padding: EdgeInsets.only(right: 10, top: 20),
+            child: new ItemWidget(food: item))).toList()
+    );
+//    return CarouselSlider(
+//      height: 450,
+//
+//      items: listFoodInfo.map((item) {
+//        return Container(
+//            padding: EdgeInsets.only(right: 10, top: 20),
+//            child: new ItemWidget(food: item));
+//      }).toList(),
+//    );
+//    return new ListView.builder(
+//        shrinkWrap: true,
+//        physics: BouncingScrollPhysics(),
+//        itemCount: listFoodInfo.length,
+//        scrollDirection: Axis.horizontal,
+//        itemBuilder: (context, position) {
+//          return Container(
+//              padding: EdgeInsets.only(right: 10, top: 20),
+//              child: new ItemWidget(food: listFoodInfo[position]));
+//        });
   }
 }

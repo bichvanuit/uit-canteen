@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -9,6 +8,7 @@ import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:uit_cantin/services/FormatPrice.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
+import 'package:uit_cantin/pages/Home.dart';
 
 List<CardGet> _parseCard(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -35,19 +35,20 @@ class _OrderState extends State<OrderScreen> {
   double totalOrder;
   List<CardGet> listCard;
   bool isLoading;
+  TextEditingController _textFieldController = TextEditingController();
 
   @override
   void initState() {
     isLoading = false;
     totalOrder = 0;
     _fetchCard().then((data) => setState(() {
-      setState(() {
-        listCard = data;
-      });
-      totalOrder = data
-          .map<double>((m) => double.parse(m.discountPrice) * m.amount)
-          .reduce((a, b) => a + b);
-    }));
+          setState(() {
+            listCard = data;
+          });
+          totalOrder = data
+              .map<double>((m) => double.parse(m.discountPrice) * m.amount)
+              .reduce((a, b) => a + b);
+        }));
 
     super.initState();
   }
@@ -58,6 +59,43 @@ class _OrderState extends State<OrderScreen> {
     super.dispose();
   }
 
+  _showDialogEdit(CardGet card) {
+    _textFieldController.text = card.note;
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Lưu ý của bạn'),
+            content: TextField(
+              controller: _textFieldController,
+              decoration: InputDecoration(hintText: "Ví dụ: không hành"),
+            ),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text('Xóa sản phẩm'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _removeFood(card);
+                },
+              ),
+              new FlatButton(
+                child: new Text('Để mua sau'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              new FlatButton(
+                child: new Text('Đóng'),
+                onPressed: () {
+                  card.note = _textFieldController.text;
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
   _removeFood(CardGet card) async {
     showDialog(
         barrierDismissible: false,
@@ -66,7 +104,7 @@ class _OrderState extends State<OrderScreen> {
           return AlertDialog(
             title: new Text("Thông báo"),
             content:
-            new Text("Bạn muốn xóa " + card.foodName + " khỏi đơn hàng"),
+                new Text("Bạn muốn xóa " + card.foodName + " khỏi đơn hàng"),
             actions: <Widget>[
               new FlatButton(
                 child: new Text("Có"),
@@ -97,7 +135,8 @@ class _OrderState extends State<OrderScreen> {
                       setState(() {
                         isLoading = false;
                         listCard.removeAt(listCard.indexOf(card));
-                        totalOrder = totalOrder - int.parse(card.discountPrice) * card.amount;
+                        totalOrder = totalOrder -
+                            int.parse(card.discountPrice) * card.amount;
                       });
                     } else {
                       //    _showDialogSuccess();
@@ -107,26 +146,6 @@ class _OrderState extends State<OrderScreen> {
               ),
               new FlatButton(
                 child: new Text("Không"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        });
-  }
-
-  _showDialogNote(String note) {
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: new Text("Lưu ý của bạn"),
-            content: new Text(note),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text("Đóng"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -154,7 +173,7 @@ class _OrderState extends State<OrderScreen> {
     requestBody["list_food"] = jsonEncode(list);
 
     var response =
-    await http.post(url, body: requestBody, headers: requestHeaders);
+        await http.post(url, body: requestBody, headers: requestHeaders);
     var statusCode = response.statusCode;
     if (statusCode == STATUS_CODE_SUCCESS) {
       var responseBody = json.decode(response.body);
@@ -165,8 +184,8 @@ class _OrderState extends State<OrderScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => ConfirmOrderScreen(
-                  totalOrder: totalOrder,
-                )));
+                      totalOrder: totalOrder,
+                    )));
       } else {
         //    _showDialogSuccess();
       }
@@ -181,67 +200,120 @@ class _OrderState extends State<OrderScreen> {
     );
   }
 
+  Widget _noProduct() {
+    return new Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        new Center(
+          child: new Text("Bạn chưa có sản phẩm nào trong đơn hàng",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0)),
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.5,
+          height: 50.0,
+          margin: EdgeInsets.only(top: 20.0),
+          child: RaisedButton(
+            color: Color.fromRGBO(229, 32, 32, 1.0),
+            onPressed: () {
+              setState(() {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              });
+            },
+            child: Text(
+              "Mua hàng ngay".toUpperCase(),
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _createBody() {
     return SafeArea(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 30.0),
-              child: Text(
-                "ĐƠN HÀNG CỦA BẠN",
-                style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade700),
-              )),
+          new Row(
+            children: <Widget>[
+              Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 30.0),
+                  child: Text(
+                    "ĐƠN HÀNG CỦA BẠN",
+                    style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade700),
+                  )),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()));
+                    });
+                  },
+                  child: new Container(
+                    alignment: Alignment.topRight,
+                    margin: const EdgeInsets.only(right: 10.0),
+                    child: new Icon(Icons.home, color: Colors.grey.shade700),
+                  ),
+                )
+              )
+            ],
+          ),
           Expanded(
               child: listCard != null
                   ? ListView.builder(
-                padding: EdgeInsets.all(16.0),
-                itemCount: listCard.length,
-                itemBuilder: (BuildContext context, int position) {
-                  return _createItemList(listCard[position]);
-                },
-              )
+                      padding: EdgeInsets.all(16.0),
+                      itemCount: listCard.length,
+                      itemBuilder: (BuildContext context, int position) {
+                        return _createItemList(listCard[position]);
+                      },
+                    )
                   : new LoadingWidget()),
           Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Text(
-                  "Tổng cộng     " +
-                      FormatPrice.getFormatPrice(totalOrder.toString()),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: MaterialButton(
-                    height: 50.0,
-                    color: totalOrder == 0
-                        ? Colors.grey
-                        : Color.fromRGBO(229, 32, 32, 1.0),
-                    child: Text(
-                      "Thanh toán".toUpperCase(),
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () {
-                      if (totalOrder == 0) {
-                      } else {
-                        _checkOut();
-                      }
-                    },
-                  ),
-                )
-              ],
-            ),
-          )
+              width: double.infinity,
+              padding: EdgeInsets.all(20.0),
+              child: listCard != null && listCard.length != 0
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          "Tổng cộng     " +
+                              FormatPrice.getFormatPrice(totalOrder.toString()),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18.0),
+                        ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: MaterialButton(
+                            height: 50.0,
+                            color: totalOrder == 0
+                                ? Colors.grey
+                                : Color.fromRGBO(229, 32, 32, 1.0),
+                            child: Text(
+                              "Thanh toán".toUpperCase(),
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            onPressed: () {
+                              if (totalOrder == 0) {
+                              } else {
+                                _checkOut();
+                              }
+                            },
+                          ),
+                        )
+                      ],
+                    )
+                  : _noProduct())
         ],
       ),
     );
@@ -284,93 +356,93 @@ class _OrderState extends State<OrderScreen> {
                 SizedBox(width: 10.0),
                 Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          card.foodName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: 20.0, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Text(
-                          FormatPrice.getFormatPrice(card.discountPrice),
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0,
-                              color: Colors.grey),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 20.0),
-                          child: new Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                new GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if (card.amount > 0) {
-                                        card.amount = card.amount - 1;
-                                        totalOrder = totalOrder -
-                                            int.parse(card.discountPrice);
-                                      }
-                                    });
-                                  },
-                                  child: new Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.black, width: 1.5),
-                                      borderRadius:
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      card.foodName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    Text(
+                      FormatPrice.getFormatPrice(card.discountPrice),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                          color: Colors.grey),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 20.0),
+                      child: new Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (card.amount > 0) {
+                                    card.amount = card.amount - 1;
+                                    totalOrder = totalOrder -
+                                        int.parse(card.discountPrice);
+                                  }
+                                });
+                              },
+                              child: new Container(
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.black, width: 1.5),
+                                  borderRadius:
                                       BorderRadius.all(Radius.circular(5.0)),
-                                    ),
-                                    child: new Center(
-                                      child: new Icon(Icons.remove, size: 18),
-                                    ),
-                                  ),
                                 ),
-                                new Container(
-                                    width: 30,
-                                    height: 30,
-                                    child: Center(
-                                      child: new Text(
-                                        card.amount.toString(),
-                                        //   '$intCount',
-                                        textAlign: TextAlign.center,
-                                        style:
+                                child: new Center(
+                                  child: new Icon(Icons.remove, size: 18),
+                                ),
+                              ),
+                            ),
+                            new Container(
+                                width: 30,
+                                height: 30,
+                                child: Center(
+                                  child: new Text(
+                                    card.amount.toString(),
+                                    //   '$intCount',
+                                    textAlign: TextAlign.center,
+                                    style:
                                         TextStyle(fontWeight: FontWeight.bold),
-                                      ),
-                                    )),
-                                new GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      card.amount++;
-                                      totalOrder = totalOrder +
-                                          int.parse(card.discountPrice);
-                                    });
-                                  },
-                                  child: new Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.black, width: 1.5),
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(5.0)),
-                                    ),
-                                    child: new Center(
-                                      child: new Icon(Icons.add, size: 18),
-                                    ),
                                   ),
-                                )
-                              ]),
-                        )
-                      ],
-                    )),
+                                )),
+                            new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  card.amount++;
+                                  totalOrder = totalOrder +
+                                      int.parse(card.discountPrice);
+                                });
+                              },
+                              child: new Container(
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.black, width: 1.5),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0)),
+                                ),
+                                child: new Center(
+                                  child: new Icon(Icons.add, size: 18),
+                                ),
+                              ),
+                            )
+                          ]),
+                    )
+                  ],
+                )),
               ],
             )),
         Positioned(
@@ -378,7 +450,8 @@ class _OrderState extends State<OrderScreen> {
             right: 0,
             child: new GestureDetector(
               onTap: () {
-                _removeFood(card);
+//                _removeFood(card);
+                _showDialogEdit(card);
               },
               child: Container(
                 height: 30,
@@ -389,61 +462,10 @@ class _OrderState extends State<OrderScreen> {
                 padding: EdgeInsets.all(0.0),
                 alignment: Alignment.center,
                 child: Center(
-                  child: Text(
-                    "X",
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                  child: Icon(
+                    Icons.edit,
+                    color: Colors.white,
                   ),
-                ),
-              ),
-            )),
-        SizedBox(
-          height: 2,
-        ),
-        Positioned(
-            top: 42,
-            right: 0,
-            child: new GestureDetector(
-              onTap: () {
-              //  _showDialogNote(note)
-              },
-              child: Container(
-                height: 30,
-                width: 30,
-                decoration: BoxDecoration(
-                    color: CanteenAppTheme.main,
-                    borderRadius: BorderRadius.circular(5.0)),
-                padding: EdgeInsets.all(0.0),
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.undo,
-                  color: Colors.white,
-                ),
-              ),
-            )),
-        SizedBox(
-          height: 2.0,
-        ),
-        Positioned(
-            top: 74,
-            right: 0,
-            child: new GestureDetector(
-              onTap: () {
-                if (card.note != "null") {
-                  _showDialogNote(card.note);
-                }
-              },
-              child: Container(
-                height: 30,
-                width: 30,
-                decoration: BoxDecoration(
-                    color: card.note != "null" ? CanteenAppTheme.main : Colors.grey,
-                    borderRadius: BorderRadius.circular(5.0)),
-                padding: EdgeInsets.all(0.0),
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.edit,
-                  color: Colors.white,
                 ),
               ),
             )),
