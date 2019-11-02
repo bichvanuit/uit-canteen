@@ -119,7 +119,7 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
       var responseBody = json.decode(response.body);
     //  isLoading = false;
       var status = responseBody["status"];
-      print(status);
+      print(responseBody);
       if (status == STATUS_SUCCESS) {
         Navigator.push(
             context,

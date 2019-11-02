@@ -8,7 +8,7 @@ class FoodInfo {
   String price;
   String discountPrice;
   String image;
-  double star;
+  int star;
 
   FoodInfo(
       {this.foodId,

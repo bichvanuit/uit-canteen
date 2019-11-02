@@ -4,7 +4,8 @@ import 'package:uit_cantin/compoments/SpecialOffer.dart';
 import 'package:uit_cantin/pages/Category.dart';
 import 'package:uit_cantin/compoments/TodayOrder.dart';
 import 'package:uit_cantin/test.dart';
-
+import 'package:uit_cantin/compoments/AdvertisementWall.dart';
+import 'package:uit_cantin/pages/Wallet.dart';
 
 class HomeMainScreen extends StatefulWidget {
   @override
@@ -82,6 +83,17 @@ class _OrderState extends State<HomeMainScreen> {
 //                    margin: const EdgeInsets.only(top: 10.0),
 //                    child: new CategoryScreen()
 //                  ),
+                new Container(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => WalletScreen()));
+                      });
+                    } ,
+                    child: AdvertisementWall(),
+                  ),
+                ),
                   new Container(
                     margin: const EdgeInsets.only(top: 20.0),
                     child: new SpecialOffer()

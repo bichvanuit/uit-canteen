@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:uit_cantin/pages/ConfirmTeleNumber.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -13,28 +14,6 @@ class BankScreen extends StatefulWidget {
 }
 
 class _BankState extends State<BankScreen> {
-  bool _value1 = false;
-
-  List<String> listVisa = [
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Visa.svg/1200px-Visa.svg.png",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Mastercard_2019_logo.svg/1200px-Mastercard_2019_logo.svg.png",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/JCB_logo.svg/1200px-JCB_logo.svg.png",
-
-  ];
-
-  List<String> listBank = [
-    "https://blog.topcv.vn/wp-content/uploads/2018/03/l%C3%A0m-vi%E1%BB%87c-t%E1%BA%A1i-VietinBank-10.png",
-    "http://file.vforum.vn/hinh/2015/11/chi-nhanh-vietcombank-hai-phong.jpg",
-    "https://thebank.vn/static/6/1135/714/90/2019/06/12/thebank_thebank_bidv_1536317691min_1560304600.jpg",
-    "https://hstatic.net/131/1000047131/10/2015/11-27/acb.jpg",
-    "https://thebank.vn/static/6/1135/714/90/2019/07/03/thebank_phidichvuthesacombankmin_1562146814.png",
-    "https://tbck.vn/stores/news_dataimages/thuhoai/082019/10/09/1445_agri.jpg",
-    "http://www.bongthom.com/Clients/3199/images/mbbank1.png",
-    "https://static.ybox.vn/2019/1/1/1548081192492-1547708804849-logo_moi.jpg",
-    "https://i.ytimg.com/vi/qpbFDBjisag/maxresdefault.jpg"
-
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,63 +24,161 @@ class _BankState extends State<BankScreen> {
           //  leading: _isSearching ? const BackButton() : null,
           title: Text("Chọn ngân hàng"),
         ),
-        body: new Container(
-          margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
-          child: new Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              new Text("THẺ QUỐC TẾ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-              SizedBox(height: 5.0,),
-              new Text("Chỉ hổ trợ phát hành tại VIết Nam", style: TextStyle(fontSize: 16),),
-              GridView.count(
-                crossAxisCount: 3,
-            //    childAspectRatio: (itemWidth / itemHeight),
-                controller: new ScrollController(keepScrollOffset: false),
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                padding: const EdgeInsets.all(4.0),
-                children: listVisa.map((url) {
-                  return new GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => InfoBankScreen()));
-                      });
-                    },
+        body: SingleChildScrollView(
+          child: new Container(
+            margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
+            child: new Column(
+              children: <Widget>[
+                new Text(
+                  "Các ngân hàng đã hổ trợ",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10.0),
+                new Container(
+                  child: new Image.network(
+                      "https://www.webico.vn/wp-content/uploads/2017/08/banknet-bank.png"),
+                ),
+                SizedBox(height: 20.0),
+                new Text(
+                  "Kích hoạt thành công bạn có thể",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10.0),
+                new Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: new Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: new Row(
+                          children: <Widget>[
+                            Image.network(
+                              "https://cdn5.vectorstock.com/i/1000x1000/33/44/money-transaction-icon-vector-21023344.jpg",
+                              width: 30,
+                              height: 30,
+                            ),
+                            Text(
+                              "Sử dụng số dư",
+                              style: TextStyle(fontSize: 17),
+                            )
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: new Row(
+                          children: <Widget>[
+                            Image.network(
+                              "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSMoS4gf_odiCXmG9iWyysSrorFtKhX4r1sdUsAjugz3u6geAwo",
+                              width: 30,
+                              height: 30,
+                            ),
+                            Text("Giao dịch an toàn",
+                                style: TextStyle(fontSize: 17))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                new GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => ConfirmTeleNumnerScreen()));
+                    });
+                  },
+                  child: new Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(color: Colors.white),
                     child: new Container(
-                      margin: const EdgeInsets.all(5.0),
-                      child: new Image.network(url),
-                    ),
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 8.0),
-              new Text("NGÂN HÀNG LIÊN KẾT", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-              GridView.count(
-                crossAxisCount: 3,
-                //    childAspectRatio: (itemWidth / itemHeight),
-                controller: new ScrollController(keepScrollOffset: false),
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                padding: const EdgeInsets.all(4.0),
-                children: listBank.map((url) {
-                  return new GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => InfoBankScreen()));
-                      });
-                    },
-                    child: new Container(
-                      margin: const EdgeInsets.all(5.0),
-                      child: new Image.network(url),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: 38.0,
+                        alignment: FractionalOffset.center,
+                        decoration: new BoxDecoration(
+                            color: const Color.fromRGBO(229, 32, 32, 1.0),
+                            borderRadius:
+                            new BorderRadius.all(const Radius.circular(5.0))),
+                        child: new Text("Tiếp tục",
+                            style: new TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w300,
+                              letterSpacing: 0.3,
+                            ))),
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Container(
+                  padding: const EdgeInsets.all(10.0),
+                  decoration: new BoxDecoration(
+                    color: Color(0xFFF8E0E6),
+                    borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                  ),
+                  child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      new Text(
+                        "Bạn có thể dùng những loại thẻ sau để liên kết",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      SizedBox(height: 3.0),
+                      new Text(
+                          "- Thẻ ATM được phát hành bởi các ngân hàng hợp tác với Moca", style: TextStyle(fontSize: 16)),
+                      new Text(
+                          "- Thẻ ghi nợ quốc tế (Visa / MasterCard / JCB / Amex) được phát hành bởi ngân hàng MSB, SCB, SHB hoặc VietCombank.", style: TextStyle(fontSize: 16)),
+                      SizedBox(height: 3.0),
+                      new Text(
+                          "Xin lưu ý, theo quy định của Ngân hàng Nhà nước Việt Nam, bạn không thể sử dụng thẻ tín dụng để liên kết với ví điện tử",
+                          style: TextStyle(fontSize: 16))
+                    ],
+                  ),
+                )
+//              GridView.count(
+//                crossAxisCount: 3,
+//                //    childAspectRatio: (itemWidth / itemHeight),
+//                controller: new ScrollController(keepScrollOffset: false),
+//                shrinkWrap: true,
+//                scrollDirection: Axis.vertical,
+//                padding: const EdgeInsets.all(4.0),
+//                children: listBank.map((url) {
+//                  return new GestureDetector(
+//                    onTap: () {
+//                      setState(() {
+//                        Navigator.push(context,
+//                            MaterialPageRoute(builder: (context) => InfoBankScreen()));
+//                      });
+//                    },
+//                    child: new Container(
+//                      margin: const EdgeInsets.all(5.0),
+//                      child: new Image.network(url),
+//                    ),
+//                  );
+//                }).toList(),
+//              ),
+              ],
+            ),
           ),
         ));
+  }
+}
+
+class MyBullet extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+      height: 5.0,
+      width: 5.0,
+      decoration: new BoxDecoration(
+        color: Colors.black,
+        shape: BoxShape.circle,
+      ),
+    );
   }
 }

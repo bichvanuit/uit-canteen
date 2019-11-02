@@ -1,4 +1,4 @@
-const SERVER_NAME = 'http://ec2-13-251-11-130.ap-southeast-1.compute.amazonaws.com/api';
+const SERVER_NAME = 'https://htu7qum9nd.execute-api.ap-southeast-1.amazonaws.com/uit-canteen/canteen-service/api';
 const ROOT_IMAGE = 'https://uit-canteen.s3-ap-southeast-1.amazonaws.com';
 const IMAGE_DEFAULT = 'https://uit-canteen.s3-ap-southeast-1.amazonaws.com/assets/assets/images/food-image.png';
 

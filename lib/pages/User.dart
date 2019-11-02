@@ -11,6 +11,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
+import 'package:uit_cantin/pages/Bank.dart';
+import 'package:uit_cantin/pages/Wallet.dart';
 
 
 Future<UserInfo>_fetchUserInfo() async {
@@ -144,6 +146,14 @@ class _UserState extends State<UserScreen> {
           }
       );
     }
+
+    void _payment() {
+      setState(() {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => WalletScreen()));
+      });
+    }
+
     return new Scaffold(
       body: FutureBuilder<UserInfo>(
         future: _fetchUserInfo(),
@@ -270,6 +280,13 @@ class _UserState extends State<UserScreen> {
                                     builder: (context) => ContactUsScreen()));
                           });
                         },
+                      ),
+                      ListTile(
+                          title: Text('Thanh toán',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          onTap: () {
+                            _payment();
+                          }
                       ),
                       ListTile(
                           title: Text('Đăng xuất',
