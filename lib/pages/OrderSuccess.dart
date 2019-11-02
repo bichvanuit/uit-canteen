@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:uit_cantin/pages/Home.dart';
 
 class OrderSuccessScreen extends StatefulWidget {
   @override
@@ -41,6 +42,34 @@ class _OrderSuccess extends State<OrderSuccessScreen> {
                       style: TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 20.0),
                     ),
+                  ),
+                ),
+                new GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()));
+                    });
+                  },
+                  child: new Container(
+                    margin: const EdgeInsets.only(top: 20.0),
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(color: Colors.white),
+                    child: new Container(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: 45.0,
+                        alignment: FractionalOffset.center,
+                        decoration: new BoxDecoration(
+                            color: const Color.fromRGBO(229, 32, 32, 1.0),
+                            borderRadius:
+                            new BorderRadius.all(const Radius.circular(5.0))),
+                        child: new Text("Quay về trang chủ",
+                            style: new TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.3,
+                            ))),
                   ),
                 ),
               ],

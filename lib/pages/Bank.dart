@@ -22,7 +22,7 @@ class _BankState extends State<BankScreen> {
           //  title: appBarTitle,
           iconTheme: new IconThemeData(color: Colors.white),
           //  leading: _isSearching ? const BackButton() : null,
-          title: Text("Chọn ngân hàng"),
+          title: Text("Liên kết"),
         ),
         body: SingleChildScrollView(
           child: new Container(
@@ -96,7 +96,7 @@ class _BankState extends State<BankScreen> {
                     decoration: BoxDecoration(color: Colors.white),
                     child: new Container(
                         width: MediaQuery.of(context).size.width * 0.8,
-                        height: 38.0,
+                        height: 45.0,
                         alignment: FractionalOffset.center,
                         decoration: new BoxDecoration(
                             color: const Color.fromRGBO(229, 32, 32, 1.0),
@@ -105,8 +105,8 @@ class _BankState extends State<BankScreen> {
                         child: new Text("Tiếp tục",
                             style: new TextStyle(
                               color: Colors.white,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w300,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
                               letterSpacing: 0.3,
                             ))),
                   ),

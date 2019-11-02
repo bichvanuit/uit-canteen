@@ -42,57 +42,57 @@ class _WalletState extends State<WalletScreen> {
             SizedBox(
               height: 20,
             ),
-            new Container(
-              width: MediaQuery.of(context).size.width,
-              height: 150.0,
-              decoration: new BoxDecoration(
-                  color: CanteenAppTheme.white,
-                  borderRadius: BorderRadius.all(Radius.circular(7.0)),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                        color: CanteenAppTheme.grey.withOpacity(0.2),
-                        offset: Offset(1.1, 1.1),
-                        blurRadius: 5.0),
-                  ]),
-              child: new Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  new Container(
-                    padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0) ,
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom:
-                                BorderSide(color: CanteenAppTheme.myGrey, width: 0.5))),
-                    child: new Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              new Text("Kích hoạt ví", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),),
-                              SizedBox(height: 7.0),
-                              new Text("Nạp tiền, thanh toán và nhiều tiện ích khác", style: TextStyle(fontSize: 18.0),),
-                            ],
+            new GestureDetector(
+              onTap: () {
+                setState(() {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => BankScreen()));
+                });
+              },
+              child: new Container(
+                width: MediaQuery.of(context).size.width,
+                height: 150.0,
+                decoration: new BoxDecoration(
+                    color: CanteenAppTheme.white,
+                    borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                          color: CanteenAppTheme.grey.withOpacity(0.2),
+                          offset: Offset(1.1, 1.1),
+                          blurRadius: 5.0),
+                    ]),
+                child: new Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    new Container(
+                      padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0) ,
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom:
+                              BorderSide(color: CanteenAppTheme.myGrey, width: 0.5))),
+                      child: new Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                new Text("Kích hoạt ví", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),),
+                                SizedBox(height: 7.0),
+                                new Text("Nạp tiền, thanh toán và nhiều tiện ích khác", style: TextStyle(fontSize: 18.0),),
+                              ],
+                            ),
                           ),
-                        ),
-                        Container(
-                            height: 50,
-                            width: 50,
-                            child: new Image.network(
-                                "http://www.global-yamato.com/business/service/online-payment/img/img_thumbnail_04.png"))
-                      ],
+                          Container(
+                              height: 50,
+                              width: 50,
+                              child: new Image.network(
+                                  "http://www.global-yamato.com/business/service/online-payment/img/img_thumbnail_04.png"))
+                        ],
+                      ),
                     ),
-                  ),
-                  new GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => BankScreen()));
-                      });
-                    },
-                    child: new Container(
+                    new Container(
                       padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0) ,
                       child: new Row(
                         children: <Widget>[
@@ -113,8 +113,8 @@ class _WalletState extends State<WalletScreen> {
                         ],
                       ),
                     ),
-                  )
-                ],
+                  ],
+                ),
               ),
             )
           ],

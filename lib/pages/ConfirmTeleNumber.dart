@@ -19,10 +19,8 @@ class _ConfirmTeleNumnerState extends State<ConfirmTeleNumnerScreen> {
     return Scaffold(
         appBar: new AppBar(
           backgroundColor: Color.fromRGBO(229, 32, 32, 1.0),
-          //  title: appBarTitle,
           iconTheme: new IconThemeData(color: Colors.white),
-          //  leading: _isSearching ? const BackButton() : null,
-          title: Text("Chọn ngân hàng"),
+          title: Text("Liên kết"),
         ),
         body: SingleChildScrollView(
           child: new Container(

@@ -60,7 +60,7 @@ class _OrderState extends State<OrderScreen> {
   }
 
   _showDialogEdit(CardGet card) {
-    _textFieldController.text = card.note;
+    _textFieldController.text = card.note == "null" ? "" : card.note;
     return showDialog(
         context: context,
         builder: (context) {
@@ -75,13 +75,7 @@ class _OrderState extends State<OrderScreen> {
                 child: new Text('Xóa sản phẩm'),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _removeFood(card);
-                },
-              ),
-              new FlatButton(
-                child: new Text('Để mua sau'),
-                onPressed: () {
-                  Navigator.of(context).pop();
+                      _removeFood(card);
                 },
               ),
               new FlatButton(
@@ -384,10 +378,13 @@ class _OrderState extends State<OrderScreen> {
                             new GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  if (card.amount > 0) {
+                                  if (card.amount > 1) {
                                     card.amount = card.amount - 1;
                                     totalOrder = totalOrder -
                                         int.parse(card.discountPrice);
+                                  }
+                                  if(card.amount == 1) {
+                                    _removeFood(card);
                                   }
                                 });
                               },
@@ -450,7 +447,6 @@ class _OrderState extends State<OrderScreen> {
             right: 0,
             child: new GestureDetector(
               onTap: () {
-//                _removeFood(card);
                 _showDialogEdit(card);
               },
               child: Container(

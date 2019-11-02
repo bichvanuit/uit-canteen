@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:uit_cantin/canteenAppTheme.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:uit_cantin/services/Token.dart';
-import 'package:uit_cantin/config.dart';
-import 'package:uit_cantin/pages/Bank.dart';
+import 'package:uit_cantin/pages/WalletInfo.dart';
 
 class InfoBankScreen extends StatefulWidget {
   @override
@@ -36,6 +31,7 @@ class _InfoBankState extends State<InfoBankScreen> {
                 new Container(
                   margin: const EdgeInsets.only(left: 5.0, right: 5.0),
                   child: new TextFormField(
+                      keyboardType: TextInputType.number,
                       style: TextStyle(
                           color:
                           Colors.grey),
@@ -71,7 +67,7 @@ class _InfoBankState extends State<InfoBankScreen> {
                       decoration:
                       InputDecoration(
                         labelText:
-                        "Ngày phát hành (mm/yy)",
+                        "Nhập mã PIN thẻ ATM",
                         labelStyle: TextStyle(
                             color:
                             Colors.grey),
@@ -87,59 +83,38 @@ class _InfoBankState extends State<InfoBankScreen> {
                       validator:
                           (String value) {
                         if (value.isEmpty)
-                          return "Bạn chưa nhập ngày phát hành";
+                          return "Bạn chưa nhập mã pin ATM";
                         return null;
                       }),
                 ),
-                new Container(
-                  margin: const EdgeInsets.only(left: 5.0, right: 5.0),
-                  child: new TextFormField(
-                      style: TextStyle(
-                          color:
-                          Colors.grey),
-                      decoration:
-                      InputDecoration(
-                        labelText:
-                        "Nhập tên chủ thẻ",
-                        labelStyle: TextStyle(
-                            color:
-                            Colors.grey),
-                        enabledBorder:
-                        const UnderlineInputBorder(
-                          borderSide:
-                          const BorderSide(
-                              color: Colors
-                                  .grey,
-                              width: 0.0),
-                        ),
-                      ),
-                      validator:
-                          (String value) {
-                        if (value.isEmpty)
-                          return "Bạn chưa nhập tên chủ thẻ";
-                        return null;
-                      }),
-                ),
-                new Container(
-                  margin: const EdgeInsets.only(top: 100.0),
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(color: Colors.white),
+                new GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => WalletInfoScreen()));
+                    });
+                  },
                   child: new Container(
-                      height: 45.0,
-                      alignment: FractionalOffset.center,
-                      decoration: new BoxDecoration(
-                          color: const Color.fromRGBO(
-                              229, 32, 32, 1.0),
-                          borderRadius: new BorderRadius.all(
-                              const Radius.circular(5.0))),
-                      child: new Text("Tiếp tục",
-                          style: new TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w300,
-                            letterSpacing: 0.3,
-                          ))),
-                ),
+                    margin: const EdgeInsets.only(top: 100.0),
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(color: Colors.white),
+                    child: new Container(
+                        height: 45.0,
+                        alignment: FractionalOffset.center,
+                        decoration: new BoxDecoration(
+                            color: const Color.fromRGBO(
+                                229, 32, 32, 1.0),
+                            borderRadius: new BorderRadius.all(
+                                const Radius.circular(5.0))),
+                        child: new Text("Tiếp tục",
+                            style: new TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.3,
+                            ))),
+                  ),
+                )
               ],
             ),
           ),

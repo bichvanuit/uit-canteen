@@ -42,6 +42,7 @@ class _AdvertisementWall extends State<AdvertisementWall> {
           child: new Row(
             children: <Widget>[
               new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   new Text(
                     "Kích hoạt ví ngay!",
@@ -50,9 +51,8 @@ class _AdvertisementWall extends State<AdvertisementWall> {
                   SizedBox(height: 80),
                   new Text(
                     "Kích hoạt",
-                    style:
-                        TextStyle(fontSize: 18.0, color: CanteenAppTheme.main),
-                  )
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: CanteenAppTheme.main),
+                  ),
                 ],
               ),
               Expanded(

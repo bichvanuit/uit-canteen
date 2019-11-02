@@ -13,6 +13,7 @@ import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/models/UserInfo.dart';
 import 'package:uit_cantin/models/DeliveryPlace.dart';
+import 'package:uit_cantin/compoments/LoadingWidget.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 
 List<PaymentMethod> _parseMethod(String responseBody) {
@@ -79,11 +80,14 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
   int role;
   List<PaymentMethod> listMethod;
   List<DeliveryPlace> listPlace;
+  bool isLoading;
 
   CheckOut checkOutInfo = new CheckOut();
 
   @override
   void initState() {
+    isLoading = false;
+
     _fetchUserInfo().then((data) => setState(() {
           setState(() {
             UserInfo userInfo = data;
@@ -103,8 +107,30 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
     super.initState();
   }
 
-  _checkout() async {
+  _showDialogError(String message) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Thông báo lỗi'),
+            content: new Text(message),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text('Đóng'),
+                onPressed: () {
+                  setState(() {
+                    isLoading = false;
+                    Navigator.of(context).pop();
+                  });
 
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  _checkout() async {
     var url = '$SERVER_NAME/order/check-out';
     Token token = new Token();
     final tokenValue = await token.getMobileToken();
@@ -117,16 +143,17 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
     var statusCode = response.statusCode;
     if (statusCode == STATUS_CODE_SUCCESS) {
       var responseBody = json.decode(response.body);
-    //  isLoading = false;
+     setState(() {
+       isLoading = false;
+     });
       var status = responseBody["status"];
-      print(responseBody);
       if (status == STATUS_SUCCESS) {
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => OrderSuccessScreen()));
       } else {
-    //    _showDialogSuccess();
+        _showDialogError(responseBody["message"]);
       }
     }
   }
@@ -165,11 +192,11 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
         title: Text("Xác nhận đơn hàng"),
         backgroundColor: Color.fromRGBO(229, 32, 32, 1.0),
       ),
-      body: _buildBody(context),
+      body: isLoading == true ? _createProgress() :  _createBody(),
     );
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _createBody() {
     return SingleChildScrollView(
       padding:
           EdgeInsets.only(left: 20.0, right: 20.0, top: 40.0, bottom: 10.0),
@@ -301,21 +328,43 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
                   ),
                 ],
               )),
-          Container(
-            width: double.infinity,
-            height: 50.0,
-            margin:
-                EdgeInsets.only(top: 50),
-            child: RaisedButton(
-              color: checkOutInfo.deliveryValue != null && checkOutInfo.deliveryValue != "" ? Color.fromRGBO(229, 32, 32, 1.0) : Colors.grey,
-              onPressed: _checkout,
-              child: Text(
-                "Xác nhận".toUpperCase(),
-                style: TextStyle(color: Colors.white),
-              ),
+          new GestureDetector(
+            onTap: () {
+              setState(() {
+                isLoading = true;
+                _checkout();
+              });
+            },
+            child: new Container(
+              margin: EdgeInsets.only(top: 50),
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(color: Colors.white),
+              child: new Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: 45.0,
+                  alignment: FractionalOffset.center,
+                  decoration: new BoxDecoration(
+                      color: checkOutInfo.deliveryValue != null && checkOutInfo.deliveryValue != "" ? Color.fromRGBO(229, 32, 32, 1.0) : Colors.grey,
+                      borderRadius:
+                      new BorderRadius.all(const Radius.circular(5.0))),
+                  child: new Text("Xác nhận",
+                      style: new TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.3,
+                      ))),
             ),
-          ),
+          )
         ],
+      ),
+    );
+  }
+
+  Widget _createProgress() {
+    return new Container(
+      child: new Stack(
+        children: <Widget>[_createBody(), new LoadingWidget()],
       ),
     );
   }
