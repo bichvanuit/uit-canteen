@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:uit_cantin/models/FoodList.dart';
-import 'package:uit_cantin/compoments/ItemFoodWidget.dart';
-import 'package:uit_cantin/models/Category.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:uit_cantin/models/FoodInfo.dart';
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/compoments/CategoryView.dart';
-import 'package:uit_cantin/canteenAppTheme.dart';
 
 // A function that converts a response body into a List<Photo>
 List<FoodList> _parseFoodToday(String responseBody) {

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:uit_cantin/services/Token.dart';
-import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/pages/Bank.dart';
 
 class WalletScreen extends StatefulWidget {
@@ -13,7 +9,6 @@ class WalletScreen extends StatefulWidget {
 }
 
 class _WalletState extends State<WalletScreen> {
-  bool _value1 = false;
 
   @override
   Widget build(BuildContext context) {

@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uit_cantin/pages/ConfirmTeleNumber.dart';
-import 'package:uit_cantin/canteenAppTheme.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:uit_cantin/services/Token.dart';
-import 'package:uit_cantin/config.dart';
-import 'package:uit_cantin/pages/InfoBank.dart';
 
 class BankScreen extends StatefulWidget {
   @override
@@ -151,7 +145,7 @@ class _BankState extends State<BankScreen> {
 //                  return new GestureDetector(
 //                    onTap: () {
 //                      setState(() {
-//                        Navigator.push(context,
+//                        .push(context,
 //                            MaterialPageRoute(builder: (context) => InfoBankScreen()));
 //                      });
 //                    },

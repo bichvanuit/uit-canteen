@@ -9,7 +9,6 @@ import 'package:uit_cantin/pages/Wallet.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:extended_navbar_scaffold/extended_navbar_scaffold.dart';
-import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -178,7 +177,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               onTap: () {
                 setState(() {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomeMainScreen()));
+                      MaterialPageRoute(builder: (context) => HomeScreen()));
                 });
               }
           ),

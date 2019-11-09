@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:uit_cantin/pages/ConfirmOrder.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/config.dart';
 

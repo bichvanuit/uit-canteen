@@ -11,7 +11,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
-import 'package:uit_cantin/pages/Bank.dart';
 import 'package:uit_cantin/pages/Wallet.dart';
 
 
@@ -65,7 +64,6 @@ class _UserState extends State<UserScreen> {
       var statusCode = response.statusCode;
       if (statusCode == STATUS_CODE_SUCCESS) {
         var responseBody = json.decode(response.body);
-        var status = responseBody["status"];
         print(responseBody);
       }
 

@@ -1,4 +1,3 @@
-import 'package:uit_cantin/models/FoodInfo.dart';
 import 'package:uit_cantin/models/Notification.dart';
 import 'package:flutter/material.dart';
 

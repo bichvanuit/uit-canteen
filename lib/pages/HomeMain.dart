@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_pro/carousel_pro.dart';
 import 'package:uit_cantin/compoments/SpecialOffer.dart';
-import 'package:uit_cantin/pages/Category.dart';
 import 'package:uit_cantin/compoments/TodayOrder.dart';
-import 'package:uit_cantin/test.dart';
 import 'package:uit_cantin/compoments/AdvertisementWall.dart';
 import 'package:uit_cantin/pages/Wallet.dart';
 

@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uit_cantin/pages/InfoBank.dart';
-import 'package:uit_cantin/canteenAppTheme.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:uit_cantin/services/Token.dart';
-import 'package:uit_cantin/config.dart';
-import 'package:uit_cantin/pages/InfoBank.dart';
 
 class ConfirmTeleNumnerScreen extends StatefulWidget {
   @override

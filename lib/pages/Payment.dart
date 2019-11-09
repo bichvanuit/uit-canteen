@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:uit_cantin/models/Payment.dart';
-import 'package:uit_cantin/pages/QRCode.dart';
-
 class PaymentMethodScreen extends StatefulWidget {
   @override
   _PaymentMethodState createState() => _PaymentMethodState();

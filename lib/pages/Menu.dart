@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:uit_cantin/models/Category.dart';
 import 'package:uit_cantin/models/FoodType.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:uit_cantin/compoments/MenuList.dart';

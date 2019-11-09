@@ -8,8 +8,6 @@ class InfoBankScreen extends StatefulWidget {
 }
 
 class _InfoBankState extends State<InfoBankScreen> {
-  bool _value1 = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

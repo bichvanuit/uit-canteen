@@ -14,7 +14,7 @@ import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/models/UserInfo.dart';
 import 'package:uit_cantin/models/DeliveryPlace.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
-import 'package:uit_cantin/canteenAppTheme.dart';
+import 'package:uit_cantin/compoments/CustomDialog.dart';
 
 List<PaymentMethod> _parseMethod(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -107,29 +107,6 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
     super.initState();
   }
 
-  _showDialogError(String message) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Thông báo lỗi'),
-            content: new Text(message),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text('Đóng'),
-                onPressed: () {
-                  setState(() {
-                    isLoading = false;
-                    Navigator.of(context).pop();
-                  });
-
-                },
-              )
-            ],
-          );
-        });
-  }
-
   _checkout() async {
     var url = '$SERVER_NAME/order/check-out';
     Token token = new Token();
@@ -153,7 +130,15 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
             MaterialPageRoute(
                 builder: (context) => OrderSuccessScreen()));
       } else {
-        _showDialogError(responseBody["message"]);
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => CustomDialog(
+            title: "Thông báo lỗi",
+            description:
+            "Hạy nạp tiền vào ví và thanh toán.",
+            buttonText: "Okay",
+          ),
+        );
       }
     }
   }
