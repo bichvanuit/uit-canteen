@@ -174,7 +174,7 @@ class LoginScreenState extends State<LoginScreen> {
                                         mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                         children: <Widget>[
-                                          new Form(
+                                        new Form(
                                               key: _formKey,
                                               child: new Column(
                                                   mainAxisAlignment:

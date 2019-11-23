@@ -39,9 +39,7 @@ dependencies:
   flutter_speed_dial: ^1.2.1
   extended_navbar_scaffold: ^1.0.1
   flutter_multi_carousel: ^1.0.0
-  
-
-
+  pin_code_text_field: ^1.4.0
 
 dev_dependencies:
   flutter_test:

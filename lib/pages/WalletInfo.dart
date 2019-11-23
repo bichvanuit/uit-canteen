@@ -2,6 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:uit_cantin/pages/Recharge.dart';
+import 'package:uit_cantin/pages/Home.dart';
+import 'package:uit_cantin/models/WalletInfo.dart';
+
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:uit_cantin/config.dart';
+import 'package:uit_cantin/services/Token.dart';
+
+Future<WalletInfo> _fetchWallet() async {
+  Token token = new Token();
+  final tokenValue = await token.getMobileToken();
+  Map<String, String> requestHeaders = {
+    "Authorization": "Bearer " + tokenValue,
+  };
+  final response = await http.get('$SERVER_NAME/user-wallet/info',
+      headers: requestHeaders);
+  final parsed = json.decode(response.body)["data"];
+  return WalletInfo.fromJson(parsed);
+}
 
 class WalletInfoScreen extends StatefulWidget {
   @override
@@ -9,6 +28,23 @@ class WalletInfoScreen extends StatefulWidget {
 }
 
 class _WalletInfoState extends State<WalletInfoScreen> {
+
+  String balance = "0";
+  @override
+  void initState() {
+    _fetchWallet().then((data) => setState(() {
+      setState(() {
+        balance = data.balance;
+      });
+    }));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +89,7 @@ class _WalletInfoState extends State<WalletInfoScreen> {
                                 margin: const EdgeInsets.only(top: 10.0),
                                 alignment: Alignment.topLeft,
                                 child: new Text(
-                                  "100.000",
+                                  balance,
                                   style: TextStyle(
                                       fontSize: 40,
                                       fontWeight: FontWeight.bold,
@@ -133,6 +169,42 @@ class _WalletInfoState extends State<WalletInfoScreen> {
                       )),
                 )
               ],
+            ),
+            Expanded(
+              child: Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 10.0),
+                    child: new GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => HomeScreen()));
+                        });
+                      },
+                      child: new Container(
+                        margin: const EdgeInsets.only(
+                            top: 20.0, left: 10.0, right: 10.0),
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(color: Colors.white),
+                        child: new Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: 45.0,
+                            alignment: FractionalOffset.center,
+                            decoration: new BoxDecoration(
+                                color: CanteenAppTheme.main,
+                                borderRadius: new BorderRadius.all(
+                                    const Radius.circular(5.0))),
+                            child: new Text("TIẾP TỤC MUA HÀNG",
+                                style: new TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.3,
+                                ))),
+                      ),
+                    ),
+                  )),
             )
           ],
         ),

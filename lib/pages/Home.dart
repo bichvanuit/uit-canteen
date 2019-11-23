@@ -9,6 +9,10 @@ import 'package:uit_cantin/pages/Wallet.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:extended_navbar_scaffold/extended_navbar_scaffold.dart';
+import 'package:uit_cantin/pages/History.dart';
+import 'package:uit_cantin/compoments/SpecialOffer.dart';
+import 'package:uit_cantin/compoments/TodayOrder.dart';
+import 'package:uit_cantin/compoments/AdvertisementWall.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -145,15 +149,36 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: HomeMainScreen(),
-//      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-//      floatingActionButton: FloatingActionButton(
-//          onPressed: null,
-//          backgroundColor: CanteenAppTheme.main,
-//          child: const Icon(
-//            Icons.add_shopping_cart,
-//            color: Colors.white,
-//          )),
+      body: new Scaffold(
+          resizeToAvoidBottomPadding: false,
+          body: SingleChildScrollView(
+              child: Container(
+                  child: new Column(
+                    children: <Widget>[
+                      new Container(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => WalletScreen()));
+                            });
+                          } ,
+                          child: AdvertisementWall(),
+                        ),
+                      ),
+                      new Container(
+                          margin: const EdgeInsets.only(top: 20.0),
+                          child: new SpecialOffer()
+                      ),
+                      new Container(
+                          margin: const EdgeInsets.only(top: 20.0),
+                          child: new TodayOffer()
+                      )
+                    ],
+                  )
+              )
+          )
+      ),
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
         animatedIconTheme: IconThemeData(size: 22.0),
@@ -206,6 +231,18 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               }
           ),
           SpeedDialChild(
+              child: Icon(Icons.add_shopping_cart),
+              backgroundColor: Colors.blue,
+              label: 'Hoạt động',
+              //     labelStyle: TextTheme(fontSize: 18.0),
+              onTap: () {
+                setState(() {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HistoryScreen()));
+                });
+              }
+          ),
+          SpeedDialChild(
             child: Icon(Icons.supervised_user_circle),
             backgroundColor: Colors.green,
             label: 'Người dùng',
@@ -219,40 +256,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ],
       ),
-//      bottomNavigationBar: BottomAppBar(
-//          shape: CircularNotchedRectangle(),
-//          notchMargin: 4.0,
-//          child: new Container(
-//            height: 50.0,
-//            child: new Row(
-//              mainAxisSize: MainAxisSize.max,
-//              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//              children: <Widget>[
-//                IconButton(icon: Icon(Icons.home),),
-//                IconButton(icon: Icon(Icons.search))
-//              ],
-//            ),
-//          )),
-
-//        bottomNavigationBar: new Theme(
-//            data: Theme.of(context).copyWith(
-//              // sets the background color of the `BottomNavigationBar`
-//                canvasColor: Colors.white,
-//                // sets the active color of the `BottomNavigationBar` if `Brightness` is light
-//                primaryColor: Color.fromRGBO(229, 32, 32, 1.0),
-//                textTheme: Theme
-//                    .of(context)
-//                    .textTheme
-//                    .copyWith(caption: new TextStyle(color: Colors.grey))), // sets the inactive color of the `BottomNavigationBar`
-//            child: BottomNavigationBar(
-//              type: BottomNavigationBarType.fixed,
-//              currentIndex: bottomSelectedIndex,
-//              onTap: (index) {
-//                bottomTapped(index);
-//              },
-//              items: buildBottomNavBarItems(),
-//            )
-//        )
     );
   }
 }

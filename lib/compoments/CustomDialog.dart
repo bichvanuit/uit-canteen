@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:uit_cantin/pages/WalletInfo.dart';
+import 'package:uit_cantin/pages/Recharge.dart';
 
 class CustomDialog extends StatelessWidget {
   final String title, description, buttonText;
@@ -72,7 +72,7 @@ class CustomDialog extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => WalletInfoScreen()));
+                          builder: (context) => RechargeScreen()));
                 },
                 child: new Container(
                   width: MediaQuery.of(context).size.width,

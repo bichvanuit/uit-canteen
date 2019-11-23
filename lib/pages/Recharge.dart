@@ -2,13 +2,50 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:uit_cantin/pages/RechargeInfo.dart';
+import 'package:uit_cantin/models/WalletInfo.dart';
+import 'package:uit_cantin/services/FormatPrice.dart';
+
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:uit_cantin/config.dart';
+import 'package:uit_cantin/services/Token.dart';
+
+Future<WalletInfo> _fetchWallet() async {
+  Token token = new Token();
+  final tokenValue = await token.getMobileToken();
+  Map<String, String> requestHeaders = {
+    "Authorization": "Bearer " + tokenValue,
+  };
+  final response = await http.get('$SERVER_NAME/user-wallet/info',
+      headers: requestHeaders);
+  final parsed = json.decode(response.body)["data"];
+  return WalletInfo.fromJson(parsed);
+}
 
 class RechargeScreen extends StatefulWidget {
+
   @override
   _RechargeState createState() => _RechargeState();
 }
 
 class _RechargeState extends State<RechargeScreen> {
+
+  String balance = "0";
+  @override
+  void initState() {
+    _fetchWallet().then((data) => setState(() {
+      setState(() {
+        balance = data.balance;
+      });
+    }));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +66,7 @@ class _RechargeState extends State<RechargeScreen> {
                   new Text("Số dư hiện có (VNĐ)",
                       style: TextStyle(color: Colors.white, fontSize: 20.0)),
                   SizedBox(height: 15),
-                  new Text("100.000",
+                  new Text(FormatPrice.getFormatPrice(balance),
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 30.0,

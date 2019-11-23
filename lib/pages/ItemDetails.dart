@@ -59,7 +59,11 @@ class _ItemDetails extends State<ItemDetails> {
       isLoading = false;
       var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
-        _showDialogSuccess();
+        Navigator.of(context).pop();
+        setState(() {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => OrderScreen()));
+        });
       } else {
         _showDialogSuccess();
       }

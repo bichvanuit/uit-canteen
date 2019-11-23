@@ -59,94 +59,268 @@ class _OrderState extends State<OrderScreen> {
     super.dispose();
   }
 
-  _showDialogEdit(CardGet card) {
+  Widget createDialogRemove(CardGet card) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      elevation: 0.0,
+      backgroundColor: Colors.transparent,
+      child: dialogContentRemove(context, card),
+    );
+  }
+
+  dialogContentRemove(BuildContext context, CardGet card) {
     _textFieldController.text = card.note == "null" ? "" : card.note;
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Lưu ý của bạn'),
-            content: TextField(
-              controller: _textFieldController,
-              decoration: InputDecoration(hintText: "Ví dụ: không hành"),
-            ),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text('Xóa sản phẩm'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                      _removeFood(card);
-                },
+    return Stack(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(16.0),
+          margin: EdgeInsets.only(top: 66.0),
+          decoration: new BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(16.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+                offset: const Offset(0.0, 10.0),
               ),
-              new FlatButton(
-                child: new Text('Đóng'),
-                onPressed: () {
-                  card.note = _textFieldController.text;
-                  Navigator.of(context).pop();
-                },
-              )
             ],
-          );
-        });
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // To make the card compact
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "Cảnh báo",
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(height: 10.0),
+              new Text("Bạn muốn xóa " + card.foodName + " khỏi đơn hàng"),
+              SizedBox(height: 25),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: new GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _removeFood(card);
+                      },
+                      child: new Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(color: Colors.white),
+                        child: new Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: 45.0,
+                            alignment: FractionalOffset.center,
+                            decoration: new BoxDecoration(
+                                borderRadius: new BorderRadius.all(
+                                    const Radius.circular(5.0)),
+                                border:
+                                    Border.all(color: Colors.grey, width: 2.0)),
+                            child: new Text("Xóa sản phẩm",
+                                style: new TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.3,
+                                ))),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 5.0),
+                  Expanded(
+                    child: new GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: new Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(color: Colors.white),
+                        child: new Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: 45.0,
+                            alignment: FractionalOffset.center,
+                            decoration: new BoxDecoration(
+                                color: const Color.fromRGBO(229, 32, 32, 1.0),
+                                borderRadius: new BorderRadius.all(
+                                    const Radius.circular(5.0))),
+                            child: new Text("Đóng",
+                                style: new TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.3,
+                                ))),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget createDialog(CardGet card) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      elevation: 0.0,
+      backgroundColor: Colors.transparent,
+      child: dialogContent(context, card),
+    );
+  }
+
+  dialogContent(BuildContext context, CardGet card) {
+    _textFieldController.text = card.note == "null" ? "" : card.note;
+    return Stack(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(16.0),
+          margin: EdgeInsets.only(top: 66.0),
+          decoration: new BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(16.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+                offset: const Offset(0.0, 10.0),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // To make the card compact
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "Lưu ý của bạn",
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(height: 10.0),
+              TextField(
+                controller: _textFieldController,
+                decoration: InputDecoration(hintText: "Ví dụ: không hành"),
+              ),
+              SizedBox(height: 15.0),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: new GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              createDialogRemove(card),
+                        );
+                      },
+                      child: new Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(color: Colors.white),
+                        child: new Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: 45.0,
+                            alignment: FractionalOffset.center,
+                            decoration: new BoxDecoration(
+                                borderRadius: new BorderRadius.all(
+                                    const Radius.circular(5.0)),
+                                border:
+                                    Border.all(color: Colors.grey, width: 2.0)),
+                            child: new Text("Xóa sản phẩm",
+                                style: new TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.3,
+                                ))),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 5.0),
+                  Expanded(
+                    child: new GestureDetector(
+                      onTap: () {
+                        card.note = _textFieldController.text;
+                        Navigator.of(context).pop();
+                      },
+                      child: new Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(color: Colors.white),
+                        child: new Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: 45.0,
+                            alignment: FractionalOffset.center,
+                            decoration: new BoxDecoration(
+                                color: const Color.fromRGBO(229, 32, 32, 1.0),
+                                borderRadius: new BorderRadius.all(
+                                    const Radius.circular(5.0))),
+                            child: new Text("Đóng",
+                                style: new TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.3,
+                                ))),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   _removeFood(CardGet card) async {
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: new Text("Thông báo"),
-            content:
-                new Text("Bạn muốn xóa " + card.foodName + " khỏi đơn hàng"),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text("Có"),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  setState(() {
-                    isLoading = true;
-                  });
-                  var url = '$SERVER_NAME/cart/remove-cart-item';
-                  Token token = new Token();
-                  final tokenValue = await token.getMobileToken();
-                  Map<String, String> requestHeaders = {
-                    "Authorization": "Bearer " + tokenValue,
-                  };
+    setState(() {
+      isLoading = true;
+    });
+    var url = '$SERVER_NAME/cart/remove-cart-item';
+    Token token = new Token();
+    final tokenValue = await token.getMobileToken();
+    Map<String, String> requestHeaders = {
+      "Authorization": "Bearer " + tokenValue,
+    };
 
-                  var requestBody = new Map<String, dynamic>();
-                  requestBody["food_id"] = card.foodId.toString();
+    var requestBody = new Map<String, dynamic>();
+    requestBody["food_id"] = card.foodId.toString();
 
-                  var response = await http.post(url,
-                      body: requestBody, headers: requestHeaders);
-                  var statusCode = response.statusCode;
-                  if (statusCode == STATUS_CODE_SUCCESS) {
-                    var responseBody = json.decode(response.body);
-                    //  isLoading = false;
-                    var status = responseBody["status"];
-                    print(status);
-                    if (status == STATUS_SUCCESS) {
-                      setState(() {
-                        isLoading = false;
-                        listCard.removeAt(listCard.indexOf(card));
-                        totalOrder = totalOrder -
-                            int.parse(card.discountPrice) * card.amount;
-                      });
-                    } else {
-                      //    _showDialogSuccess();
-                    }
-                  }
-                },
-              ),
-              new FlatButton(
-                child: new Text("Không"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
+    var response =
+        await http.post(url, body: requestBody, headers: requestHeaders);
+    var statusCode = response.statusCode;
+    if (statusCode == STATUS_CODE_SUCCESS) {
+      var responseBody = json.decode(response.body);
+      //  isLoading = false;
+      var status = responseBody["status"];
+      print(status);
+      if (status == STATUS_SUCCESS) {
+        setState(() {
+          isLoading = false;
+          listCard.removeAt(listCard.indexOf(card));
+          totalOrder = totalOrder - int.parse(card.discountPrice) * card.amount;
         });
+      } else {
+        //    _showDialogSuccess();
+      }
+    }
   }
 
   _checkOut() async {
@@ -162,7 +336,6 @@ class _OrderState extends State<OrderScreen> {
       list.add(CardGet.toMapObject(item));
     }
 
-    print(jsonEncode(list));
     var requestBody = new Map<String, dynamic>();
     requestBody["list_food"] = jsonEncode(list);
 
@@ -199,6 +372,7 @@ class _OrderState extends State<OrderScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        SizedBox(height: 30),
         new Center(
           child: new Text("Bạn chưa có sản phẩm nào trong đơn hàng",
               textAlign: TextAlign.center,
@@ -229,26 +403,29 @@ class _OrderState extends State<OrderScreen> {
   Widget _createBody() {
     return SafeArea(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          new Row(
-            children: <Widget>[
-              Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 30.0),
-                  child: Text(
-                    "ĐƠN HÀNG CỦA BẠN",
-                    style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade700),
-                  )),
-              Expanded(
-                child: GestureDetector(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Row(
+              children: <Widget>[
+                Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 30.0),
+                    child: Text(
+                      "ĐƠN HÀNG CỦA BẠN",
+                      style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade700),
+                    )),
+                Expanded(
+                    child: GestureDetector(
                   onTap: () {
                     setState(() {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomeScreen()));
                     });
                   },
                   child: new Container(
@@ -256,60 +433,67 @@ class _OrderState extends State<OrderScreen> {
                     margin: const EdgeInsets.only(right: 10.0),
                     child: new Icon(Icons.home, color: Colors.grey.shade700),
                   ),
-                )
-              )
-            ],
-          ),
-          Expanded(
-              child: listCard != null
-                  ? ListView.builder(
-                      padding: EdgeInsets.all(16.0),
-                      itemCount: listCard.length,
-                      itemBuilder: (BuildContext context, int position) {
-                        return _createItemList(listCard[position]);
-                      },
-                    )
-                  : new LoadingWidget()),
-          Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(20.0),
-              child: listCard != null && listCard.length != 0
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Text(
-                          "Tổng cộng     " +
-                              FormatPrice.getFormatPrice(totalOrder.toString()),
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18.0),
-                        ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        SizedBox(
+                ))
+              ],
+            ),
+            listCard != null && listCard.length != 0
+                ? new Column(
+                    children: <Widget>[
+                          listCard != null
+                              ? ListView.builder(
+                            shrinkWrap: true,
+                            physics: BouncingScrollPhysics(),
+                                  padding: EdgeInsets.all(16.0),
+                                  itemCount: listCard.length,
+                                   scrollDirection: Axis.vertical,
+                                  itemBuilder:
+                                      (BuildContext context, int position) {
+                                    return _createItemList(listCard[position]);
+                                  },
+                                )
+                              : new LoadingWidget(),
+                      Container(
                           width: double.infinity,
-                          child: MaterialButton(
-                            height: 50.0,
-                            color: totalOrder == 0
-                                ? Colors.grey
-                                : Color.fromRGBO(229, 32, 32, 1.0),
-                            child: Text(
-                              "Thanh toán".toUpperCase(),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            onPressed: () {
-                              if (totalOrder == 0) {
-                              } else {
-                                _checkOut();
-                              }
-                            },
-                          ),
-                        )
-                      ],
-                    )
-                  : _noProduct())
-        ],
-      ),
+                          padding: EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              Text(
+                                "Tổng cộng     " +
+                                    FormatPrice.getFormatPrice(
+                                        totalOrder.toString()),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18.0),
+                              ),
+                              SizedBox(
+                                height: 20.0,
+                              ),
+                              SizedBox(
+                                width: double.infinity,
+                                child: MaterialButton(
+                                  height: 50.0,
+                                  color: totalOrder == 0
+                                      ? Colors.grey
+                                      : Color.fromRGBO(229, 32, 32, 1.0),
+                                  child: Text(
+                                    "Thanh toán".toUpperCase(),
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  onPressed: () {
+                                    if (totalOrder == 0) {
+                                    } else {
+                                      _checkOut();
+                                    }
+                                  },
+                                ),
+                              )
+                            ],
+                          ))
+                    ],
+                  )
+                : _noProduct()
+          ]),
     );
   }
 
@@ -325,7 +509,6 @@ class _OrderState extends State<OrderScreen> {
     return Stack(
       children: <Widget>[
         Container(
-            height: 120,
             width: double.infinity,
             margin: EdgeInsets.only(right: 10.0, bottom: 10.0),
             padding: EdgeInsets.all(10.0),
@@ -383,8 +566,12 @@ class _OrderState extends State<OrderScreen> {
                                     totalOrder = totalOrder -
                                         int.parse(card.discountPrice);
                                   }
-                                  if(card.amount == 1) {
-                                    _removeFood(card);
+                                  if (card.amount == 1) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          createDialogRemove(card),
+                                    );
                                   }
                                 });
                               },
@@ -447,7 +634,10 @@ class _OrderState extends State<OrderScreen> {
             right: 0,
             child: new GestureDetector(
               onTap: () {
-                _showDialogEdit(card);
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => createDialog(card),
+                );
               },
               child: Container(
                 height: 30,
