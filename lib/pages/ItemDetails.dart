@@ -11,10 +11,24 @@ import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/FormatPrice.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
 
-class ItemDetails extends StatefulWidget {
-  final FoodInfo food;
 
-  ItemDetails({Key key, this.food}) : super(key: key);
+
+Future<FoodInfo> _fetchProduct(int foodId) async {
+  Token token = new Token();
+  final tokenValue = await token.getMobileToken();
+  Map<String, String> requestHeaders = {
+    "Authorization": "Bearer " + tokenValue,
+  };
+  final response = await http.get('$SERVER_NAME/food/get-detail-food?food_id=' + foodId.toString(),
+      headers: requestHeaders);
+  final parsed = json.decode(response.body)["data"];
+  return FoodInfo.fromJson(parsed);
+}
+
+class ItemDetails extends StatefulWidget {
+  final int foodId;
+
+  ItemDetails({Key key, this.foodId}) : super(key: key);
 
   _ItemDetails createState() => new _ItemDetails();
 }
@@ -24,9 +38,16 @@ class _ItemDetails extends State<ItemDetails> {
   var note;
   bool isLoading;
 
+  FoodInfo foodInfo = new FoodInfo();
+
   @override
   initState() {
     isLoading = false;
+    _fetchProduct(widget.foodId).then((data) => setState(() {
+      setState(() {
+        foodInfo = data;
+      });
+    }));
     super.initState();
   }
 
@@ -40,7 +61,7 @@ class _ItemDetails extends State<ItemDetails> {
 
   void _postOrder() async {
     CardInfo cardInfo = new CardInfo();
-    cardInfo.foodId = widget.food.foodId.toString();
+    cardInfo.foodId = foodInfo.foodId.toString();
     cardInfo.note = note.toString();
     cardInfo.quantity = intCount.toInt().toString();
 
@@ -123,7 +144,7 @@ class _ItemDetails extends State<ItemDetails> {
               width: MediaQuery.of(context).size.height,
               decoration: new BoxDecoration(
                 image: new DecorationImage(
-                    image: new NetworkImage(widget.food.image),
+                    image: new NetworkImage(foodInfo.image),
                     fit: BoxFit.cover),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
@@ -149,7 +170,7 @@ class _ItemDetails extends State<ItemDetails> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               new Expanded(
-                                child: new Text(widget.food.foodName,
+                                child: new Text(foodInfo.foodName,
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -159,7 +180,7 @@ class _ItemDetails extends State<ItemDetails> {
                                   child: new Align(
                                     alignment: Alignment.topRight,
                                     child: new Text(
-                                        FormatPrice.getFormatPrice(widget.food.discountPrice),
+                                        FormatPrice.getFormatPrice(foodInfo.discountPrice),
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,

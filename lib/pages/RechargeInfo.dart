@@ -59,8 +59,6 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
 
   TextEditingController _textFieldController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  String strBank = "";
-  String strBankName = "";
 
   List<Color> listColor = [Colors.white, Colors.white, Colors.white];
 
@@ -100,23 +98,31 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
     var response =
         await http.post(url, body: requestBody, headers: requestHeaders);
     var statusCode = response.statusCode;
-    print (response.body);
-    print (response.statusCode);
     if (statusCode == STATUS_CODE_SUCCESS) {
       var responseBody = json.decode(response.body);
       //  isLoading = false;
       var status = responseBody["status"];
+      setState(() {
+        isLoading = false;
+      });
       if (status == STATUS_SUCCESS) {
-        setState(() {
-          isLoading = false;
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => RechargeSuccessScreen()));
-        });
+
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => RechargeSuccessScreen(
+                    amount:
+                      _textFieldController.text,
+                      method:
+                      bankSelect.bankName +
+                          " " +
+                          bankSelect.cardId.toString().substring(0, 4))));
 
       } else {
         showDialog(
           context: context,
-          builder: (BuildContext context) => createError(responseBody["message"]),
+          builder: (BuildContext context) =>
+              createError(responseBody["message"]),
         );
       }
     }
@@ -184,8 +190,8 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                       alignment: FractionalOffset.center,
                       decoration: new BoxDecoration(
                           color: const Color.fromRGBO(229, 32, 32, 1.0),
-                          borderRadius: new BorderRadius.all(
-                              const Radius.circular(5.0))),
+                          borderRadius:
+                              new BorderRadius.all(const Radius.circular(5.0))),
                       child: new Text("Thử lại",
                           style: new TextStyle(
                             color: Colors.white,
@@ -201,7 +207,6 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
       ],
     );
   }
-
 
   Widget createDialog() {
     return Dialog(
@@ -278,9 +283,6 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                           return new GestureDetector(
                             onTap: () {
                               setState(() {
-                                strBank =
-                                    "https://htcamera.vn/wp-content/uploads/Logo-MSB.jpg";
-                                strBankName = "8548";
                                 bankSelect = listBank[position];
                                 Navigator.of(context).pop();
                               });
@@ -294,7 +296,8 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                               child: new Row(
                                 children: <Widget>[
                                   new Image.network(
-                                    "https://htcamera.vn/wp-content/uploads/Logo-MSB.jpg",
+                                    listBank[position]
+                                        .logo,
                                     width: 50,
                                     height: 40,
                                   ),
@@ -472,8 +475,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
               ),
               SizedBox(height: 10.0),
               new Container(
-                  padding:
-                      const EdgeInsets.only( bottom: 15),
+                  padding: const EdgeInsets.only(bottom: 15),
                   decoration: BoxDecoration(color: Colors.white),
                   child: new TextField(
                     controller: _passwordController,
@@ -485,14 +487,14 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                     ),
                     style: const TextStyle(color: Colors.black, fontSize: 16.0),
                     onChanged: (String value) {
-                      if (value.length == 6 ) {
+                      if (value.length == 6) {
                         Navigator.of(context).pop();
                         setState(() {
                           isLoading = true;
                           _topUp();
                         });
                       }
-                      },
+                    },
                   )),
             ],
           ),
@@ -519,13 +521,13 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 color: CanteenAppTheme.myGrey, width: 0.5))),
                     child: new Row(
                       children: <Widget>[
-                        new Image.network(
-                          strBank,
+                        bankSelect != null ? new Image.network(
+                          bankSelect.logo != null ? bankSelect.logo : "",
                           width: 50,
                           height: 40,
-                        ),
+                        ) : new Container(),
                         SizedBox(width: 20),
-                        new Text(bankSelect.cardNumber.substring(0, 4)),
+                        new Text(bankSelect.cardNumber != null ?bankSelect.cardNumber.substring(0, 4) : ""),
                         new Expanded(
                             child: new GestureDetector(
                           onTap: () {
@@ -628,7 +630,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                         alignment: FractionalOffset.center,
                         decoration: new BoxDecoration(
                             color:
-                                strBank == "" || _textFieldController.text == ""
+                                bankSelect == null || _textFieldController.text == ""
                                     ? Colors.grey
                                     : const Color.fromRGBO(229, 32, 32, 1.0),
                             borderRadius: new BorderRadius.all(
@@ -774,7 +776,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                   new Text("2. Chọn phương thức thanh toán",
                       style: TextStyle(fontSize: 17.0)),
                   SizedBox(height: 15.0),
-                  strBank == ""
+                  bankSelect.cardNumber == null
                       ? new Text("Chọn trong danh sách",
                           style: TextStyle(fontSize: 17.0, color: Colors.grey))
                       : new Container(
@@ -785,13 +787,14 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                       width: 0.5))),
                           child: new Row(
                             children: <Widget>[
-                              new Image.network(
-                                strBank,
+                          bankSelect != null ?new Image.network(
+                            bankSelect.logo != null ? bankSelect.logo : "",
                                 width: 50,
                                 height: 40,
-                              ),
+                              ) : new Container(),
                               SizedBox(width: 20),
-                              new Text(bankSelect.cardNumber.substring(0, 4) + " **** **** ****"),
+                              new Text(bankSelect.cardNumber != null ? bankSelect.cardNumber.substring(0, 4) +
+                                  " **** **** ****" : ""),
                             ],
                           ),
                         ),
@@ -818,7 +821,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                           height: 45.0,
                           alignment: FractionalOffset.center,
                           decoration: new BoxDecoration(
-                              color: strBank == "" ||
+                              color: bankSelect == null ||
                                       _textFieldController.text == ""
                                   ? Colors.grey
                                   : const Color.fromRGBO(229, 32, 32, 1.0),

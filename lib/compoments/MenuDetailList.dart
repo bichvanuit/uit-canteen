@@ -118,7 +118,7 @@ class MenuDetailList extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => new ItemDetails(food: food)));
+                  builder: (context) => new ItemDetails(foodId: food.foodId)));
         },
         child: new Container(
           margin: const EdgeInsets.symmetric(

@@ -163,7 +163,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   MaterialPageRoute(builder: (context) => WalletScreen()));
                             });
                           } ,
-                          child: AdvertisementWall(),
+                          child:  AdvertisementWall(),
                         ),
                       ),
                       new Container(
@@ -231,7 +231,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               }
           ),
           SpeedDialChild(
-              child: Icon(Icons.add_shopping_cart),
+              child: Icon(Icons.history),
               backgroundColor: Colors.blue,
               label: 'Hoạt động',
               //     labelStyle: TextTheme(fontSize: 18.0),

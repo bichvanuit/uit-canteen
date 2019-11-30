@@ -41,7 +41,7 @@ class _ItemFoodWidget extends State<ItemFoodWidget> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => new ItemDetails(food: widget.food)));
+                  builder: (context) => new ItemDetails(foodId: widget.food.foodId)));
         },
         child: new Container(
             child: new Row(

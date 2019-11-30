@@ -30,9 +30,9 @@ class _DialogRating extends State<DialogRating> {
     };
 
     var requestBody = new Map<String, dynamic>();
-    requestBody["food_id"] = widget.foodInfo.foodId;
+    requestBody["food_id"] = widget.foodInfo.foodId.toString();
     requestBody["rating_comment"] = _textFieldController.text;
-    requestBody["star"] = ratingResult;
+    requestBody["star"] = ratingResult.toString();
 
     var response =
     await http.post(url, body: requestBody, headers: requestHeaders);
@@ -40,9 +40,98 @@ class _DialogRating extends State<DialogRating> {
     if (statusCode == STATUS_CODE_SUCCESS) {
       var responseBody = json.decode(response.body);
       var status = responseBody["status"];
-      print(status);
+      if (status == STATUS_SUCCESS) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => createDialog(),
+        );
+      } else {
+        //    _showDialogSuccess();
+      }
     }
   }
+
+  Widget createDialog() {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      elevation: 0.0,
+      backgroundColor: Colors.transparent,
+      child: dialogSuccessContent(context),
+    );
+  }
+
+  dialogSuccessContent(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(16.0),
+          margin: EdgeInsets.only(top: 66.0),
+          decoration: new BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(16.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+                offset: const Offset(0.0, 10.0),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // To make the card compact
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "Thông báo",
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(height: 10.0),
+              Text(
+                "Nhận xét của bạn đã được chúng tôi ghi nhận. Cảm ơn bạn đã đánh giá.",
+                style: TextStyle(
+                  fontSize: 18.0,
+                ),
+              ),
+              SizedBox(height: 15.0),
+              new GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: new Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(color: Colors.white),
+                  child: new Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: 45.0,
+                      alignment: FractionalOffset.center,
+                      decoration: new BoxDecoration(
+                          color: const Color.fromRGBO(229, 32, 32, 1.0),
+                          borderRadius: new BorderRadius.all(
+                              const Radius.circular(5.0))),
+                      child: new Text("Đóng",
+                          style: new TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.3,
+                          ))),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Dialog(

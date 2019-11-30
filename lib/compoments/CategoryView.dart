@@ -25,7 +25,7 @@ class CategoryView extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ItemDetails(food: foodInfo)));
+                builder: (context) => ItemDetails(foodId: foodInfo.foodId)));
       },
       splashColor: Colors.transparent,
       child: Stack(

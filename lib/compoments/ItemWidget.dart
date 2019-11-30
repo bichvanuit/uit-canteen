@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uit_cantin/pages/ItemDetails.dart';
 import 'package:uit_cantin/models/FoodInfo.dart';
 import 'package:flutter_rating/flutter_rating.dart';
+import 'package:uit_cantin/canteenAppTheme.dart';
 
 class ItemWidget extends StatelessWidget {
   final FoodInfo food;
@@ -16,60 +17,57 @@ class ItemWidget extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => new ItemDetails(food: food)));
+                  builder: (context) => new ItemDetails(foodId: food.foodId)));
         },
-        child: new SizedBox(
-            height: 450,
-            width: MediaQuery.of(context).size.width * 0.7,
+        child: new Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: CanteenAppTheme.myGrey, width: 1.0)
+          ),
+            height: 200,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width * 0.5,
             child: new Column(
               children: <Widget>[
                 new Stack(children: <Widget>[
                   new Container(
-                      height: 320,
-                      decoration: new BoxDecoration(
+                    height: 180,
+                    decoration: new BoxDecoration(
                         image: food != null
                             ? new DecorationImage(
-                                image: new NetworkImage(food.image),
-                                fit: BoxFit.cover)
+                            image: new NetworkImage(food.image),
+                            fit: BoxFit.cover)
                             : null,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: new Container(
-                        decoration: new BoxDecoration(
-                          gradient: new LinearGradient(
-                            colors: <Color>[
-                              const Color.fromRGBO(0, 0, 0, 0.5),
-                              const Color.fromRGBO(51, 51, 63, 0.1),
-                            ],
-                            stops: [0.2, 1.0],
-                            begin: const FractionalOffset(0.0, 0.0),
-                            end: const FractionalOffset(0.0, 1.0),
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                      )),
+                    ),
+                  ),
                 ]),
                 new Container(
-                  margin: const EdgeInsets.only(top: 15.0),
+                  padding: const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
+                  color: CanteenAppTheme.myGrey,
                   child: new Row(
                     children: <Widget>[
                       new Expanded(
-                        child: new Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            new Text(food != null ? food.foodName : "", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),),
-                            new Container(
-                              alignment: Alignment.topLeft,
-                              child: new StarRating(
-                                size: 15.0,
-                                rating: 4.5,
-                                color: Colors.orange,
-                                borderColor: Colors.grey,
+                          child: new Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              new Text(food != null ? food.foodName : "",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontWeight: FontWeight.bold,
+                                    fontSize: 16.0),),
+                              new Container(
+                                alignment: Alignment.topLeft,
+                                child: new StarRating(
+                                  size: 15.0,
+                                  rating: 4.5,
+                                  color: Colors.orange,
+                                  borderColor: Colors.grey,
+                                ),
                               ),
-                            ),
-                          ],
-                        )
+                            ],
+                          )
                       ),
                       new Expanded(
                           child: new Align(
@@ -77,12 +75,13 @@ class ItemWidget extends StatelessWidget {
                             child: new Container(
                                 decoration: BoxDecoration(
                                     color: food != null
-                                        ? const Color.fromRGBO(229, 32, 32, 1.0)
+                                        ? CanteenAppTheme.main
                                         : Color(0xFFE6E6E6),
                                     borderRadius:
                                     BorderRadius.all(Radius.circular(5))),
                                 padding:
-                                EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                                EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 4),
                                 child: food != null
                                     ? new Text(
                                     "- " +
@@ -96,7 +95,8 @@ class ItemWidget extends StatelessWidget {
                                         " %",
                                     style: TextStyle(
                                         color: Colors.white,
-                                        fontWeight: FontWeight.bold, fontSize: 18))
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16))
                                     : null),
                           )
                       )

@@ -54,6 +54,7 @@ class _SpecialOffer extends State<SpecialOffer> {
                       fontWeight: FontWeight.bold,
                       color: Colors.grey))),
           new Container(
+              height: 241.0,
               child: new FutureBuilder(
                 future: _fetchFoodDiscout(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -68,6 +69,7 @@ class _SpecialOffer extends State<SpecialOffer> {
                             highlightColor: Colors.white,
                             child: Container(
                                 padding: EdgeInsets.only(right: 10, top: 20),
+                                margin: EdgeInsets.only(right: 20),
                                 child: new ItemWidget(food: null))),
                       );
 
@@ -84,38 +86,15 @@ class _SpecialOffer extends State<SpecialOffer> {
 
   Widget createListView(BuildContext context, AsyncSnapshot snapshot) {
     List<FoodInfo> listFoodInfo = snapshot.data;
-    return Carousel(
-        height: 500.0,
-        width: MediaQuery.of(context).size.width,
-        type: "slideswiper",
-        indicatorType: "bubble",
-        arrowColor: Colors.white,
-        axis: Axis.horizontal,
-        showArrow: false,
-        showIndicator: false,
+    return new ListView.builder(
+        itemCount: listFoodInfo.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, position) {
+          return new Container(
+            margin: const EdgeInsets.only(right: 10.0, top: 12),
+            child: new ItemWidget(food: listFoodInfo[position]),
+          );
+        });
 
-        children: listFoodInfo.map((item) => Container(
-       //     padding: EdgeInsets.only(right: 10, top: 20),
-            child: new ItemWidget(food: item))).toList()
-    );
-//    return CarouselSlider(
-//      height: 450,
-//
-//      items: listFoodInfo.map((item) {
-//        return Container(
-//            padding: EdgeInsets.only(right: 10, top: 20),
-//            child: new ItemWidget(food: item));
-//      }).toList(),
-//    );
-//    return new ListView.builder(
-//        shrinkWrap: true,
-//        physics: BouncingScrollPhysics(),
-//        itemCount: listFoodInfo.length,
-//        scrollDirection: Axis.horizontal,
-//        itemBuilder: (context, position) {
-//          return Container(
-//              padding: EdgeInsets.only(right: 10, top: 20),
-//              child: new ItemWidget(food: listFoodInfo[position]));
-//        });
   }
 }
