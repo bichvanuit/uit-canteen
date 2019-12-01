@@ -1,102 +1,168 @@
 import 'package:flutter/material.dart';
-import 'package:uit_cantin/pages/HomeMain.dart';
-import 'package:uit_cantin/pages/Order.dart';
-import 'package:uit_cantin/pages/User.dart';
-import 'package:uit_cantin/pages/Notification.dart';
 
+import 'package:gradient_app_bar/gradient_app_bar.dart';
+import 'package:uit_cantin/canteenAppTheme.dart';
+import 'package:uit_cantin/services/FormatPrice.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key key}) : super(key: key);
-
-  @override
-  HomeScreenState createState() => new HomeScreenState();
+Widget fullAppbar(BuildContext context, String fullname, String totalPrice) {
+  return PreferredSize(
+    preferredSize: Size.fromHeight(160.0),
+    child: GradientAppBar(
+      flexibleSpace: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          CustomPaint(
+            painter: CircleOne(),
+          ),
+          CustomPaint(
+            painter: CircleTwo(),
+          ),
+        ],
+      ),
+      title: Container(
+        margin: EdgeInsets.only(top: 20),
+        child: Text(
+          'Chào ' + fullname + "!",
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+        )
+      ),
+//      actions: <Widget>[
+//        Container(
+//          margin: EdgeInsets.fromLTRB(0, 20, 20, 0),
+//          child: Image.asset('assets/images/photo.png'),
+//        ),
+//      ],
+      elevation: 0,
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [CanteenAppTheme.HeaderBlueDark, CanteenAppTheme.HeaderBlueLight],
+      ),
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(8),
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+          padding: EdgeInsets.fromLTRB(15, 18, 15, 18),
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            color: CanteenAppTheme.HeaderGreyLight,
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Bạn có đơn hàng cần thanh toán',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600),
+              ),
+              SizedBox(
+                height: 3,
+              ),
+              Text(
+                'Tổng cộng: ' + FormatPrice.getFormatPrice(totalPrice),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w300),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
-
-class HomeScreenState extends State<HomeScreen> {
-
-  int bottomSelectedIndex = 0;
-
-  List<BottomNavigationBarItem> buildBottomNavBarItems() {
-    return [
-      BottomNavigationBarItem(
-          icon: new Icon(Icons.home),
-          title: new Text('Trang chủ')
+Widget emptyAppbar() {
+  return PreferredSize(
+    preferredSize: Size.fromHeight(75.0),
+    child: GradientAppBar(
+      flexibleSpace: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          CustomPaint(
+            painter: CircleOne(),
+          ),
+          CustomPaint(
+            painter: CircleTwo(),
+          ),
+        ],
       ),
-      BottomNavigationBarItem(
-        icon: new Icon(Icons.notifications),
-        title: new Text('Thông báo'),
+      title: Container(
+        margin: EdgeInsets.only(top: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              'Hello Brenda!',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+            Text(
+              'Today you have no tasks',
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300),
+            ),
+          ],
+        ),
       ),
-      BottomNavigationBarItem(
-        icon: new Icon(Icons.add_shopping_cart),
-        title: new Text('Đơn hàng'),
-      ),
-      BottomNavigationBarItem(
-          icon: Icon(Icons.supervised_user_circle),
-          title: Text('Người dùng')
-      )
-    ];
-  }
-
-  PageController pageController = PageController(
-    initialPage: 0,
-    keepPage: true,
-  );
-
-  Widget buildPageView() {
-    return PageView(
-      controller: pageController,
-      onPageChanged: (index) {
-        pageChanged(index);
-      },
-      children: <Widget>[
-        HomeMainScreen(),
-        NotificationScreen(),
-        OrderScreen(),
-        UserScreen(),
+      actions: <Widget>[
+        Container(
+          margin: EdgeInsets.fromLTRB(0, 20, 20, 0),
+          child: Image.asset('assets/images/photo.png'),
+        ),
       ],
-    );
+      elevation: 0,
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [CanteenAppTheme.HeaderBlueDark, CanteenAppTheme.HeaderBlueLight],
+      ),
+    ),
+  );
+}
+
+class CircleOne extends CustomPainter {
+  Paint _paint;
+
+  CircleOne() {
+    _paint = Paint()
+      ..color = CanteenAppTheme.HeaderCircle
+      ..strokeWidth = 10.0
+      ..style = PaintingStyle.fill;
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  void pageChanged(int index) {
-    setState(() {
-      bottomSelectedIndex = index;
-    });
-  }
-
-  void bottomTapped(int index) {
-    setState(() {
-      bottomSelectedIndex = index;
-      pageController.animateToPage(index, duration: Duration(milliseconds: 500), curve: Curves.ease);
-    });
+  void paint(Canvas canvas, Size size) {
+    canvas.drawCircle(Offset(28.0, 0.0), 99.0, _paint);
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: buildPageView(),
-      bottomNavigationBar: new Theme(
-        data: Theme.of(context).copyWith(
-          // sets the background color of the `BottomNavigationBar`
-            canvasColor: Colors.white,
-            // sets the active color of the `BottomNavigationBar` if `Brightness` is light
-            primaryColor: Color.fromRGBO(229, 32, 32, 1.0),
-            textTheme: Theme
-                .of(context)
-                .textTheme
-                .copyWith(caption: new TextStyle(color: Colors.grey))), // sets the inactive color of the `BottomNavigationBar`
-          child: BottomNavigationBar(
-            currentIndex: bottomSelectedIndex,
-            onTap: (index) {
-              bottomTapped(index);
-            },
-            items: buildBottomNavBarItems(),
-          ),)
-    );
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
+  }
+}
+
+class CircleTwo extends CustomPainter {
+  Paint _paint;
+
+  CircleTwo() {
+    _paint = Paint()
+      ..color = CanteenAppTheme.HeaderCircle
+      ..strokeWidth = 10.0
+      ..style = PaintingStyle.fill;
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawCircle(Offset(-30, 20), 50.0, _paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
   }
 }

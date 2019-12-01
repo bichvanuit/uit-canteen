@@ -15,9 +15,13 @@ class ItemWidget extends StatelessWidget {
     return new GestureDetector(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => new ItemDetails(foodId: food.foodId)));
+            context,
+            PageRouteBuilder(
+              pageBuilder: (c, a1, a2) => new ItemDetails(foodId: food.foodId),
+              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+              transitionDuration: Duration(milliseconds: 2000),
+            ),
+          );
         },
         child: new Container(
           decoration: BoxDecoration(

@@ -9,6 +9,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
+import 'package:uit_cantin/pages/test.dart';
 
 Future<WalletInfo> _fetchWallet() async {
   Token token = new Token();

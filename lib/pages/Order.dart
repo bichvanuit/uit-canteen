@@ -39,11 +39,12 @@ class _OrderState extends State<OrderScreen> {
 
   @override
   void initState() {
-    isLoading = false;
+    isLoading = true;
     totalOrder = 0;
     _fetchCard().then((data) => setState(() {
           setState(() {
             listCard = data;
+            isLoading = false;
           });
           totalOrder = data
               .map<double>((m) => double.parse(m.discountPrice) * m.amount)
@@ -410,7 +411,7 @@ class _OrderState extends State<OrderScreen> {
               children: <Widget>[
                 Container(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 30.0),
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                     child: Text(
                       "ĐƠN HÀNG CỦA BẠN",
                       style: TextStyle(
@@ -431,7 +432,13 @@ class _OrderState extends State<OrderScreen> {
                   child: new Container(
                     alignment: Alignment.topRight,
                     margin: const EdgeInsets.only(right: 10.0),
-                    child: new Icon(Icons.home, color: Colors.grey.shade700),
+                    child: new Text(
+                      "Thêm món",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                          color: Colors.grey.shade700),
+                    ),
                   ),
                 ))
               ],
@@ -439,32 +446,47 @@ class _OrderState extends State<OrderScreen> {
             listCard != null && listCard.length != 0
                 ? new Column(
                     children: <Widget>[
-                          listCard != null
-                              ? ListView.builder(
-                            shrinkWrap: true,
-                            physics: BouncingScrollPhysics(),
-                                  padding: EdgeInsets.all(16.0),
-                                  itemCount: listCard.length,
-                                   scrollDirection: Axis.vertical,
-                                  itemBuilder:
-                                      (BuildContext context, int position) {
-                                    return _createItemList(listCard[position]);
-                                  },
-                                )
-                              : new LoadingWidget(),
+                      listCard != null
+                          ? new Container(
+                              height: 440,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: BouncingScrollPhysics(),
+                                padding: EdgeInsets.all(16.0),
+                                itemCount: listCard.length,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder:
+                                    (BuildContext context, int position) {
+                                  return _createItemList(listCard[position]);
+                                },
+                              ),
+                            )
+                          : new LoadingWidget(),
                       Container(
                           width: double.infinity,
-                          padding: EdgeInsets.all(20.0),
+                          padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(
+                                    color: CanteenAppTheme.grey.withOpacity(0.8),
+                                    offset: Offset(1.1, 1.1),
+                                    blurRadius: 5.0),
+                              ]
+                          ),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              Text(
-                                "Tổng cộng     " +
-                                    FormatPrice.getFormatPrice(
-                                        totalOrder.toString()),
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18.0),
+                              Row(
+                                children: <Widget>[
+                                  new Expanded(child: new Text("Tổng cộng", style: TextStyle(fontSize: 18.0),)),
+                                  new Expanded(
+                                      child: new Text(
+
+                                          FormatPrice.getFormatPrice(
+                                              totalOrder.toString()), style: TextStyle(fontWeight: FontWeight.bold,
+                                          fontSize: 18.0), textAlign: TextAlign.right,),
+                                  )
+                                ],
                               ),
                               SizedBox(
                                 height: 20.0,
@@ -492,7 +514,7 @@ class _OrderState extends State<OrderScreen> {
                           ))
                     ],
                   )
-                : _noProduct()
+                : isLoading ? new Container() : _noProduct()
           ]),
     );
   }

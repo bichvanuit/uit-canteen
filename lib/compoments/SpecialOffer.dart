@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:flutter_multi_carousel/carousel.dart';
 
 // A function that converts a response body into a List<Photo>
 List<FoodInfo> _parseFoodDiscount(String responseBody) {

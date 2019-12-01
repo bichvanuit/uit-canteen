@@ -8,7 +8,6 @@ import 'package:uit_cantin/models/TabIconData.dart';
 import 'package:uit_cantin/pages/Wallet.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:extended_navbar_scaffold/extended_navbar_scaffold.dart';
 import 'package:uit_cantin/pages/History.dart';
 import 'package:uit_cantin/compoments/SpecialOffer.dart';
 import 'package:uit_cantin/compoments/TodayOrder.dart';
@@ -124,27 +123,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ],
     );
   }
-
-  final parallaxCardItemsList = <ParallaxCardItem>[
-    ParallaxCardItem(
-        title: 'Some Random Route 1',
-        body: 'Place 1',
-        background: Container(
-          color: Colors.orange,
-        )),
-    ParallaxCardItem(
-        title: 'Some Random Route 2',
-        body: 'Place 2',
-        background: Container(
-          color: Colors.redAccent,
-        )),
-    ParallaxCardItem(
-        title: 'Some Random Route 3',
-        body: 'Place 1',
-        background: Container(
-          color: Colors.blue,
-        )),
-  ];
 
   @override
   Widget build(BuildContext context) {

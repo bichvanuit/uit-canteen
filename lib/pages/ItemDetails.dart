@@ -40,14 +40,16 @@ class _ItemDetails extends State<ItemDetails> {
 
   FoodInfo foodInfo = new FoodInfo();
 
+
   @override
   initState() {
-    isLoading = false;
-    _fetchProduct(widget.foodId).then((data) => setState(() {
-      setState(() {
-        foodInfo = data;
-      });
-    }));
+    isLoading = true;
+    _fetchProduct(widget.foodId).then((data) =>
+        setState(() {
+          foodInfo = data;
+          isLoading = false;
+        })
+    );
     super.initState();
   }
 
@@ -144,7 +146,7 @@ class _ItemDetails extends State<ItemDetails> {
               width: MediaQuery.of(context).size.height,
               decoration: new BoxDecoration(
                 image: new DecorationImage(
-                    image: new NetworkImage(foodInfo.image),
+                    image: foodInfo.image != null ? new NetworkImage(foodInfo.image) : new AssetImage("assets/food_default.png"),
                     fit: BoxFit.cover),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
@@ -170,7 +172,7 @@ class _ItemDetails extends State<ItemDetails> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               new Expanded(
-                                child: new Text(foodInfo.foodName,
+                                child: new Text(foodInfo.foodName != null ? foodInfo.foodName : "",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -180,7 +182,7 @@ class _ItemDetails extends State<ItemDetails> {
                                   child: new Align(
                                     alignment: Alignment.topRight,
                                     child: new Text(
-                                        FormatPrice.getFormatPrice(foodInfo.discountPrice),
+                                        FormatPrice.getFormatPrice(foodInfo.discountPrice != null ? foodInfo.discountPrice : "0"),
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
@@ -373,7 +375,7 @@ class _ItemDetails extends State<ItemDetails> {
             iconTheme: new IconThemeData(color: Colors.white),
             title: Text("Chi tiết"),
             actions: _buildActions()),
-        body: isLoading == true ? _createProgress() : _createBody()
+        body: isLoading ? _createProgress() : _createBody()
     );
   }
 }

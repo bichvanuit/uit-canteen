@@ -107,6 +107,10 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
       });
       if (status == STATUS_SUCCESS) {
 
+        print( _textFieldController.text);
+        print(bankSelect.bankName +
+            " " +
+            bankSelect.cardNumber);
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -116,7 +120,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                       method:
                       bankSelect.bankName +
                           " " +
-                          bankSelect.cardId.toString().substring(0, 4))));
+                          bankSelect.cardNumber.toString().substring(0, 4))));
 
       } else {
         showDialog(

@@ -127,7 +127,7 @@ class LoginScreenState extends State<LoginScreen> {
           body: new Container(
               decoration: new BoxDecoration(
                 image: new DecorationImage(
-                  image: new ExactAssetImage('assets/rice.jpg'),
+                  image: new ExactAssetImage('assets/uit.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),

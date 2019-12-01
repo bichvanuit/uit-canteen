@@ -2,11 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:uit_cantin/pages/Home.dart';
 
-class RechargeSuccessScreen extends StatelessWidget {
-  String amount;
-  String method;
+class RechargeSuccessScreen extends StatefulWidget {
 
+
+  final String amount;
+  final String method;
   RechargeSuccessScreen({Key key, this.amount, this.method}) : super(key: key);
+
+  @override
+  _RechargeSuccessState createState() => _RechargeSuccessState();
+}
+
+
+class _RechargeSuccessState extends State<RechargeSuccessScreen> {
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +72,7 @@ class RechargeSuccessScreen extends StatelessWidget {
                     ),
                     Expanded(
                       child: new Text(
-                        amount + " VNĐ",
+                        widget.amount + " VNĐ",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.grey,
@@ -93,7 +101,7 @@ class RechargeSuccessScreen extends StatelessWidget {
                 new Row(
                   children: <Widget>[
                     new Text(
-                      method,
+                      widget.method,
                       style: TextStyle(
                           color: Colors.grey,
                           fontSize: 18.0,

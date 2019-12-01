@@ -147,32 +147,32 @@ class _AdvertisementWall extends State<AdvertisementWall> {
                       ],
                     )),
               ),
-              new GestureDetector(
-                onTap: () {
-                  setState(() {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => RechargeScreen()));
-                  });
-                },
-                child: new Container(
-                    height: 70,
-                    width: 70,
-                    padding: const EdgeInsets.only(top: 10),
-                    //   padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: CanteenAppTheme.myGrey, width: 2)),
-                    child: new Column(
-                      children: <Widget>[
-                        Icon(
-                          Icons.money_off,
-                          color: CanteenAppTheme.main,
-                          size: 30.0,
-                        ),
-                        new Text("Rút tiền")
-                      ],
-                    )),
-              ),
+//              new GestureDetector(
+//                onTap: () {
+//                  setState(() {
+//                    Navigator.push(context,
+//                        MaterialPageRoute(builder: (context) => RechargeScreen()));
+//                  });
+//                },
+//                child: new Container(
+//                    height: 70,
+//                    width: 70,
+//                    padding: const EdgeInsets.only(top: 10),
+//                    //   padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+//                    decoration: BoxDecoration(
+//                        border: Border.all(
+//                            color: CanteenAppTheme.myGrey, width: 2)),
+//                    child: new Column(
+//                      children: <Widget>[
+//                        Icon(
+//                          Icons.money_off,
+//                          color: CanteenAppTheme.main,
+//                          size: 30.0,
+//                        ),
+//                        new Text("Rút tiền")
+//                      ],
+//                    )),
+//              ),
               new GestureDetector(
                   onTap: () {},
                   child: new Container(
