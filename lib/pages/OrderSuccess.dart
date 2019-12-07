@@ -9,15 +9,33 @@ class OrderSuccessScreen extends StatefulWidget {
 
 class _OrderSuccess extends State<OrderSuccessScreen> {
 
-  _onWillPop() {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (c, a1, a2) => new HomeScreen(),
-        transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-        transitionDuration: Duration(milliseconds: 2000),
+  Future<bool> _onWillPop() {
+    return showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Quay về trang chủ'),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: new Text('Hủy'),
+          ),
+          new FlatButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (c, a1, a2) => new HomeScreen(),
+                  transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                  transitionDuration: Duration(milliseconds: 2000),
+                ),
+              );
+            },
+            child: new Text('Tiếp tực'),
+          ),
+        ],
       ),
-    );
+    ) ?? false;
   }
 
   @override

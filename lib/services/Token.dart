@@ -35,4 +35,10 @@ class Token {
     return prefs.setString(_storageKeyMobileWating, token);
   }
 
+  Future<bool> removeMobileWaiting() async {
+    final SharedPreferences prefs = await _prefs;
+
+    return prefs.remove(_storageKeyMobileWating);
+  }
+
 }

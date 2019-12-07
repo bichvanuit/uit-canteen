@@ -191,6 +191,8 @@ class _DeliveryMethod extends State<DeliveryMethodScreen> {
       });
       var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
+        bool aaa = await token.removeMobileWaiting();
+        print(aaa);
         Navigator.push(
           context,
           PageRouteBuilder(

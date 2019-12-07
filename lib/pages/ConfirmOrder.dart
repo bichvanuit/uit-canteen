@@ -68,7 +68,7 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
   bool isLoading;
   UserInfo userInfo = new UserInfo();
   String paymentMethod = "";
-  String timeRemaining = "";
+  String timeRemaining = "0";
   bool isWaiting = true;
 
   int locationId = 1;
@@ -246,6 +246,8 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
       isWaiting = true;
     }
     requestBody["time_remaining"] = timeRemaining;
+    print(isWaiting);
+    print(timeRemaining);
 
     var response = await http.post(url,
         body: requestBody, headers: requestHeaders);

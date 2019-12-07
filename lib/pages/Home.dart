@@ -187,6 +187,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     Token token = new Token();
 
     token.getMobileWaiting().then((value) {
+      print(value);
       if (value != '') {
         showDialog(
           context: context,
