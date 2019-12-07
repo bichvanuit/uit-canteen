@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:uit_cantin/models/Payment.dart';
 import 'dart:async';
-import 'package:intl/intl.dart';
-import 'package:barcode_scan/barcode_scan.dart';
-import 'package:flutter/services.dart';
-import 'package:uit_cantin/pages/OrderSuccess.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 
-import 'package:uit_cantin/models/CheckOut.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
@@ -20,6 +15,10 @@ import 'package:uit_cantin/pages/Recharge.dart';
 import 'package:uit_cantin/pages/Wallet.dart';
 import 'package:uit_cantin/pages/test.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:uit_cantin/pages/DeliveryMethod.dart';
+import 'package:rich_alert/rich_alert.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 List<PaymentMethod> _parseMethod(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -37,25 +36,6 @@ Future<List<PaymentMethod>> _fetchMethod() async {
   final response = await http.get('$SERVER_NAME/common/get-payment-methods',
       headers: requestHeaders);
   return _parseMethod(response.body);
-}
-
-List<DeliveryPlace> _parsePlace(String responseBody) {
-  final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
-  return parsed
-      .map<DeliveryPlace>((json) => DeliveryPlace.fromJson(json))
-      .toList();
-}
-
-Future<List<DeliveryPlace>> _fetchPlace() async {
-  Token token = new Token();
-  final tokenValue = await token.getMobileToken();
-  Map<String, String> requestHeaders = {
-    "Authorization": "Bearer " + tokenValue,
-  };
-  final response = await http.get(
-      '$SERVER_NAME/common/get-delivery-place-types',
-      headers: requestHeaders);
-  return _parsePlace(response.body);
 }
 
 Future<UserInfo> _fetchUserInfo() async {
@@ -81,16 +61,19 @@ class ConfirmOrderScreen extends StatefulWidget {
 
 class _ConfirmOrder extends State<ConfirmOrderScreen> {
   int paymentId = 1;
-  String result = "Quét mã";
+  String result = "***";
   int role;
   List<PaymentMethod> listMethod;
   List<DeliveryPlace> listPlace;
   bool isLoading;
   UserInfo userInfo = new UserInfo();
+  String paymentMethod = "";
+  String timeRemaining = "";
+  bool isWaiting = true;
+
+  int locationId = 1;
 
   DateTime date3 = DateTime.now();
-
-  CheckOut checkOutInfo = new CheckOut();
 
   @override
   void initState() {
@@ -104,12 +87,7 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
         }));
     _fetchMethod().then((data) => setState(() {
           listMethod = data;
-          checkOutInfo.methodId = listMethod[0].methodId.toString();
-        }));
-
-    _fetchPlace().then((data) => setState(() {
-          listPlace = data;
-          checkOutInfo.deliveryPlaceId = listPlace[0].placeId.toString();
+          paymentMethod = listMethod[0].methodId.toString();
         }));
 
     super.initState();
@@ -239,6 +217,16 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
     );
   }
 
+  _waitingProcess() async {
+    Token token = new Token();
+    await token.setMobileWaiting(timeRemaining);
+    setState(() {
+      isLoading = false;
+      Navigator.of(context).pop();
+      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    });
+  }
+
   _checkout() async {
     var url = '$SERVER_NAME/order/check-out';
     Token token = new Token();
@@ -247,8 +235,20 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
       "Authorization": "Bearer " + tokenValue,
     };
 
+    var requestBody = new Map<String, dynamic>();
+    requestBody["payment_method_id"] = paymentMethod;
+
+    if (timeRemaining == "0") {
+      DateTime date = DateTime.now();
+      isWaiting = false;
+      timeRemaining = date.hour.toString() + ":" + date.minute.toString() + ":" + date.second.toString();
+    } else {
+      isWaiting = true;
+    }
+    requestBody["time_remaining"] = timeRemaining;
+
     var response = await http.post(url,
-        body: checkOutInfo.toMap(), headers: requestHeaders);
+        body: requestBody, headers: requestHeaders);
     var statusCode = response.statusCode;
     if (statusCode == STATUS_CODE_SUCCESS) {
       var responseBody = json.decode(response.body);
@@ -257,8 +257,44 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
       });
       var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => OrderSuccessScreen()));
+        if (isWaiting) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return RichAlertDialog(
+                  alertTitle: richTitle("Đặt đơn thành công"),
+                  alertSubtitle: richSubtitle(
+                      "Hẹn gặp lại bạn vào " + timeRemaining + " nhé!!!"),
+                  alertType: RichAlertType.SUCCESS,
+                  actions: <Widget>[
+                    new GestureDetector(
+                      onTap: () {
+                        _waitingProcess();
+                      },
+                      child: new Container(
+                          width: 100.0,
+                          height: 35.0,
+                          alignment: FractionalOffset.center,
+                          decoration: new BoxDecoration(
+                              color: Color.fromRGBO(229, 32, 32, 1.0),
+                              borderRadius:
+                              new BorderRadius.all(const Radius.circular(5.0))),
+                          child: new Text("OK",
+                              style: new TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.3,
+                              ))),
+                    )
+                  ],
+                );
+              });
+
+        } else {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => DeliveryMethodScreen()));
+        }
       } else {
         showDialog(
           context: context,
@@ -269,39 +305,13 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
     }
   }
 
-  Future _scanQR() async {
-    try {
-      String qrResult = await BarcodeScanner.scan();
-      setState(() {
-        result = qrResult;
-        checkOutInfo.deliveryValue = qrResult;
-      });
-    } on PlatformException catch (ex) {
-      if (ex.code == BarcodeScanner.CameraAccessDenied) {
-        setState(() {
-          result = "Camera permission was denied";
-        });
-      } else {
-        setState(() {
-          result = "Unknown Error $ex";
-        });
-      }
-    } on FormatException {
-      setState(() {
-        result = "You pressed the back button before scanning anything";
-      });
-    } catch (ex) {
-      setState(() {
-        result = "Unknown Error $ex";
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          fullAppbar(context, userInfo.fullName, widget.totalOrder.toString()),
+      appBar: userInfo.fullName == null
+          ? fullAppbar(context, "bạn", widget.totalOrder.toString())
+          : fullAppbar(
+              context, userInfo.fullName, widget.totalOrder.toString()),
       body: isLoading == true ? _createProgress() : _createBody(),
     );
   }
@@ -320,7 +330,6 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
             ),
           ),
-
           Container(
               width: double.infinity,
               child: listMethod != null
@@ -332,17 +341,20 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
                       itemBuilder: (context, position) {
                         return Container(
                           margin: EdgeInsets.only(top: 5),
-                          //    padding: EdgeInsets.fromLTRB(5, 13, 5, 13),
                           child: RadioListTile(
                             groupValue: true,
                             value: listMethod[position].methodId.toString() ==
-                                    checkOutInfo.methodId
+                                    paymentMethod
                                 ? true
                                 : false,
                             title: Text(listMethod[position].methodName),
                             onChanged: (value) {
                               setState(() {
-                                checkOutInfo.methodId =
+                                var id = listMethod[position].methodId.toString();
+                                if (id != "1") {
+                                  locationId = 1;
+                                }
+                                paymentMethod =
                                     listMethod[position].methodId.toString();
                               });
                             },
@@ -368,39 +380,28 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
           Container(
             margin: EdgeInsets.only(bottom: 15, top: 15),
             child: Text(
-              'Bạn có đang ở căn tin',
+              'Bạn có muốn được phục vụ ngay không?',
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
             ),
           ),
-
           Container(
             margin: EdgeInsets.only(top: 5),
-            //    padding: EdgeInsets.fromLTRB(5, 13, 5, 13),
             child: new Column(
               children: <Widget>[
                 RadioListTile(
                   groupValue: true,
-                  value: true,
-                  title: Text("Có, tôi đang ở bàn số ***"),
+                  value: locationId == 1 ? true : false,
+                  title: Text("Có"),
                   onChanged: (value) {
                     setState(() {
-                      // checkOutInfo.methodId= listMethod[position].methodId.toString();
+                      timeRemaining = "0";
+                      locationId = 1;
                     });
                   },
                 ),
-                Container(
-                  alignment: Alignment.centerRight,
-                  height: 50.0,
-                  width: 70.0,
-                  child: FittedBox(
-                    child: FloatingActionButton.extended(
-                      backgroundColor: Color.fromRGBO(229, 32, 32, 1.0),
-                      icon: Icon(Icons.camera_alt),
-                      label: Text("Quét mã QR"),
-                      onPressed: _scanQR,
-                    ),
-                  ),
-                ),
+                SizedBox(
+                  height: 10,
+                )
               ],
             ),
             decoration: BoxDecoration(
@@ -418,7 +419,6 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
                       blurRadius: 5.0),
                 ]),
           ),
-
           Container(
             margin: EdgeInsets.only(top: 5),
             //    padding: EdgeInsets.fromLTRB(5, 13, 5, 13),
@@ -426,24 +426,52 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
               children: <Widget>[
                 RadioListTile(
                   groupValue: true,
-                  value: false,
-                  title: Text("Không, tôi sẽ xuống căn tin vào lúc"),
-                  onChanged: (value) {
-                    setState(() {
-                      // checkOutInfo.methodId= listMethod[position].methodId.toString();
-                    });
-                  },
+                  value: locationId == 2 ? true : false,
+                  title: Text("Không, hay đợi tôi đến "),
+//                  onChanged: (value) {
+//                    setState(() {
+//                      locationId = 2;
+//                      timeRemaining = date3.hour.toString() +
+//                          ":" +
+//                          date3.minute.toString() +
+//                          ":" +
+//                          date3.second.toString();
+//                      // checkOutInfo.methodId= listMethod[position].methodId.toString();
+//                    });
+//                  },
+                  onChanged: paymentMethod != "1"
+                      ? null
+                      : (val) {
+                          setState(() {
+                            locationId = 2;
+                            timeRemaining = date3.hour.toString() +
+                                ":" +
+                                date3.minute.toString() +
+                                ":" +
+                                date3.second.toString();
+                          });
+                        },
                 ),
+                paymentMethod != "1" && paymentMethod != "" ? new Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: new Text(
+                    "Vì bạn đã chọn thanh toán bằng tiền mặt nên không được dùng tính năng này",
+                    style: TextStyle(color: Colors.red, fontStyle: FontStyle.italic),
+                  ),
+                ) : new Container(),
                 FlatButton(
                     onPressed: () {
-                      DatePicker.showTimePicker(context, showTitleActions: true,
-                          onChanged: (date) {
-                        print('change $date');
-                      }, onConfirm: (date) {
+                      DatePicker.showTimePicker(context,
+                          showTitleActions: true,
+                          onChanged: (date) {}, onConfirm: (date) {
                         setState(() {
+                          timeRemaining = date3.hour.toString() +
+                              ":" +
+                              date3.minute.toString() +
+                              ":" +
+                              date3.second.toString();
                           date3 = date;
                         });
-                        print('confirm $date');
                       }, currentTime: date3, locale: LocaleType.vi);
                     },
                     child: Text(
@@ -468,87 +496,6 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
                       blurRadius: 5.0),
                 ]),
           ),
-
-//          Container(
-//              width: double.infinity,
-//              child: listPlace != null ? new ListView.builder(
-//                  shrinkWrap: true,
-//                  itemCount: listPlace.length,
-//                  scrollDirection: Axis.vertical,
-//                  physics: BouncingScrollPhysics(),
-//                  itemBuilder: (context, position) {
-//                    return RadioListTile(
-//                      groupValue: true,
-//                      value: listPlace[position].placeId.toString() == checkOutInfo.deliveryPlaceId
-//                          ? true
-//                          : false,
-//                      title: Text(listPlace[position].placeName),
-//
-//                      onChanged:
-//                      listPlace[position].placeId == 2 && role == 1
-//                          ? null
-//                          : (val) {
-//                        setState(() {
-//                          checkOutInfo.deliveryPlaceId =
-//                              listPlace[position].placeId.toString();
-//                          checkOutInfo.deliveryValue = "";
-//                        });
-//                      },
-//                    );
-//                  }): new Container()),
-//          checkOutInfo.deliveryPlaceId == "1" ?
-//          Container(
-//              padding: const EdgeInsets.only(top: 10.0, left: 10.0),
-//              child: new Row(
-//                children: <Widget>[
-//                  new Expanded(
-//                    child: new Text(result, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-//                  ),
-//                  new Expanded(
-//                    child: Container(
-//                      alignment: Alignment.centerRight,
-//                      height: 40.0,
-//                      width: 40.0,
-//                      child: FittedBox(
-//                        child: FloatingActionButton.extended(
-//                          backgroundColor: Color.fromRGBO(229, 32, 32, 1.0),
-//                          icon: Icon(Icons.camera_alt),
-//                          label: Text("Quét"),
-//                          onPressed: _scanQR,
-//                        ),
-//                      ),
-//                    ),
-//                  )
-//                ],
-//              )) :
-//          Container(
-//              padding: EdgeInsets.all(8.0),
-//              child: new Row(
-//                children: <Widget>[
-//                  new Expanded(
-//                    flex: 1,
-//                    child: new Text("Nhập nơi giao: ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-//                  ),
-//                  new Expanded(
-//                    flex: 2,
-//                    child: new Container(
-//                      child: new TextField(
-//                          autofocus: false,
-//                          decoration: const InputDecoration(
-//                            hintText: 'Ví dụ: Phòng E.4',
-//                            hintStyle: const TextStyle(color: Colors.grey),
-//                          ),
-//                          style: const TextStyle(
-//                              color: Colors.black, fontSize: 16.0),
-//                          onChanged: (String value) {
-//                            setState(() {
-//                              checkOutInfo.deliveryValue = value;
-//                            });
-//                          }),
-//                    ),
-//                  ),
-//                ],
-//              )),
           new GestureDetector(
             onTap: () {
               setState(() {
@@ -565,10 +512,7 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
                   height: 45.0,
                   alignment: FractionalOffset.center,
                   decoration: new BoxDecoration(
-                      color: checkOutInfo.deliveryValue != null &&
-                              checkOutInfo.deliveryValue != ""
-                          ? Color.fromRGBO(229, 32, 32, 1.0)
-                          : Colors.grey,
+                      color: Color.fromRGBO(229, 32, 32, 1.0),
                       borderRadius:
                           new BorderRadius.all(const Radius.circular(5.0))),
                   child: new Text("Xác nhận",

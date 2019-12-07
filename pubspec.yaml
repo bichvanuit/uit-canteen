@@ -38,6 +38,7 @@ dependencies:
   pin_code_text_field: ^1.4.0
   flutter_datetime_picker: ^1.2.8
   virtual_keyboard: ^0.1.4
+  rich_alert: ^0.1.32
 
 dev_dependencies:
   flutter_test:
