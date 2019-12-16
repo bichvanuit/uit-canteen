@@ -111,17 +111,20 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
         print(bankSelect.bankName +
             " " +
             bankSelect.cardNumber);
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => RechargeSuccessScreen(
-                    amount:
-                      _textFieldController.text,
-                      method:
-                      bankSelect.bankName +
-                          " " +
-                          bankSelect.cardNumber.toString().substring(0, 4))));
-
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (c, a1, a2) => RechargeSuccessScreen(
+                amount:
+                _textFieldController.text,
+                method:
+                bankSelect.bankName +
+                    " " +
+                    bankSelect.cardNumber.toString().substring(0, 4)),
+            transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+            transitionDuration: Duration(milliseconds: 2000),
+          ),
+        );
       } else {
         showDialog(
           context: context,

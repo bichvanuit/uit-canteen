@@ -147,8 +147,14 @@ class _UserState extends State<UserScreen> {
 
     void _payment() {
       setState(() {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => WalletScreen()));
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (c, a1, a2) => new WalletScreen(),
+            transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+            transitionDuration: Duration(milliseconds: 2000),
+          ),
+        );
       });
     }
 
@@ -247,9 +253,13 @@ class _UserState extends State<UserScreen> {
                         onTap: () {
                           setState(() {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => AccountSettingScreen(fullName: userInfo.fullName)));
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (c, a1, a2) => new AccountSettingScreen(fullName: userInfo.fullName),
+                                transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                                transitionDuration: Duration(milliseconds: 2000),
+                              ),
+                            );
                           });
                         },
                       ),

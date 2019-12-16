@@ -184,11 +184,15 @@ class CategoryItemDetail extends StatelessWidget {
                   child: new GestureDetector(
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => new MenuDetailScreen(
-                                  categoryId: foodType.foodCategoryId,
-                                  foodType: foodType.foodTypeId)));
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (c, a1, a2) => new MenuDetailScreen(
+                              categoryId: foodType.foodCategoryId,
+                              foodType: foodType.foodTypeId),
+                          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                          transitionDuration: Duration(milliseconds: 2000),
+                        ),
+                      );
                     },
                     child: SizedBox(
                         width: 145,

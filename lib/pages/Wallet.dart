@@ -40,8 +40,14 @@ class _WalletState extends State<WalletScreen> {
             new GestureDetector(
               onTap: () {
                 setState(() {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => BankScreen()));
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (c, a1, a2) => new BankScreen(),
+                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                      transitionDuration: Duration(milliseconds: 2000),
+                    ),
+                  );
                 });
               },
               child: new Container(

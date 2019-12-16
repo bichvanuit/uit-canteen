@@ -43,9 +43,13 @@ class ActiveWalletState extends State<ActiveWalletScreen> {
       var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => InfoBankScreen()));
+          context,
+          PageRouteBuilder(
+            pageBuilder: (c, a1, a2) => InfoBankScreen(),
+            transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+            transitionDuration: Duration(milliseconds: 2000),
+          ),
+        );
       } else {
 
       }

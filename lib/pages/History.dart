@@ -209,8 +209,14 @@ class _HistoryState extends State<HistoryScreen> {
                                                                   GestureDetector(
                                                                     onTap:
                                                                         () {
-                                                                          Navigator.push(context,
-                                                                              MaterialPageRoute(builder: (context) => ItemDetails(foodId: listHistory[position].foodInfo[position1].foodId,)));
+                                                                          Navigator.push(
+                                                                            context,
+                                                                            PageRouteBuilder(
+                                                                              pageBuilder: (c, a1, a2) => new ItemDetails(foodId: listHistory[position].foodInfo[position1].foodId,),
+                                                                              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                                                                              transitionDuration: Duration(milliseconds: 2000),
+                                                                            ),
+                                                                          );
                                                                         },
                                                                     child: new Container(
                                                                     //    padding: const EdgeInsets.only(right: 5.0),

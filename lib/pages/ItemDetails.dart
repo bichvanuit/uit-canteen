@@ -262,8 +262,14 @@ class _ItemDetails extends State<ItemDetails> {
       new IconButton(
           icon: const Icon(Icons.shopping_basket, color: Colors.white),
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => OrderScreen()));
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (c, a1, a2) => new OrderScreen(),
+                transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                transitionDuration: Duration(milliseconds: 2000),
+              ),
+            );
           }),
     ];
   }
@@ -282,8 +288,14 @@ class _ItemDetails extends State<ItemDetails> {
                 onPressed: () {
                   Navigator.of(context).pop();
                   setState(() {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (c, a1, a2) => new HomeScreen(),
+                        transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                        transitionDuration: Duration(milliseconds: 2000),
+                      ),
+                    );
                   });
                 },
               ),
@@ -292,8 +304,14 @@ class _ItemDetails extends State<ItemDetails> {
                 onPressed: () {
                   Navigator.of(context).pop();
                   setState(() {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => OrderScreen()));
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (c, a1, a2) => OrderScreen(),
+                        transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                        transitionDuration: Duration(milliseconds: 2000),
+                      ),
+                    );
                   });
                 },
               ),

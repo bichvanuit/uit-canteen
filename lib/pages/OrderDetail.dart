@@ -159,9 +159,13 @@ class _OrderDetailState extends State<OrderDetailScreen> {
                       onTap: (){
                         setState(() {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => OrderDetailScreen(food: widget.food)));
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder: (c, a1, a2) => new OrderDetailScreen(food: widget.food),
+                              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                              transitionDuration: Duration(milliseconds: 2000),
+                            ),
+                          );
                         });
                       },
                       child: new Container(

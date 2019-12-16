@@ -70,9 +70,13 @@ class CustomDialog extends StatelessWidget {
               new GestureDetector(
                 onTap: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => RechargeScreen()));
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (c, a1, a2) => new RechargeScreen(),
+                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                      transitionDuration: Duration(milliseconds: 2000),
+                    ),
+                  );
                 },
                 child: new Container(
                   width: MediaQuery.of(context).size.width,

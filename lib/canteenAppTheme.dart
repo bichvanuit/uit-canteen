@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CanteenAppTheme {
   static const Color main = Color.fromRGBO(229, 32, 32, 1.0);
   static const Color myGrey = Color(0xFFE6E6E6);
+  static const Color myGreyTitle = Color(0xFF6E6E6E);
 
   static const Color nearlyWhite = Color(0xFFFAFAFA);
   static const Color white = Color(0xFFFFFFFF);

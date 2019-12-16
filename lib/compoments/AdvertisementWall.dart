@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
+import 'package:uit_cantin/pages/WalletInfo.dart';
 
 Future<WalletInfo> _fetchWallet() async {
   Token token = new Token();
@@ -174,7 +175,16 @@ class _AdvertisementWall extends State<AdvertisementWall> {
 //                    )),
 //              ),
               new GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (c, a1, a2) => new WalletInfoScreen(),
+                        transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                        transitionDuration: Duration(milliseconds: 2000),
+                      ),
+                    );
+                  },
                   child: new Container(
                       height: 70,
                       width: 70,
@@ -228,7 +238,7 @@ class _AdvertisementWall extends State<AdvertisementWall> {
                     offset: Offset(1.1, 1.1),
                     blurRadius: 5.0),
               ]),
-          child: walletInfo.isActive == 0
+          child: walletInfo.isActive == null || walletInfo.isActive == 0
               ? createLayoutNoActice()
               : createLayoutActive(),
         ),

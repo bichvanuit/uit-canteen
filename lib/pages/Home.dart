@@ -13,9 +13,7 @@ import 'package:uit_cantin/compoments/SpecialOffer.dart';
 import 'package:uit_cantin/compoments/TodayOrder.dart';
 import 'package:uit_cantin/compoments/AdvertisementWall.dart';
 import 'package:uit_cantin/services/Token.dart';
-import 'package:rich_alert/rich_alert.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:uit_cantin/pages/DeliveryMethod.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -28,44 +26,6 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   int bottomSelectedIndex = 0;
   AnimationController animationController;
-
-  List<BottomNavigationBarItem> buildBottomNavBarItems() {
-    return [
-      BottomNavigationBarItem(
-          icon: new Icon(Icons.home), title: new Text('Trang chủ')),
-      BottomNavigationBarItem(
-        icon: new Icon(Icons.notifications),
-        title: new Text('Thông báo'),
-      ),
-      BottomNavigationBarItem(
-        icon: new Icon(Icons.payment),
-        title: new Text('Liên kết'),
-      ),
-      BottomNavigationBarItem(
-          icon: Icon(Icons.supervised_user_circle), title: Text('Người dùng'))
-    ];
-  }
-
-  PageController pageController = PageController(
-    initialPage: 0,
-    keepPage: true,
-  );
-
-  Widget buildPageView() {
-    return PageView(
-      controller: pageController,
-      onPageChanged: (index) {
-        pageChanged(index);
-      },
-      children: <Widget>[
-        HomeMainScreen(),
-        NotificationScreen(),
-        OrderScreen(),
-        WalletScreen(),
-        UserScreen(),
-      ],
-    );
-  }
 
   Widget createDialog() {
     return Dialog(
@@ -197,8 +157,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       }
     });
 
-
-
     super.initState();
     tabIconsList.forEach((tab) {
       tab.isSelected = false;
@@ -209,54 +167,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         AnimationController(duration: Duration(milliseconds: 600), vsync: this);
   }
 
-  void pageChanged(int index) {
-    setState(() {
-      bottomSelectedIndex = index;
-    });
-  }
-
-  void bottomTapped(int index) {
-    setState(() {
-      bottomSelectedIndex = index;
-      pageController.animateToPage(index,
-          duration: Duration(milliseconds: 500), curve: Curves.ease);
-    });
-  }
-
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
-
-  Widget bottomBar() {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: SizedBox(),
-        ),
-        BottomBarView(
-          tabIconsList: tabIconsList,
-          addClick: () {},
-          changeIndex: (index) {
-            if (index == 0 || index == 2) {
-              animationController.reverse().then((data) {
-                if (!mounted) return;
-                setState(() {
-                  //  tabBody =
-                  //      MyDiaryScreen(animationController: animationController);
-                });
-              });
-            } else if (index == 1 || index == 3) {
-              animationController.reverse().then((data) {
-                if (!mounted) return;
-                setState(() {
-                  //  tabBody =
-                  //      TrainingScreen(animationController: animationController);
-                });
-              });
-            }
-          },
-        ),
-      ],
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -271,8 +182,14 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         child: GestureDetector(
                           onTap: () {
                             setState(() {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => WalletScreen()));
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (c, a1, a2) => new WalletScreen(),
+                                  transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                                  transitionDuration: Duration(milliseconds: 2000),
+                                ),
+                              );
                             });
                           } ,
                           child:  AdvertisementWall(),
@@ -313,8 +230,14 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               //        labelStyle: TextTheme(fontSize: 18.0),
               onTap: () {
                 setState(() {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()));
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (c, a1, a2) => new HomeScreen(),
+                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                      transitionDuration: Duration(milliseconds: 2000),
+                    ),
+                  );
                 });
               }
           ),
@@ -325,8 +248,15 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               //        labelStyle: TextTheme(fontSize: 18.0),
               onTap: () {
                 setState(() {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => NotificationScreen()));
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (c, a1, a2) => new NotificationScreen(),
+                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                      transitionDuration: Duration(milliseconds: 2000),
+                    ),
+                  );
+
                 });
               }
           ),
@@ -337,8 +267,14 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
        //     labelStyle: TextTheme(fontSize: 18.0),
               onTap: () {
                 setState(() {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => OrderScreen()));
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (c, a1, a2) => new OrderScreen(),
+                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                      transitionDuration: Duration(milliseconds: 2000),
+                    ),
+                  );
                 });
               }
           ),
@@ -349,8 +285,14 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               //     labelStyle: TextTheme(fontSize: 18.0),
               onTap: () {
                 setState(() {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HistoryScreen()));
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (c, a1, a2) => new HistoryScreen(),
+                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                      transitionDuration: Duration(milliseconds: 2000),
+                    ),
+                  );
                 });
               }
           ),
@@ -361,8 +303,14 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             //      labelStyle: TextTheme(fontSize: 18.0),
               onTap: () {
                 setState(() {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => UserScreen()));
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (c, a1, a2) => new UserScreen(),
+                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                      transitionDuration: Duration(milliseconds: 2000),
+                    ),
+                  );
                 });
               }
           ),

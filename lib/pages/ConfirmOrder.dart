@@ -152,14 +152,22 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
                 onTap: () {
                   if (isActived) {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RechargeScreen()));
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (c, a1, a2) => new RechargeScreen(),
+                        transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                        transitionDuration: Duration(milliseconds: 2000),
+                      ),
+                    );
                   } else {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => WalletScreen()));
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (c, a1, a2) => new WalletScreen(),
+                        transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                        transitionDuration: Duration(milliseconds: 2000),
+                      ),
+                    );
                   }
                 },
                 child: new Container(
@@ -294,8 +302,14 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
               });
 
         } else {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => DeliveryMethodScreen()));
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (c, a1, a2) => new DeliveryMethodScreen(),
+              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+              transitionDuration: Duration(milliseconds: 2000),
+            ),
+          );
         }
       } else {
         showDialog(

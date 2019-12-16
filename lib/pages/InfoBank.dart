@@ -100,8 +100,14 @@ class _InfoBankState extends State<InfoBankScreen> {
 
       if (status == STATUS_SUCCESS) {
         setState(() {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => WalletInfoScreen()));
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (c, a1, a2) => new WalletInfoScreen(),
+              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+              transitionDuration: Duration(milliseconds: 2000),
+            ),
+          );
         });
       } else {
         showDialog(

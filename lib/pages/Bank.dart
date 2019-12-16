@@ -54,7 +54,13 @@ class _BankState extends State<BankScreen> {
       if (status == STATUS_SUCCESS) {
         isLoading = false;
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => InfoBankScreen()));
+          context,
+          PageRouteBuilder(
+            pageBuilder: (c, a1, a2) => new InfoBankScreen(),
+            transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+            transitionDuration: Duration(milliseconds: 2000),
+          ),
+        );
       } else {}
     }
   }

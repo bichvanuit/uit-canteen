@@ -736,8 +736,14 @@ class _RechargeState extends State<RechargeScreen> {
           new GestureDetector(
             onTap: () {
               setState(() {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => RechargeInfoScreen()));
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (c, a1, a2) => new RechargeInfoScreen(),
+                    transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                    transitionDuration: Duration(milliseconds: 2000),
+                  ),
+                );
               });
             },
             child: Container(

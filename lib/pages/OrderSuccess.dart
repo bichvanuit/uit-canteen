@@ -79,8 +79,14 @@ class _OrderSuccess extends State<OrderSuccessScreen> {
                   new GestureDetector(
                     onTap: () {
                       setState(() {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => HomeScreen()));
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (c, a1, a2) => new HomeScreen(),
+                            transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                            transitionDuration: Duration(milliseconds: 2000),
+                          ),
+                        );
                       });
                     },
                     child: new Container(

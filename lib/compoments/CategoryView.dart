@@ -23,9 +23,13 @@ class CategoryView extends StatelessWidget {
         child: InkWell(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ItemDetails(foodId: foodInfo.foodId)));
+          context,
+          PageRouteBuilder(
+            pageBuilder: (c, a1, a2) => ItemDetails(foodId: foodInfo.foodId),
+            transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+            transitionDuration: Duration(milliseconds: 2000),
+          ),
+        );
       },
       splashColor: Colors.transparent,
       child: Stack(

@@ -4,13 +4,12 @@ import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:uit_cantin/pages/Recharge.dart';
 import 'package:uit_cantin/pages/Home.dart';
 import 'package:uit_cantin/models/WalletInfo.dart';
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
-import 'package:uit_cantin/pages/test.dart';
+import 'package:uit_cantin/models/Transaction.dart';
+import 'package:uit_cantin/services/FormatPrice.dart';
 
 Future<WalletInfo> _fetchWallet() async {
   Token token = new Token();
@@ -18,10 +17,28 @@ Future<WalletInfo> _fetchWallet() async {
   Map<String, String> requestHeaders = {
     "Authorization": "Bearer " + tokenValue,
   };
-  final response = await http.get('$SERVER_NAME/user-wallet/info',
-      headers: requestHeaders);
+  final response =
+  await http.get('$SERVER_NAME/user-wallet/info', headers: requestHeaders);
   final parsed = json.decode(response.body)["data"];
   return WalletInfo.fromJson(parsed);
+}
+
+List<Transaction> _parseCategory(String responseBody) {
+  final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
+  return parsed.map<Transaction>((json) => Transaction.fromJson(json)).toList();
+}
+
+Future<List<Transaction>> _fetchTransactionList() async {
+  Token token = new Token();
+  final tokenValue = await token.getMobileToken();
+  Map<String, String> requestHeaders = {
+    "Authorization": "Bearer " + tokenValue,
+  };
+  final response =
+  await http.get('$SERVER_BANK/transaction/list', headers: requestHeaders);
+  List<Transaction> listCategory = _parseCategory(response.body);
+
+  return listCategory;
 }
 
 class WalletInfoScreen extends StatefulWidget {
@@ -30,15 +47,23 @@ class WalletInfoScreen extends StatefulWidget {
 }
 
 class _WalletInfoState extends State<WalletInfoScreen> {
-
   String balance = "0";
+  List<Transaction> listTracsaction = [];
+
   @override
   void initState() {
-    _fetchWallet().then((data) => setState(() {
+    _fetchWallet().then((data) =>
+        setState(() {
+          setState(() {
+            balance = data.balance;
+          });
+        }));
+
+    _fetchTransactionList().then((data) {
       setState(() {
-        balance = data.balance;
+        listTracsaction = data;
       });
-    }));
+    });
     super.initState();
   }
 
@@ -58,7 +83,10 @@ class _WalletInfoState extends State<WalletInfoScreen> {
             new Stack(
               children: <Widget>[
                 new Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
                   height: 200.0,
                   decoration: BoxDecoration(color: CanteenAppTheme.main),
                 ),
@@ -106,13 +134,15 @@ class _WalletInfoState extends State<WalletInfoScreen> {
                 new GestureDetector(
                   onTap: () {
                     setState(() {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => RechargeScreen()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RechargeScreen()));
                     });
                   },
                   child: new Container(
-                      margin:
-                      const EdgeInsets.only(top: 150.0, left: 20, right: 20),
+                      margin: const EdgeInsets.only(
+                          top: 150.0, left: 20, right: 20),
                       padding: const EdgeInsets.all(10.0),
                       alignment: Alignment.center,
                       height: 150.0,
@@ -148,9 +178,14 @@ class _WalletInfoState extends State<WalletInfoScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 10.0,),
+                          SizedBox(
+                            height: 10.0,
+                          ),
                           new Container(
-                            width: MediaQuery.of(context).size.width,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width,
                             padding: const EdgeInsets.only(top: 7.0),
                             decoration: BoxDecoration(
                                 border: Border(
@@ -166,11 +201,77 @@ class _WalletInfoState extends State<WalletInfoScreen> {
                                   color: CanteenAppTheme.main),
                             ),
                           ),
-
                         ],
                       )),
                 )
               ],
+            ),
+            SizedBox(height: 10),
+            new Container(
+              height: 200,
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Container(
+                    margin: const EdgeInsets.only(left: 16) ,
+                    child: new Text(
+                      "Hoạt động gần đây",
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: CanteenAppTheme.myGreyTitle,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  new Container(
+                    margin: const EdgeInsets.all(10.0),
+                    decoration: new BoxDecoration(
+                        color: CanteenAppTheme.white,
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                              color: CanteenAppTheme.grey.withOpacity(0.2),
+                              offset: Offset(1.1, 1.1),
+                              blurRadius: 5.0),
+                        ]),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      padding: EdgeInsets.all(16.0),
+                      itemCount: listTracsaction.length,
+                      scrollDirection: Axis.vertical,
+                      itemBuilder: (BuildContext context, int position) {
+                        return new Container(
+                          child: new Row(
+                            children: <Widget>[
+                              new Expanded(
+                                  child: new Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      new Text(listTracsaction[position]
+                                          .transactionTypeName, style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18),),
+                                      SizedBox(height: 10),
+                                      new Text(listTracsaction[position].bankName,
+                                        style: TextStyle(
+                                            color: CanteenAppTheme.grey,
+                                            fontSize: 16),),
+                                    ],
+                                  )
+                              ),
+                              new Expanded(
+                                  child:
+                                  new Text(FormatPrice.getFormatPrice(listTracsaction[position].amount),
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),))
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
             ),
             Expanded(
               child: Align(
@@ -180,17 +281,25 @@ class _WalletInfoState extends State<WalletInfoScreen> {
                     child: new GestureDetector(
                       onTap: () {
                         setState(() {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => HomeScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen()));
                         });
                       },
                       child: new Container(
                         margin: const EdgeInsets.only(
                             top: 20.0, left: 10.0, right: 10.0),
-                        width: MediaQuery.of(context).size.width,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
                         decoration: BoxDecoration(color: Colors.white),
                         child: new Container(
-                            width: MediaQuery.of(context).size.width * 0.8,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width * 0.8,
                             height: 45.0,
                             alignment: FractionalOffset.center,
                             decoration: new BoxDecoration(
@@ -207,7 +316,7 @@ class _WalletInfoState extends State<WalletInfoScreen> {
                       ),
                     ),
                   )),
-            )
+            ),
           ],
         ),
       ),
