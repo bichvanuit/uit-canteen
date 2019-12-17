@@ -29,12 +29,22 @@ class _BankState extends State<BankScreen> {
     _scaffoldKey.currentState
         .showBottomSheet((context) {
       return new Container(
+          decoration: new BoxDecoration(
+              color: CanteenAppTheme.white,
+              borderRadius:
+              BorderRadius.all(Radius.circular(16.0)),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: CanteenAppTheme.grey.withOpacity(0.2),
+                    offset: Offset(1.1, 1.1),
+                    blurRadius: 5.0),
+              ]),
           height: MediaQuery.of(context).size.height - 200,
           child: new Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               new Container(
-                height: 50,
+                height: 40,
                 decoration: BoxDecoration(color: Colors.white),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: new Row(
@@ -45,7 +55,7 @@ class _BankState extends State<BankScreen> {
                           style: TextStyle(
                               color: CanteenAppTheme.main,
                               fontWeight: FontWeight.bold,
-                              fontSize: 20),
+                              fontSize: 25),
                         )),
                     new Expanded(
                         child: new GestureDetector(
@@ -412,7 +422,8 @@ class _BankState extends State<BankScreen> {
               ),
               new GestureDetector(
                 onTap: () {
-                  _showPersBottomSheetCallBack();
+                  Navigator.of(context).pop();
+                  _activeWallet();
                 },
                 child: new Container(
                   margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
@@ -460,7 +471,7 @@ class _BankState extends State<BankScreen> {
     super.dispose();
   }
 
-  _activeWallet(String pin) async {
+  _activeWallet() async {
     setState(() {
       isLoading = true;
     });
@@ -472,16 +483,18 @@ class _BankState extends State<BankScreen> {
     };
 
     var requestBody = new Map<String, dynamic>();
-    requestBody["password"] = pin;
+    requestBody["password"] = textController.text;
 
     var response =
     await http.post(url, body: requestBody, headers: requestHeaders);
     var statusCode = response.statusCode;
+    setState(() {
+      isLoading = false;
+    });
     if (statusCode == STATUS_CODE_SUCCESS) {
       var responseBody = json.decode(response.body);
       var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
-        isLoading = false;
         Navigator.push(
           context,
           PageRouteBuilder(
@@ -504,81 +517,84 @@ class _BankState extends State<BankScreen> {
   }
 
   Widget _createBody() {
-    return SingleChildScrollView(
-      child: new Container(
-        margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
-        child: new Column(
-          children: <Widget>[
-            new Text(
-              "Kích hoạt thành công bạn có thể",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10.0),
-            new Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: new Row(
-                children: <Widget>[
-                  Expanded(
-                    child: new Row(
-                      children: <Widget>[
-                        Image.network(
-                          "https://cdn5.vectorstock.com/i/1000x1000/33/44/money-transaction-icon-vector-21023344.jpg",
-                          width: 30,
-                          height: 30,
-                        ),
-                        Text(
-                          "Sử dụng số dư",
-                          style: TextStyle(fontSize: 17),
-                        )
-                      ],
-                    ),
+    return new Container(
+      margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
+      child: new Column(
+        children: <Widget>[
+          new Text(
+            "Kích hoạt thành công bạn có thể",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10.0),
+          new Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: new Row(
+              children: <Widget>[
+                Expanded(
+                  child: new Row(
+                    children: <Widget>[
+                      Image.network(
+                        "https://cdn5.vectorstock.com/i/1000x1000/33/44/money-transaction-icon-vector-21023344.jpg",
+                        width: 30,
+                        height: 30,
+                      ),
+                      Text(
+                        "Sử dụng số dư",
+                        style: TextStyle(fontSize: 17),
+                      )
+                    ],
                   ),
-                  Expanded(
-                    child: new Row(
-                      children: <Widget>[
-                        Image.network(
-                          "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSMoS4gf_odiCXmG9iWyysSrorFtKhX4r1sdUsAjugz3u6geAwo",
-                          width: 30,
-                          height: 30,
-                        ),
-                        Text("Giao dịch an toàn",
-                            style: TextStyle(fontSize: 17))
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                ),
+                Expanded(
+                  child: new Row(
+                    children: <Widget>[
+                      Image.network(
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSMoS4gf_odiCXmG9iWyysSrorFtKhX4r1sdUsAjugz3u6geAwo",
+                        width: 30,
+                        height: 30,
+                      ),
+                      Text("Giao dịch an toàn",
+                          style: TextStyle(fontSize: 17))
+                    ],
+                  ),
+                )
+              ],
             ),
-            SizedBox(
-              height: 30,
-            ),
-            new GestureDetector(
-              onTap: () {
-                _showPersBottomSheetCallBack();
-              },
-              child: new Container(
-                margin: const EdgeInsets.only(top: 20.0),
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(color: Colors.white),
-                child: new Container(
-                    height: 45.0,
-                    alignment: FractionalOffset.center,
-                    decoration: new BoxDecoration(
-                        color: const Color.fromRGBO(229, 32, 32, 1.0),
-                        borderRadius:
-                        new BorderRadius.all(const Radius.circular(5.0))),
-                    child: new Text("Tiếp tục",
-                        style: new TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.3,
-                        ))),
-              ),
-            )
-          ],
-        ),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          Expanded(
+              child: Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: new GestureDetector(
+                  onTap: () {
+                    _showPersBottomSheetCallBack();
+                  },
+                  child: new Container(
+                    margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(color: Colors.white),
+                    child: new Container(
+                        height: 45.0,
+                        alignment: FractionalOffset.center,
+                        decoration: new BoxDecoration(
+                            color: const Color.fromRGBO(229, 32, 32, 1.0),
+                            borderRadius:
+                            new BorderRadius.all(const Radius.circular(5.0))),
+                        child: new Text("Tiếp tục",
+                            style: new TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.3,
+                            ))),
+                  ),
+                ),
+              )
+          )
+        ],
       ),
     );
   }
@@ -589,9 +605,7 @@ class _BankState extends State<BankScreen> {
         key: _scaffoldKey,
         appBar: new AppBar(
           backgroundColor: Color.fromRGBO(229, 32, 32, 1.0),
-          //  title: appBarTitle,
           iconTheme: new IconThemeData(color: Colors.white),
-          //  leading: _isSearching ? const BackButton() : null,
           title: Text("Liên kết"),
         ),
         body: isLoading == true ? _createProgress() : _createBody());

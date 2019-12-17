@@ -24,7 +24,6 @@ Future<List<BankInfo>> _fetchBank() async {
   };
   final response = await http.get('$SERVER_BANK/bank/get-bank-list',
       headers: requestHeaders);
-  print(response.body);
   return _parseBank(response.body);
 }
 
@@ -41,7 +40,8 @@ class _InfoBankState extends State<InfoBankScreen> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
 
   final TextEditingController _controllerCardName = new TextEditingController();
-  final TextEditingController _controllerCardNumber = new TextEditingController();
+  final TextEditingController _controllerCardNumber =
+      new TextEditingController();
   final TextEditingController _controllerCardDate = new TextEditingController();
 
   @override
@@ -88,8 +88,8 @@ class _InfoBankState extends State<InfoBankScreen> {
     Map<String, String> requestHeaders = {
       "Authorization": "Bearer " + tokenValue,
     };
-    print(info.toMap());
-    var response = await http.post(url, body: info.toMap(), headers: requestHeaders);
+    var response =
+        await http.post(url, body: info.toMap(), headers: requestHeaders);
     var statusCode = response.statusCode;
     if (statusCode == STATUS_CODE_SUCCESS) {
       var responseBody = json.decode(response.body);
@@ -104,7 +104,8 @@ class _InfoBankState extends State<InfoBankScreen> {
             context,
             PageRouteBuilder(
               pageBuilder: (c, a1, a2) => new WalletInfoScreen(),
-              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+              transitionsBuilder: (c, anim, a2, child) =>
+                  FadeTransition(opacity: anim, child: child),
               transitionDuration: Duration(milliseconds: 2000),
             ),
           );
@@ -112,7 +113,8 @@ class _InfoBankState extends State<InfoBankScreen> {
       } else {
         showDialog(
           context: context,
-          builder: (BuildContext context) => createDialog(responseBody["message"]),
+          builder: (BuildContext context) =>
+              createDialog(responseBody["message"]),
         );
       }
     }
@@ -180,8 +182,8 @@ class _InfoBankState extends State<InfoBankScreen> {
                       alignment: FractionalOffset.center,
                       decoration: new BoxDecoration(
                           color: const Color.fromRGBO(229, 32, 32, 1.0),
-                          borderRadius: new BorderRadius.all(
-                              const Radius.circular(5.0))),
+                          borderRadius:
+                              new BorderRadius.all(const Radius.circular(5.0))),
                       child: new Text("Thử lại",
                           style: new TextStyle(
                             color: Colors.white,
@@ -198,7 +200,6 @@ class _InfoBankState extends State<InfoBankScreen> {
     );
   }
 
-
   @override
   void dispose() {
     super.dispose();
@@ -207,166 +208,163 @@ class _InfoBankState extends State<InfoBankScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: new AppBar(
-          backgroundColor: Color.fromRGBO(229, 32, 32, 1.0),
-          //  title: appBarTitle,
-          iconTheme: new IconThemeData(color: Colors.white),
-          //  leading: _isSearching ? const BackButton() : null,
-          title: Text("Liên kết"),
-        ),
+      appBar: new AppBar(
+        backgroundColor: Color.fromRGBO(229, 32, 32, 1.0),
+        //  title: appBarTitle,
+        iconTheme: new IconThemeData(color: Colors.white),
+        //  leading: _isSearching ? const BackButton() : null,
+        title: Text("Liên kết"),
+      ),
       body: isLoading == true ? _createProgress() : _createBody(),
     );
   }
 
   Widget _createBody() {
-    return SingleChildScrollView(
-      child: new Container(
-        margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-//                new Container(
-//////                  child: Image.asset('assets/atm.png'),
-//////                ),
-            new Text(
-              "1. Chọn ngân hàng",
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            listBank != null
-                ? new Container(
-              child: GridView.count(
-                crossAxisCount: 3,
-                controller:
-                new ScrollController(keepScrollOffset: false),
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                padding: const EdgeInsets.all(4.0),
-                children: listBank.map((bank) {
-                  return new GestureDetector(
-                    onTap: () {
-                      _onChangeBank(bank);
-                    },
-                    child: new Container(
-                      height: 60,
-                      width: 90,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: listColor[listBank.indexOf(bank)],
-                              width: 2.0)),
-                      margin: const EdgeInsets.all(5.0),
-                      child: new Image.network(
-                        bank.logo,
-                        width: 90,
-                        height: 60,
+    return new Container(
+      margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
+      child: new Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          new Text(
+            "1. Chọn ngân hàng",
+            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+          ),
+          listBank != null
+              ? new Container(
+                  height: 100.0,
+                  margin: const EdgeInsets.only(bottom: 10.0),
+                  child: new ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: listBank.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, position) {
+                        return GestureDetector(
+                          onTap: () {
+                            _onChangeBank(listBank[position]);
+                          },
+                          child: new Container(
+                            height: 60,
+                            width: 90,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: listColor[position], width: 2.0)),
+                            margin: const EdgeInsets.all(5.0),
+                            child: new Image.network(
+                              listBank[position].logo,
+                              width: 90,
+                              height: 60,
+                            ),
+                          ),
+                        );
+                      }),
+                )
+              : new Container(),
+          SizedBox(
+            height: 10,
+          ),
+          new Text(
+            "2. Nhập thông tin",
+            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+          ),
+          new Form(
+            key: _formKey,
+            child: new Column(
+              children: <Widget>[
+                new Container(
+                  margin: const EdgeInsets.only(left: 5.0, right: 5.0),
+                  child: new TextFormField(
+                      style: TextStyle(color: Colors.black),
+                      controller: _controllerCardName,
+                      decoration: InputDecoration(
+                        labelText: "Nhập tên chủ thẻ",
+                        labelStyle: TextStyle(color: Colors.grey),
+                        enabledBorder: const UnderlineInputBorder(
+                          borderSide:
+                              const BorderSide(color: Colors.grey, width: 0.0),
+                        ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            )
-                : new Container(),
-
-            SizedBox(
-              height: 10,
-            ),
-            new Text(
-              "2. Nhập thông tin",
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            new Form(
-              key: _formKey,
-              child: new Column(
-                children: <Widget>[
-                  new Container(
-                    margin: const EdgeInsets.only(left: 5.0, right: 5.0),
-                    child: new TextFormField(
-                        style: TextStyle(color: Colors.black),
-                        controller: _controllerCardName,
-                        decoration: InputDecoration(
-                          labelText: "Nhập tên chủ thẻ",
-                          labelStyle: TextStyle(color: Colors.grey),
-                          enabledBorder: const UnderlineInputBorder(
-                            borderSide:
-                            const BorderSide(color: Colors.grey, width: 0.0),
-                          ),
+                      validator: (String value) {
+                        if (value.isEmpty) return "Bạn chưa nhập tên chủ thẻ";
+                        return null;
+                      }),
+                ),
+                new Container(
+                  margin: const EdgeInsets.only(left: 5.0, right: 5.0),
+                  child: new TextFormField(
+                      keyboardType: TextInputType.number,
+                      style: TextStyle(color: Colors.black),
+                      controller: _controllerCardNumber,
+                      decoration: InputDecoration(
+                        labelText: "Nhập số thẻ",
+                        labelStyle: TextStyle(color: Colors.grey),
+                        enabledBorder: const UnderlineInputBorder(
+                          borderSide:
+                              const BorderSide(color: Colors.grey, width: 0.0),
                         ),
-                        validator: (String value) {
-                          if (value.isEmpty) return "Bạn chưa nhập tên chủ thẻ";
-                          return null;
-                        }),
-                  ),
-                  new Container(
-                    margin: const EdgeInsets.only(left: 5.0, right: 5.0),
-                    child: new TextFormField(
-                        keyboardType: TextInputType.number,
-                        style: TextStyle(color: Colors.black),
-                        controller: _controllerCardNumber,
-                        decoration: InputDecoration(
-                          labelText: "Nhập số thẻ",
-                          labelStyle: TextStyle(color: Colors.grey),
-                          enabledBorder: const UnderlineInputBorder(
-                            borderSide:
-                            const BorderSide(color: Colors.grey, width: 0.0),
-                          ),
+                      ),
+                      validator: (String value) {
+                        if (value.isEmpty) return "Bạn chưa nhập số thẻ";
+                        return null;
+                      }),
+                ),
+                new Container(
+                  margin: const EdgeInsets.only(left: 5.0, right: 5.0),
+                  child: new TextFormField(
+                      style: TextStyle(color: Colors.black),
+                      controller: _controllerCardDate,
+                      decoration: InputDecoration(
+                        labelText: "Nhập ngày mở thẻ",
+                        labelStyle: TextStyle(color: Colors.grey),
+                        enabledBorder: const UnderlineInputBorder(
+                          borderSide:
+                              const BorderSide(color: Colors.grey, width: 0.0),
                         ),
-                        validator: (String value) {
-                          if (value.isEmpty) return "Bạn chưa nhập số thẻ";
-                          return null;
-                        }),
-                  ),
-                  new Container(
-                    margin: const EdgeInsets.only(left: 5.0, right: 5.0),
-                    child: new TextFormField(
-                        style: TextStyle(color: Colors.black),
-                        controller: _controllerCardDate,
-                        decoration: InputDecoration(
-                          labelText: "Nhập ngày hết hạn",
-                          labelStyle: TextStyle(color: Colors.grey),
-                          enabledBorder: const UnderlineInputBorder(
-                            borderSide:
-                            const BorderSide(color: Colors.grey, width: 0.0),
-                          ),
-                        ),
-                        validator: (String value) {
-                          if (value.isEmpty) return "Bạn chưa nhập ngày hết hạn";
-                          return null;
-                        }),
-                  ),
-                ],
-              ),
+                      ),
+                      validator: (String value) {
+                        if (value.isEmpty) return "Bạn chưa nhập ngày mở thẻ";
+                        return null;
+                      }),
+                ),
+              ],
             ),
-            new GestureDetector(
-              onTap: () {
-                if (_formKey.currentState.validate()) {
-                  setState(() {
-                    isLoading = true;
-                    _linkBank();
-                  });
-                }
-              },
-              child: new Container(
-                margin: const EdgeInsets.only(top: 20.0),
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(color: Colors.white),
-                child: new Container(
-                    height: 45.0,
-                    alignment: FractionalOffset.center,
-                    decoration: new BoxDecoration(
-                        color: const Color.fromRGBO(229, 32, 32, 1.0),
-                        borderRadius: new BorderRadius.all(
-                            const Radius.circular(5.0))),
-                    child: new Text("Tiếp tục",
-                        style: new TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.3,
-                        ))),
-              ),
-            )
-          ],
-        ),
+          ),
+          new Expanded(
+              child: Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: new GestureDetector(
+                  onTap: () {
+                    if (_formKey.currentState.validate()) {
+                      setState(() {
+                        isLoading = true;
+                        _linkBank();
+                      });
+                    }
+                  },
+                  child: new Container(
+                    margin: const EdgeInsets.only(top: 20.0, bottom: 10.0),
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(color: Colors.white),
+                    child: new Container(
+                        height: 45.0,
+                        alignment: FractionalOffset.center,
+                        decoration: new BoxDecoration(
+                            color: const Color.fromRGBO(229, 32, 32, 1.0),
+                            borderRadius:
+                            new BorderRadius.all(const Radius.circular(5.0))),
+                        child: new Text("Tiếp tục",
+                            style: new TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.3,
+                            ))),
+                  ),
+                ),
+              )
+          )
+        ],
       ),
     );
   }

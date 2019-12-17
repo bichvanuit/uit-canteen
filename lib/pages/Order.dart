@@ -311,7 +311,6 @@ class _OrderState extends State<OrderScreen> {
       var responseBody = json.decode(response.body);
       //  isLoading = false;
       var status = responseBody["status"];
-      print(status);
       if (status == STATUS_SUCCESS) {
         setState(() {
           isLoading = false;
@@ -346,7 +345,6 @@ class _OrderState extends State<OrderScreen> {
     if (statusCode == STATUS_CODE_SUCCESS) {
       var responseBody = json.decode(response.body);
       var status = responseBody["status"];
-      print(status);
       if (status == STATUS_SUCCESS) {
         Navigator.push(
             context,

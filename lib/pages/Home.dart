@@ -147,7 +147,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     Token token = new Token();
 
     token.getMobileWaiting().then((value) {
-      print(value);
       if (value != '') {
         showDialog(
           context: context,
@@ -242,27 +241,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               }
           ),
           SpeedDialChild(
-              child: Icon(Icons.notifications),
-              backgroundColor: Colors.amber,
-              label: 'Thông báo',
-              //        labelStyle: TextTheme(fontSize: 18.0),
-              onTap: () {
-                setState(() {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (c, a1, a2) => new NotificationScreen(),
-                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                      transitionDuration: Duration(milliseconds: 2000),
-                    ),
-                  );
-
-                });
-              }
-          ),
-          SpeedDialChild(
             child: Icon(Icons.add_shopping_cart),
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.amber,
             label: 'Đơn hàng',
        //     labelStyle: TextTheme(fontSize: 18.0),
               onTap: () {

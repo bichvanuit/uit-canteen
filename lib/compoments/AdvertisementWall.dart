@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
-import 'package:uit_cantin/services/FormatPrice.dart';
+import 'package:uit_cantin/services/FormatVND.dart';
 import 'package:uit_cantin/models/WalletInfo.dart';
 import 'package:uit_cantin/pages/Recharge.dart';
 
@@ -105,7 +105,7 @@ class _AdvertisementWall extends State<AdvertisementWall> {
             ),
             new Expanded(
               child: new Text(
-                FormatPrice.getFormatPrice(
+                FormatVND.getFormatPrice(
                     walletInfo.balance == null ? "0" : walletInfo.balance),
                 style: TextStyle(
                     fontSize: 22.0,
@@ -130,13 +130,10 @@ class _AdvertisementWall extends State<AdvertisementWall> {
                   });
                 },
                 child: new Container(
-                    height: 70,
                     width: 70,
                     padding: const EdgeInsets.only(top: 10),
                     //   padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: CanteenAppTheme.myGrey, width: 2)),
+
                     child: new Column(
                       children: <Widget>[
                         Icon(
@@ -148,32 +145,6 @@ class _AdvertisementWall extends State<AdvertisementWall> {
                       ],
                     )),
               ),
-//              new GestureDetector(
-//                onTap: () {
-//                  setState(() {
-//                    Navigator.push(context,
-//                        MaterialPageRoute(builder: (context) => RechargeScreen()));
-//                  });
-//                },
-//                child: new Container(
-//                    height: 70,
-//                    width: 70,
-//                    padding: const EdgeInsets.only(top: 10),
-//                    //   padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-//                    decoration: BoxDecoration(
-//                        border: Border.all(
-//                            color: CanteenAppTheme.myGrey, width: 2)),
-//                    child: new Column(
-//                      children: <Widget>[
-//                        Icon(
-//                          Icons.money_off,
-//                          color: CanteenAppTheme.main,
-//                          size: 30.0,
-//                        ),
-//                        new Text("Rút tiền")
-//                      ],
-//                    )),
-//              ),
               new GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -186,12 +157,8 @@ class _AdvertisementWall extends State<AdvertisementWall> {
                     );
                   },
                   child: new Container(
-                      height: 70,
                       width: 70,
                       padding: const EdgeInsets.only(top: 10),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: CanteenAppTheme.myGrey, width: 2)),
                       child: new Column(
                         children: <Widget>[
                           Icon(
@@ -201,7 +168,56 @@ class _AdvertisementWall extends State<AdvertisementWall> {
                           ),
                           Text("Lịch sử")
                         ],
-                      )))
+                      ))),
+              new GestureDetector(
+                onTap: () {
+                  setState(() {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => RechargeScreen()));
+                  });
+                },
+                child: new Container(
+                    width: 70,
+                    padding: const EdgeInsets.only(top: 10),
+                    //   padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                    child: new Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.money_off,
+                          color: CanteenAppTheme.main,
+                          size: 30.0,
+                        ),
+                        new Center(
+                          child: new Text("Thêm"),
+                        )
+                      ],
+                    )),
+              ),
+              new GestureDetector(
+                onTap: () {
+                  setState(() {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => RechargeScreen()));
+                  });
+                },
+                child: new Container(
+
+                    width: 70,
+                    padding: const EdgeInsets.only(top: 10),
+                    //   padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                    child: new Column(
+                      children: <Widget>[
+                        Icon(
+                          Icons.money_off,
+                          color: CanteenAppTheme.main,
+                          size: 30.0,
+                        ),
+                        new Text("Hủy liên kết")
+                      ],
+                    )),
+              ),
             ],
           ),
         )

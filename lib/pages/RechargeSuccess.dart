@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:uit_cantin/pages/Home.dart';
+import 'package:uit_cantin/services/FormatVND.dart';
 
 class RechargeSuccessScreen extends StatefulWidget {
-
-
   final String amount;
   final String method;
   RechargeSuccessScreen({Key key, this.amount, this.method}) : super(key: key);
@@ -72,7 +71,7 @@ class _RechargeSuccessState extends State<RechargeSuccessScreen> {
                     ),
                     Expanded(
                       child: new Text(
-                        widget.amount + " VNĐ",
+                        FormatVND.getFormatPrice(widget.amount),
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.grey,

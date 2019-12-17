@@ -514,106 +514,6 @@ class _RechargeState extends State<RechargeScreen> {
                 )));
       },
     );
-//    showModalBottomSheet(
-//        isScrollControlled: true,
-//        context: context,
-//        builder: (BuildContext bc) {
-//          return Container(
-//            height: 210.0,
-//            padding: EdgeInsets.all(10.0),
-//            width: MediaQuery.of(context).size.width,
-//            child: new Column(
-//                mainAxisSize: MainAxisSize.min,
-//              children: <Widget>[
-//                new Container(
-//                  child: new Container(
-//                    decoration: BoxDecoration(
-//                        border: Border(
-//                            bottom: BorderSide(
-//                                color: CanteenAppTheme.myGrey, width: 0.5))),
-//                    child: new Row(
-//                      children: <Widget>[
-//                        listBank != null ? new Image.network(
-//                          listBank.logo != null ? listBank.logo : "",
-//                          width: 50,
-//                          height: 40,
-//                        ) : new Container(),
-//                        SizedBox(width: 20),
-//                        new Text(listBank.cardNumber != null ?listBank.cardNumber.substring(0, 4) + " ****" : ""),
-//                        new Expanded(
-//                            child: new GestureDetector(
-//                              onTap: () {
-//                                Navigator.of(context).pop();
-//                              },
-//                              child: new Text(
-//                                "Bỏ qua",
-//                                textAlign: TextAlign.right,
-//                                style: TextStyle(
-//                                    color: CanteenAppTheme.main,
-//                                    fontWeight: FontWeight.bold),
-//                              ),
-//                            )),
-//                      ],
-//                    ),
-//                  ),
-//                ),
-//                SizedBox(height: 10.0),
-//                new Container(
-//                    padding: const EdgeInsets.only(
-//                        left: 20, right: 20, bottom: 15),
-//                    decoration: BoxDecoration(color: Colors.white),
-//                    child: new Padding(
-//                      padding: MediaQuery.of(context).viewInsets,
-//                      child: new TextField(
-//                        controller: _textFieldController,
-//                        autofocus: false,
-//                        decoration: const InputDecoration(
-//                          hintText: '0',
-//                          hintStyle:
-//                          const TextStyle(color: Colors.grey),
-//                        ),
-//                        style: const TextStyle(
-//                            color: Colors.black, fontSize: 16.0),),
-//                    )),
-//                new GestureDetector(
-//                  onTap: () {
-////                    Navigator.of(context).pop();
-////                    showDialog(
-////                      context: context,
-////                      builder: (BuildContext context) => createDialogPassword(),
-////                    );
-//                  },
-//                  child: new Container(
-//                    margin: const EdgeInsets.only(
-//                        top: 20.0, left: 10.0, right: 10.0),
-//                    width: MediaQuery.of(context).size.width,
-//                    decoration: BoxDecoration(color: Colors.white),
-//                    child: new Container(
-//                        width: MediaQuery.of(context).size.width * 0.8,
-//                        height: 45.0,
-//                        alignment: FractionalOffset.center,
-//                        decoration: new BoxDecoration(
-//                            color:
-//                            _textFieldController.text == "0" || _textFieldController.text == ""
-//                                ? Colors.grey
-//                                : const Color.fromRGBO(229, 32, 32, 1.0),
-//                            borderRadius: new BorderRadius.all(
-//                                const Radius.circular(5.0))),
-//                        child: new Text("XÁC NHẬN",
-//                            style: new TextStyle(
-//                              color: Colors.white,
-//                              fontSize: 18.0,
-//                              fontWeight: FontWeight.bold,
-//                              letterSpacing: 0.3,
-//                            ))),
-//                  ),
-//                ),
-//                SizedBox(height: 10),
-//
-//              ],
-//            ),
-//          );
-//        });
   }
 
   @override
@@ -706,24 +606,6 @@ class _RechargeState extends State<RechargeScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-//            Container(
-//              height: 150,
-//              width: MediaQuery.of(context).size.width,
-//              decoration: BoxDecoration(color: CanteenAppTheme.main),
-//              child: new Column(
-//                children: <Widget>[
-//                  SizedBox(height: 35),
-//                  new Text("Số dư hiện có (VNĐ)",
-//                      style: TextStyle(color: Colors.white, fontSize: 20.0)),
-//                  SizedBox(height: 15),
-//                  new Text(FormatPrice.getFormatPrice(balance),
-//                      style: TextStyle(
-//                          color: Colors.white,
-//                          fontSize: 30.0,
-//                          fontWeight: FontWeight.bold))
-//                ],
-//              ),
-//            ),
           Container(
               width: MediaQuery.of(context).size.width,
               color: Colors.white,

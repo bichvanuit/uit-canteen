@@ -35,6 +35,10 @@ class RechargeInfoScreen extends StatefulWidget {
 }
 
 class _RechargeInfoState extends State<RechargeInfoScreen> {
+  final _scaffoldKey = new GlobalKey<ScaffoldState>();
+  VoidCallback _showPersBottomSheetCallBack;
+  TextEditingController textController = TextEditingController();
+
   List<BankLinked> listBank = [];
   BankLinked bankSelect = new BankLinked();
   bool isLoading = false;
@@ -49,6 +53,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
           });
         }));
     super.initState();
+    _showPersBottomSheetCallBack = _showBottomSheet;
   }
 
   @override
@@ -59,6 +64,447 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
 
   TextEditingController _textFieldController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+
+  void _showBottomSheet() {
+    setState(() {
+      _showPersBottomSheetCallBack = null;
+    });
+
+    _scaffoldKey.currentState
+        .showBottomSheet((context) {
+      return new Container(
+          decoration: new BoxDecoration(
+              color: CanteenAppTheme.white,
+              borderRadius:
+              BorderRadius.all(Radius.circular(16.0)),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: CanteenAppTheme.grey.withOpacity(0.2),
+                    offset: Offset(1.1, 1.1),
+                    blurRadius: 5.0),
+              ]),
+          height: MediaQuery.of(context).size.height - 200,
+          child: new Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              new Container(
+                height: 40,
+                decoration: BoxDecoration(color: Colors.white),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: new Row(
+                  children: <Widget>[
+                    new Expanded(
+                        child: new Text(
+                          "MW",
+                          style: TextStyle(
+                              color: CanteenAppTheme.main,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25),
+                        )),
+                    new Expanded(
+                        child: new GestureDetector(
+                            onTap: () {
+                              textController.text = "";
+                              Navigator.of(context).pop();
+                            },
+                            child: new Text(
+                              "Hủy",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                            )))
+                  ],
+                ),
+              ),
+              new Container(
+                  padding: const EdgeInsets.only(
+                      left: 20, right: 20, bottom: 15),
+                  decoration: BoxDecoration(color: Colors.white),
+                  child: new TextField(
+                      textAlign: TextAlign.center,
+                      enabled: false,
+                      controller: textController,
+                      obscureText: true,
+                      autofocus: false,
+                      decoration: const InputDecoration(
+                        hintStyle: const TextStyle(color: Colors.grey),
+                      ),
+                      style: const TextStyle(
+                          color: Colors.black, fontSize: 30.0),
+                      onChanged: (String value) {
+                        // note = value;
+                      })),
+              new Container(
+                margin: const EdgeInsets.symmetric(horizontal: 60),
+                child: new Column(
+                  children: <Widget>[
+                    new Row(
+                      children: <Widget>[
+                        new Expanded(
+                            child: new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  textController.text = textController.text + "1";
+                                });
+                              },
+                              child: new Container(
+                                height: 60,
+                                margin:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: CanteenAppTheme.myGrey,
+                                            width: 1.0))),
+                                child: new Center(
+                                  child: new Text(
+                                    "1",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ),
+                              ),
+                            )),
+                        new Expanded(
+                            child: new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  textController.text = textController.text + "2";
+                                });
+                              },
+                              child: new Container(
+                                height: 60,
+                                margin:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: CanteenAppTheme.myGrey,
+                                            width: 1.0))),
+                                child: new Center(
+                                  child: new Text(
+                                    "2",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ),
+                              ),
+                            )),
+                        new Expanded(
+                            child: new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  textController.text = textController.text + "3";
+                                });
+                              },
+                              child: new Container(
+                                height: 60,
+                                margin:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: CanteenAppTheme.myGrey,
+                                            width: 1.0))),
+                                child: new Center(
+                                  child: new Text(
+                                    "3",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ),
+                              ),
+                            ))
+                      ],
+                    ),
+                    new Row(
+                      children: <Widget>[
+                        new Expanded(
+                            child: new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  textController.text = textController.text + "4";
+                                });
+                              },
+                              child: new Container(
+                                height: 60,
+                                margin:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: CanteenAppTheme.myGrey,
+                                            width: 1.0))),
+                                child: new Center(
+                                  child: new Text(
+                                    "4",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ),
+                              ),
+                            )),
+                        new Expanded(
+                            child: new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  textController.text = textController.text + "5";
+                                });
+                              },
+                              child: new Container(
+                                height: 60,
+                                margin:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: CanteenAppTheme.myGrey,
+                                            width: 1.0))),
+                                child: new Center(
+                                  child: new Text(
+                                    "5",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ),
+                              ),
+                            )),
+                        new Expanded(
+                            child: new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  textController.text = textController.text + "6";
+                                });
+                              },
+                              child: new Container(
+                                height: 60,
+                                margin:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: CanteenAppTheme.myGrey,
+                                            width: 1.0))),
+                                child: new Center(
+                                  child: new Text(
+                                    "6",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ),
+                              ),
+                            ))
+                      ],
+                    ),
+                    new Row(
+                      children: <Widget>[
+                        new Expanded(
+                            child: new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  textController.text = textController.text + "7";
+                                });
+                              },
+                              child: new Container(
+                                height: 60,
+                                margin:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: CanteenAppTheme.myGrey,
+                                            width: 1.0))),
+                                child: new Center(
+                                  child: new Text(
+                                    "7",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ),
+                              ),
+                            )),
+                        new Expanded(
+                            child: new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  textController.text = textController.text + "8";
+                                });
+                              },
+                              child: new Container(
+                                height: 60,
+                                margin:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: CanteenAppTheme.myGrey,
+                                            width: 1.0))),
+                                child: new Center(
+                                  child: new Text(
+                                    "8",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ),
+                              ),
+                            )),
+                        new Expanded(
+                            child: new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  textController.text = textController.text + "9";
+                                });
+                              },
+                              child: new Container(
+                                height: 60,
+                                margin:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: CanteenAppTheme.myGrey,
+                                            width: 1.0))),
+                                child: new Center(
+                                  child: new Text(
+                                    "9",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ),
+                              ),
+                            ))
+                      ],
+                    ),
+                    new Row(
+                      children: <Widget>[
+                        new Expanded(
+                            child: new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  textController.text = "";
+                                });
+                              },
+                              child: new Container(
+                                height: 60,
+                                margin:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: CanteenAppTheme.myGrey,
+                                            width: 1.0))),
+                                child: new Center(
+                                  child: new Text(
+                                    "Clear",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ),
+                              ),
+                            )),
+                        new Expanded(
+                            child: new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  textController.text = textController.text + "0";
+                                });
+                              },
+                              child: new Container(
+                                height: 60,
+                                margin:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: CanteenAppTheme.myGrey,
+                                            width: 1.0))),
+                                child: new Center(
+                                  child: new Text(
+                                    "0",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ),
+                              ),
+                            )),
+                        new Expanded(
+                            child: new GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  textController.text = textController.text.substring(0, textController.text.length - 1);
+                                });
+                              },
+                              child: new Container(
+                                height: 60,
+                                margin:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: CanteenAppTheme.myGrey,
+                                            width: 1.0))),
+                                child: new Center(
+                                  child: Icon(Icons.backspace),
+                                ),
+                              ),
+                            ))
+                      ],
+                    ),
+
+                  ],
+                ),
+              ),
+              new GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    isLoading = true;
+                    _topUp();
+                  });
+
+                },
+                child: new Container(
+                  margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(color: Colors.white),
+                  child: new Container(
+                      height: 45.0,
+                      alignment: FractionalOffset.center,
+                      decoration: new BoxDecoration(
+                          color: const Color.fromRGBO(229, 32, 32, 1.0),
+                          borderRadius:
+                          new BorderRadius.all(const Radius.circular(5.0))),
+                      child: new Text("Xác nhận",
+                          style: new TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.3,
+                          ))),
+                ),
+              )
+            ],
+          ));
+    })
+        .closed
+        .whenComplete(() {
+      if (mounted) {
+        setState(() {
+          _showPersBottomSheetCallBack = _showBottomSheet;
+        });
+      }
+    });
+  }
 
   List<Color> listColor = [Colors.white, Colors.white, Colors.white];
 
@@ -93,7 +539,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
     var requestBody = new Map<String, dynamic>();
     requestBody["amount"] = _textFieldController.text;
     requestBody["card_id"] = bankSelect.cardId.toString();
-    requestBody["password"] = _passwordController.text;
+    requestBody["password"] = textController.text;
 
     var response =
         await http.post(url, body: requestBody, headers: requestHeaders);
@@ -333,82 +779,6 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
     );
   }
 
-  Widget createDialogPassword() {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Consts.padding),
-      ),
-      elevation: 0.0,
-      backgroundColor: Colors.transparent,
-      child: dialogContentPassword(context),
-    );
-  }
-
-  dialogContentPassword(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.only(
-            top: Consts.padding,
-            bottom: Consts.padding,
-            left: Consts.padding,
-            right: Consts.padding,
-          ),
-          margin: EdgeInsets.only(top: Consts.avatarRadius),
-          decoration: new BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(Consts.padding),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 10.0,
-                offset: const Offset(0.0, 10.0),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min, // To make the card compact
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                "Nhập mật khẩu cho ví",
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(height: 10.0),
-              new Container(
-                  padding: const EdgeInsets.only(bottom: 15),
-                  decoration: BoxDecoration(color: Colors.white),
-                  child: new TextField(
-                    controller: _passwordController,
-                    keyboardType: TextInputType.number,
-                    autofocus: false,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      hintStyle: const TextStyle(color: Colors.grey),
-                    ),
-                    style: const TextStyle(color: Colors.black, fontSize: 16.0),
-                    onChanged: (String value) {
-                      if (value.length == 6) {
-                        Navigator.of(context).pop();
-                        setState(() {
-                          isLoading = true;
-                          _topUp();
-                        });
-                      }
-                    },
-                  )),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   _modalConfirm() {
     showModalBottomSheet(
         context: context,
@@ -520,10 +890,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                 new GestureDetector(
                   onTap: () {
                     Navigator.of(context).pop();
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) => createDialogPassword(),
-                    );
+                    _showBottomSheet();
                   },
                   child: new Container(
                     margin: const EdgeInsets.only(
@@ -559,6 +926,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: new AppBar(
         backgroundColor: CanteenAppTheme.main,
         iconTheme: new IconThemeData(color: Colors.white),
