@@ -9,6 +9,7 @@ class FoodInfo {
   String discountPrice;
   String image;
   int star;
+  int quantity;
 
   FoodInfo(
       {this.foodId,
@@ -18,7 +19,8 @@ class FoodInfo {
       this.price,
       this.discountPrice,
       this.image,
-      this.star});
+      this.star,
+      this.quantity});
 
   FoodInfo.fromJson(Map<String, dynamic> json) {
     this.foodId = json["food_id"];
@@ -29,6 +31,7 @@ class FoodInfo {
     this.discountPrice = json["price_discount"];
     this.image = json["image"] == null ? IMAGE_DEFAULT : ROOT_IMAGE + json["image"];
     this.star = json["star"];
+    this.quantity = json["quantity"];
   }
 
   Map toMap() {
@@ -41,6 +44,7 @@ class FoodInfo {
     map["price_discount"] = discountPrice;
     map["image"] = image;
     map["star"] = star;
+    map["quantity"] = quantity;
     return map;
   }
 }

@@ -116,16 +116,16 @@ class LoginScreenState extends State<LoginScreen> {
     return showDialog(
       context: context,
       child: new AlertDialog(
-        title: new Text('Are you sure?'),
+        title: new Text('Bạn có chắc chắn muốn thoát khỏi ứng dụng'),
         actions: <Widget>[
           new FlatButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('No'),
+            child: new Text('Không'),
           ),
           new FlatButton(
             onPressed: () =>
                 SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
-            child: new Text('Yes'),
+            child: new Text('Thoát ứng dụng'),
           ),
         ],
       ),

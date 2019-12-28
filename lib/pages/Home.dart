@@ -12,6 +12,9 @@ import 'package:uit_cantin/compoments/AdvertisementWall.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uit_cantin/pages/DeliveryMethod.dart';
+import 'package:uit_cantin/compoments/StopServingWidget.dart';
+import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
+import 'package:flutter/services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -82,7 +85,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     context,
                     PageRouteBuilder(
                       pageBuilder: (c, a1, a2) => new DeliveryMethodScreen(),
-                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                      transitionsBuilder: (c, anim, a2, child) =>
+                          FadeTransition(opacity: anim, child: child),
                       transitionDuration: Duration(milliseconds: 2000),
                     ),
                   );
@@ -97,7 +101,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       decoration: new BoxDecoration(
                           color: const Color.fromRGBO(229, 32, 32, 1.0),
                           borderRadius:
-                          new BorderRadius.all(const Radius.circular(5.0))),
+                              new BorderRadius.all(const Radius.circular(5.0))),
                       child: new Text("Hoàn tất đơn hàng",
                           style: new TextStyle(
                             color: Colors.white,
@@ -121,7 +125,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       alignment: FractionalOffset.center,
                       decoration: new BoxDecoration(
                           borderRadius:
-                          new BorderRadius.all(const Radius.circular(5.0)),
+                              new BorderRadius.all(const Radius.circular(5.0)),
                           border: Border.all(color: Colors.grey, width: 2.0)),
                       child: new Text("Chờ chút",
                           style: new TextStyle(
@@ -147,8 +151,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       if (value != '') {
         showDialog(
           context: context,
-          builder: (BuildContext context) =>
-              createDialog(),
+          builder: (BuildContext context) => createDialog(),
         );
       }
     });
@@ -165,134 +168,157 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: new Scaffold(
-          resizeToAvoidBottomPadding: false,
-          body: SingleChildScrollView(
-              child: Container(
-                  child: new Column(
-                    children: <Widget>[
-                      new Container(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  pageBuilder: (c, a1, a2) => new WalletScreen(),
-                                  transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                                  transitionDuration: Duration(milliseconds: 2000),
-                                ),
-                              );
-                            });
-                          } ,
-                          child:  AdvertisementWall(),
-                        ),
-                      ),
-                      new Container(
-                          margin: const EdgeInsets.only(top: 20.0),
-                          child: new SpecialOffer()
-                      ),
-                      new Container(
-                          margin: const EdgeInsets.only(top: 20.0),
-                          child: new TodayOffer()
-                      )
-                    ],
-                  )
-              )
-          )
-      ),
-      floatingActionButton: SpeedDial(
-        animatedIcon: AnimatedIcons.menu_close,
-        animatedIconTheme: IconThemeData(size: 22.0),
-        curve: Curves.bounceIn,
-        overlayColor: Colors.black,
-        overlayOpacity: 0.5,
-        onOpen: () => print('OPENING DIAL'),
-        onClose: () => print('DIAL CLOSED'),
-        tooltip: 'Speed Dial',
-        heroTag: 'speed-dial-hero-tag',
-        backgroundColor: CanteenAppTheme.main,
-        foregroundColor: Colors.white,
-        elevation: 8.0,
-        shape: CircleBorder(),
-        children: [
-          SpeedDialChild(
-              child: Icon(Icons.home),
-              backgroundColor: Colors.red,
-              label: 'Trang chủ',
-              //        labelStyle: TextTheme(fontSize: 18.0),
-              onTap: () {
-                setState(() {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (c, a1, a2) => new HomeScreen(),
-                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                      transitionDuration: Duration(milliseconds: 2000),
-                    ),
-                  );
-                });
-              }
+  Future<bool> _onWillPop() {
+    return showDialog(
+      context: context,
+      child: new AlertDialog(
+        title: new Text('Bạn có chắc chắn muốn thoát khỏi ứng dụng'),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('Không'),
           ),
-          SpeedDialChild(
-            child: Icon(Icons.add_shopping_cart),
-            backgroundColor: Colors.amber,
-            label: 'Đơn hàng',
-       //     labelStyle: TextTheme(fontSize: 18.0),
-              onTap: () {
-                setState(() {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (c, a1, a2) => new OrderScreen(),
-                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                      transitionDuration: Duration(milliseconds: 2000),
-                    ),
-                  );
-                });
-              }
-          ),
-          SpeedDialChild(
-              child: Icon(Icons.history),
-              backgroundColor: Colors.blue,
-              label: 'Hoạt động',
-              //     labelStyle: TextTheme(fontSize: 18.0),
-              onTap: () {
-                setState(() {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (c, a1, a2) => new HistoryScreen(),
-                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                      transitionDuration: Duration(milliseconds: 2000),
-                    ),
-                  );
-                });
-              }
-          ),
-          SpeedDialChild(
-            child: Icon(Icons.supervised_user_circle),
-            backgroundColor: Colors.green,
-            label: 'Người dùng',
-            //      labelStyle: TextTheme(fontSize: 18.0),
-              onTap: () {
-                setState(() {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (c, a1, a2) => new UserScreen(),
-                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                      transitionDuration: Duration(milliseconds: 2000),
-                    ),
-                  );
-                });
-              }
+          new FlatButton(
+            onPressed: () =>
+                SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+            child: new Text('Thoát ứng dụng'),
           ),
         ],
       ),
-    );
+    ) ??
+        false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    YYDialog.init(context);
+    return new WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          body: new Scaffold(
+              resizeToAvoidBottomPadding: false,
+              body: SingleChildScrollView(
+                  child: Container(
+                      child: new Column(
+                children: <Widget>[
+                  new Container(
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder: (c, a1, a2) => new WalletScreen(),
+                              transitionsBuilder: (c, anim, a2, child) =>
+                                  FadeTransition(opacity: anim, child: child),
+                              transitionDuration: Duration(milliseconds: 2000),
+                            ),
+                          );
+                        });
+                      },
+                      child: AdvertisementWall(),
+                    ),
+                  ),
+                  new Container(
+                      margin: const EdgeInsets.only(top: 20.0),
+                      child: new StopServingWidget()),
+                  new Container(
+                      margin: const EdgeInsets.only(top: 20.0),
+                      child: new SpecialOffer()),
+                  new Container(
+                      margin: const EdgeInsets.only(top: 20.0),
+                      child: new TodayOffer())
+                ],
+              )))),
+          floatingActionButton: SpeedDial(
+            animatedIcon: AnimatedIcons.menu_close,
+            animatedIconTheme: IconThemeData(size: 22.0),
+            curve: Curves.bounceIn,
+            overlayColor: Colors.black,
+            overlayOpacity: 0.5,
+            onOpen: () => print('OPENING DIAL'),
+            onClose: () => print('DIAL CLOSED'),
+            tooltip: 'Speed Dial',
+            heroTag: 'speed-dial-hero-tag',
+            backgroundColor: CanteenAppTheme.main,
+            foregroundColor: Colors.white,
+            elevation: 8.0,
+            shape: CircleBorder(),
+            children: [
+              SpeedDialChild(
+                  child: Icon(Icons.home),
+                  backgroundColor: Colors.red,
+                  label: 'Trang chủ',
+                  //        labelStyle: TextTheme(fontSize: 18.0),
+                  onTap: () {
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (c, a1, a2) => new HomeScreen(),
+                          transitionsBuilder: (c, anim, a2, child) =>
+                              FadeTransition(opacity: anim, child: child),
+                          transitionDuration: Duration(milliseconds: 2000),
+                        ),
+                      );
+                    });
+                  }),
+              SpeedDialChild(
+                  child: Icon(Icons.add_shopping_cart),
+                  backgroundColor: Colors.amber,
+                  label: 'Đơn hàng',
+                  //     labelStyle: TextTheme(fontSize: 18.0),
+                  onTap: () {
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (c, a1, a2) => new OrderScreen(),
+                          transitionsBuilder: (c, anim, a2, child) =>
+                              FadeTransition(opacity: anim, child: child),
+                          transitionDuration: Duration(milliseconds: 2000),
+                        ),
+                      );
+                    });
+                  }),
+              SpeedDialChild(
+                  child: Icon(Icons.history),
+                  backgroundColor: Colors.blue,
+                  label: 'Hoạt động',
+                  //     labelStyle: TextTheme(fontSize: 18.0),
+                  onTap: () {
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (c, a1, a2) => new HistoryScreen(),
+                          transitionsBuilder: (c, anim, a2, child) =>
+                              FadeTransition(opacity: anim, child: child),
+                          transitionDuration: Duration(milliseconds: 2000),
+                        ),
+                      );
+                    });
+                  }),
+              SpeedDialChild(
+                  child: Icon(Icons.supervised_user_circle),
+                  backgroundColor: Colors.green,
+                  label: 'Người dùng',
+                  //      labelStyle: TextTheme(fontSize: 18.0),
+                  onTap: () {
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (c, a1, a2) => new UserScreen(),
+                          transitionsBuilder: (c, anim, a2, child) =>
+                              FadeTransition(opacity: anim, child: child),
+                          transitionDuration: Duration(milliseconds: 2000),
+                        ),
+                      );
+                    });
+                  }),
+            ],
+          ),
+        ));
   }
 }
