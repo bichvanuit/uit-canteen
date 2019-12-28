@@ -257,7 +257,7 @@ class _DeliveryMethod extends State<DeliveryMethodScreen> {
           Container(
             margin: EdgeInsets.only(bottom: 15),
             child: Text(
-              'Phương thức thanh toán',
+              'Phương thức nhận hàng',
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
             ),
           ),
@@ -277,7 +277,7 @@ class _DeliveryMethod extends State<DeliveryMethodScreen> {
                       title: Text(listPlace[position].placeName),
 
                       onChanged:
-                      listPlace[position].placeId == 2 && role == 1
+                      listPlace[position].placeId == 2 && role == 2
                           ? null
                           : (val) {
                         setState(() {
@@ -294,7 +294,7 @@ class _DeliveryMethod extends State<DeliveryMethodScreen> {
               child: new Row(
                 children: <Widget>[
                   new Expanded(
-                    child: new Text(result, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                    child: new Text("Bàn " + result, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
                   ),
                   new Expanded(
                     child: Container(

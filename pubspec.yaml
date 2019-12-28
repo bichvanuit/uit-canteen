@@ -39,6 +39,7 @@ dependencies:
   flutter_datetime_picker: ^1.2.8
   virtual_keyboard: ^0.1.4
   rich_alert: ^0.1.32
+  flutter_custom_dialog: ^1.0.1
 
 dev_dependencies:
   flutter_test:

@@ -15,7 +15,6 @@ class BankScreen extends StatefulWidget {
 
 class _BankState extends State<BankScreen> {
   TextEditingController textController = TextEditingController();
-  int pinLength = 6;
   bool isLoading;
 
   final _scaffoldKey = new GlobalKey<ScaffoldState>();

@@ -3,15 +3,14 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
-
 import 'package:uit_cantin/compoments/WhiteTick.dart';
 import 'package:uit_cantin/models/User.dart';
 import 'package:uit_cantin/services/Token.dart';
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
+import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key key}) : super(key: key);
@@ -39,6 +38,51 @@ class LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  YYDialog _showDialog(BuildContext context) {
+    return YYDialog().build(context)
+      ..width = 230
+      ..borderRadius = 4.0
+      ..animatedFunc = (child, animation) {
+        return ScaleTransition(
+          child: child,
+          scale: Tween(begin: 0.0, end: 1.0).animate(animation),
+        );
+      }
+      ..text(
+        padding: EdgeInsets.all(25.0),
+        alignment: Alignment.center,
+        text: "Sai mã số sinh viên hoặc mật khẩu",
+        color: Colors.black,
+        fontSize: 17.0,
+        fontWeight: FontWeight.w500,
+      )
+      ..divider()
+      ..doubleButton(
+        padding: EdgeInsets.only(top: 10.0),
+        gravity: Gravity.center,
+        withDivider: true,
+        text1: "Thoát ứng dụng",
+        color1: Colors.redAccent,
+        fontSize1: 14.0,
+        fontWeight1: FontWeight.bold,
+        onTap1: () {
+          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        },
+        text2: "Thử lại",
+        color2: Colors.redAccent,
+        fontSize2: 14.0,
+        fontWeight2: FontWeight.bold,
+        onTap2: () {
+            setState(() {
+              isLoading = false;
+            });
+            _controllerUsername.clear();
+            _controllerPassword.clear();
+        },
+      )
+      ..show();
+  }
+
   @override
   Widget build(BuildContext context) {
     timeDilation = 0.4;
@@ -63,40 +107,9 @@ class LoginScreenState extends State<LoginScreen> {
         await token.setMobileToken(responseBody["data"]);
         Navigator.pushNamed(context, "/home");
       } else {
-        _showDialog();
+        _showDialog(context);
       }
     }
-  }
-
-  void _showDialog() {
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: new Text("Sai mã số sinh viên hoặc mật khẩu"),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text("Thử lại"),
-                onPressed: () {
-                  setState(() {
-                    isLoading = false;
-                  });
-                  _controllerUsername.clear();
-                  _controllerPassword.clear();
-                  Navigator.of(context).pop();
-
-                },
-              ),
-              new FlatButton(
-                child: new Text("Thoát ứng dụng"),
-                onPressed: () {
-                  SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-                },
-              ),
-            ],
-          );
-        });
   }
 
   Future<bool> _onWillPop() {
@@ -127,7 +140,7 @@ class LoginScreenState extends State<LoginScreen> {
           body: new Container(
               decoration: new BoxDecoration(
                 image: new DecorationImage(
-                  image: new ExactAssetImage('assets/uit.jpg'),
+                  image: new NetworkImage('https://toinayangi.vn/wp-content/uploads/2016/05/C%C3%A1ch-l%C3%A0m-c%C6%A1m-chi%C3%AAn-th%E1%BB%8Bt-g%C3%A0-quay-%C4%91%C6%A1n-gi%E1%BA%A3n1.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -154,7 +167,7 @@ class LoginScreenState extends State<LoginScreen> {
                               children: <Widget>[
                                 new Tick(image: new DecorationImage(
                                   image: new ExactAssetImage('assets/fork.png'),
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
                                 )),
                                 new Container(
                                   margin: const EdgeInsets.only(bottom: 20.0),

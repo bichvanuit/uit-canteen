@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/pages/WalletInfo.dart';
+import 'package:uit_cantin/pages/InfoBank.dart';
 
 Future<WalletInfo> _fetchWallet() async {
   Token token = new Token();
@@ -125,8 +126,15 @@ class _AdvertisementWall extends State<AdvertisementWall> {
               new GestureDetector(
                 onTap: () {
                   setState(() {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => RechargeScreen()));
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (c, a1, a2) => new RechargeScreen(),
+                        transitionsBuilder: (c, anim, a2, child) =>
+                            FadeTransition(opacity: anim, child: child),
+                        transitionDuration: Duration(milliseconds: 2000),
+                      ),
+                    );
                   });
                 },
                 child: new Container(
@@ -172,8 +180,15 @@ class _AdvertisementWall extends State<AdvertisementWall> {
               new GestureDetector(
                 onTap: () {
                   setState(() {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => RechargeScreen()));
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (c, a1, a2) => new InfoBankScreen(),
+                        transitionsBuilder: (c, anim, a2, child) =>
+                            FadeTransition(opacity: anim, child: child),
+                        transitionDuration: Duration(milliseconds: 2000),
+                      ),
+                    );
                   });
                 },
                 child: new Container(
@@ -185,36 +200,13 @@ class _AdvertisementWall extends State<AdvertisementWall> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Icon(
-                          Icons.money_off,
+                          Icons.add,
                           color: CanteenAppTheme.main,
                           size: 30.0,
                         ),
                         new Center(
-                          child: new Text("Thêm"),
+                          child: new Text("Thêm liên kết", textAlign: TextAlign.center,),
                         )
-                      ],
-                    )),
-              ),
-              new GestureDetector(
-                onTap: () {
-                  setState(() {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => RechargeScreen()));
-                  });
-                },
-                child: new Container(
-
-                    width: 70,
-                    padding: const EdgeInsets.only(top: 10),
-                    //   padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                    child: new Column(
-                      children: <Widget>[
-                        Icon(
-                          Icons.money_off,
-                          color: CanteenAppTheme.main,
-                          size: 30.0,
-                        ),
-                        new Text("Hủy liên kết")
                       ],
                     )),
               ),
