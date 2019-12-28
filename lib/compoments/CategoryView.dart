@@ -52,7 +52,9 @@ class CategoryView extends StatelessWidget {
                                   color: CanteenAppTheme.grey.withOpacity(0.2),
                                   offset: Offset(1.1, 1.1),
                                   blurRadius: 5.0),
-                            ]),
+
+                            ],
+                          ),
                         child: Row(children: <Widget>[
                           SizedBox(
                             width: 65.0,
@@ -79,7 +81,7 @@ class CategoryView extends StatelessWidget {
                                   alignment: Alignment.topLeft,
                                   child: new StarRating(
                                     size: 15.0,
-                                    rating: 4.5,
+                                    rating: foodInfo == null || foodInfo.star == null ? 0 : foodInfo.star.toDouble(),
                                     color: Colors.orange,
                                     borderColor: Colors.grey,
                                   ),
@@ -118,6 +120,14 @@ class CategoryView extends StatelessWidget {
                               ])))
                         ])))
               ])),
+//          new Container(
+//            width: MediaQuery.of(context).size.width * 0.75,
+//            margin: const EdgeInsets.only(right: 12.0, left: 35.0),
+//            decoration: BoxDecoration(
+//             // color: Colors.red
+//               color: Color.fromRGBO(255, 255, 255, 0.7)
+//            ),
+//          ),
           new Container(
               margin: const EdgeInsets.only(top: 20.0),
               height: 70.0,
@@ -131,6 +141,16 @@ class CategoryView extends StatelessWidget {
                     : null,
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               )),
+//          new Container(
+//            margin: const EdgeInsets.only(top: 20.0),
+//            height: 70.0,
+//            width: 90.0,
+//            decoration: BoxDecoration(
+//              // color: Colors.red
+//                color: Color.fromRGBO(255, 255, 255, 0.7),
+//              borderRadius: BorderRadius.all(Radius.circular(10)),
+//            ),
+//          ),
         ],
       ),
     ));

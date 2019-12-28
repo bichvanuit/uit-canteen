@@ -65,7 +65,7 @@ class ItemWidget extends StatelessWidget {
                                 alignment: Alignment.topLeft,
                                 child: new StarRating(
                                   size: 15.0,
-                                  rating: 4.5,
+                                  rating: food == null || food.star == null ? 0 : food.star.toDouble(),
                                   color: Colors.orange,
                                   borderColor: Colors.grey,
                                 ),

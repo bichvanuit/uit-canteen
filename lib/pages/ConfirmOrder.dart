@@ -18,7 +18,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:uit_cantin/pages/DeliveryMethod.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
+import 'package:uit_cantin/pages/Home.dart';
 
 List<PaymentMethod> _parseMethod(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -231,7 +231,14 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
     setState(() {
       isLoading = false;
       Navigator.of(context).pop();
-      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (c, a1, a2) => new HomeScreen(),
+          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+          transitionDuration: Duration(milliseconds: 2000),
+        ),
+      );
     });
   }
 
@@ -245,6 +252,8 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
 
     var requestBody = new Map<String, dynamic>();
     requestBody["payment_method_id"] = paymentMethod;
+
+    print(timeRemaining);
 
     if (timeRemaining == "0") {
       DateTime date = DateTime.now();
@@ -444,20 +453,7 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
                   groupValue: true,
                   value: locationId == 2 ? true : false,
                   title: Text("Không, hay đợi tôi đến "),
-//                  onChanged: (value) {
-//                    setState(() {
-//                      locationId = 2;
-//                      timeRemaining = date3.hour.toString() +
-//                          ":" +
-//                          date3.minute.toString() +
-//                          ":" +
-//                          date3.second.toString();
-//                      // checkOutInfo.methodId= listMethod[position].methodId.toString();
-//                    });
-//                  },
-                  onChanged: paymentMethod != "1"
-                      ? null
-                      : (val) {
+                  onChanged: (val) {
                           setState(() {
                             locationId = 2;
                             timeRemaining = date3.hour.toString() +
@@ -468,24 +464,17 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
                           });
                         },
                 ),
-                paymentMethod != "1" && paymentMethod != "" ? new Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: new Text(
-                    "Vì bạn đã chọn thanh toán bằng tiền mặt nên không được dùng tính năng này",
-                    style: TextStyle(color: Colors.red, fontStyle: FontStyle.italic),
-                  ),
-                ) : new Container(),
                 FlatButton(
                     onPressed: () {
                       DatePicker.showTimePicker(context,
                           showTitleActions: true,
                           onChanged: (date) {}, onConfirm: (date) {
                         setState(() {
-                          timeRemaining = date3.hour.toString() +
+                          timeRemaining = date.hour.toString() +
                               ":" +
-                              date3.minute.toString() +
+                              date.minute.toString() +
                               ":" +
-                              date3.second.toString();
+                              date.second.toString();
                           date3 = date;
                         });
                       }, currentTime: date3, locale: LocaleType.vi);

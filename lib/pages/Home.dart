@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:uit_cantin/pages/HomeMain.dart';
 import 'package:uit_cantin/pages/Order.dart';
 import 'package:uit_cantin/pages/User.dart';
-import 'package:uit_cantin/pages/Notification.dart';
-import 'package:uit_cantin/compoments/BottomBarView.dart';
 import 'package:uit_cantin/models/TabIconData.dart';
 import 'package:uit_cantin/pages/Wallet.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
