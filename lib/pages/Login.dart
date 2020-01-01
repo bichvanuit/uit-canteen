@@ -11,6 +11,23 @@ import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
+import 'package:uit_cantin/pages/RequireNumberPhone.dart';
+import 'package:device_info/device_info.dart';
+import 'package:uit_cantin/models/UserInfo.dart';
+import 'package:uit_cantin/pages/OTPNewDevice.dart';
+import 'package:uit_cantin/pages/HomeMain.dart';
+
+Future<UserInfo>_fetchUserInfo() async {
+  Token token = new Token();
+  final tokenValue = await token.getMobileToken();
+  Map<String, String> requestHeaders = {
+    "Authorization": "Bearer " + tokenValue,
+  };
+  final response = await http.get('$SERVER_NAME/user/get-detail-user',
+      headers: requestHeaders);
+  final parsed = json.decode(response.body)["data"];
+  return UserInfo.fromJson(parsed);
+}
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key key}) : super(key: key);
@@ -36,6 +53,17 @@ class LoginScreenState extends State<LoginScreen> {
   void dispose() {
     isLoading = false;
     super.dispose();
+  }
+
+  Future<String> _getId() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
+      IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
+      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+    } else {
+      AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
+      return androidDeviceInfo.androidId; // unique ID on Android
+    }
   }
 
   YYDialog _showDialog(BuildContext context) {
@@ -92,9 +120,46 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  _newDevice() async {
+    setState(() {
+      isLoading = true;
+    });
+    var url = '$SERVER_NAME/user/verify-device';
+
+    Token token = new Token();
+    final tokenValue = await token.getMobileToken();
+    Map<String, String> requestHeaders = {
+      "Authorization": "Bearer " + tokenValue,
+    };
+
+    var response =
+    await http.post(url, headers: requestHeaders);
+    var statusCode = response.statusCode;
+    if (statusCode == STATUS_CODE_SUCCESS) {
+      var responseBody = json.decode(response.body);
+      setState(() {
+        isLoading = false;
+      });
+      var status = responseBody["status"];
+      print(status);
+      Navigator.of(context).pop();
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (c, a1, a2) => new OTPNewDeviceScreen(),
+          transitionsBuilder: (c, anim, a2, child) =>
+              FadeTransition(opacity: anim, child: child),
+          transitionDuration: Duration(milliseconds: 2000),
+        ),
+      );
+    }
+  }
+
   Future<Null> _login() async {
+    var devideId = await _getId();
     userInfo.username = _controllerUsername.text;
     userInfo.password = _controllerPassword.text;
+    userInfo.deviceId = devideId;
     var url = '$SERVER_NAME/login';
     var response = await http.post(url, body: userInfo.toMap());
     var statusCode = response.statusCode;
@@ -105,7 +170,29 @@ class LoginScreenState extends State<LoginScreen> {
       if (status == STATUS_SUCCESS) {
         Token token = new Token();
         await token.setMobileToken(responseBody["data"]);
-        Navigator.pushNamed(context, "/home");
+        UserInfo user = await _fetchUserInfo();
+        if (user.phone == null) {
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (c, a1, a2) => new RequireNumberPhoneScreen(),
+              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+              transitionDuration: Duration(milliseconds: 2000),
+            ),
+          );
+        } else if (user.newDevice) {
+
+          _newDevice();
+        } else {
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (c, a1, a2) => new HomeMainScreen(),
+              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+              transitionDuration: Duration(milliseconds: 2000),
+            ),
+          );
+        }
       } else {
         _showDialog(context);
       }

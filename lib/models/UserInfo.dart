@@ -8,6 +8,7 @@ class UserInfo {
   String avatar;
   String username;
   String phone;
+  bool newDevice;
 
   UserInfo({
     this.userId,
@@ -16,7 +17,8 @@ class UserInfo {
     this.fullName,
     this.avatar,
     this.username,
-    this.phone
+    this.phone,
+    this.newDevice
   });
 
 //  factory UserInfo.fromJson(Map<String, dynamic> json) {
@@ -36,6 +38,7 @@ class UserInfo {
     this.avatar =  ROOT_IMAGE + json["avatar"];
     this.username = json["username"];
     this.phone = json["phone"];
+    this.newDevice = json["is_new_device"];
   }
 
   Map toMap() {
@@ -47,6 +50,7 @@ class UserInfo {
     map["avatar"] = avatar;
     map["username"] = username;
     map["phone"] = phone;
+    map["is_new_device"] = newDevice;
     return map;
   }
 }

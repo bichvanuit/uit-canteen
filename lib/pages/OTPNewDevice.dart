@@ -1,21 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:uit_cantin/pages/OTP.dart';
-import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
+import 'package:uit_cantin/pages/Home.dart';
 import 'package:flutter/services.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
+import 'package:uit_cantin/models/UserInfo.dart';
+import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 
 import 'package:uit_cantin/services/Token.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 
-class RequireNumberPhoneScreen extends StatefulWidget {
-  @override
-  _RequireNumberPhone createState() => _RequireNumberPhone();
+Future<UserInfo> _fetchUserInfo() async {
+  Token token = new Token();
+  final tokenValue = await token.getMobileToken();
+  Map<String, String> requestHeaders = {
+    "Authorization": "Bearer " + tokenValue,
+  };
+  final response = await http.get('$SERVER_NAME/user/get-detail-user',
+      headers: requestHeaders);
+  final parsed = json.decode(response.body)["data"];
+  return UserInfo.fromJson(parsed);
 }
 
-class _RequireNumberPhone extends State<RequireNumberPhoneScreen> {
+class OTPNewDeviceScreen extends StatefulWidget {
+  @override
+  _OTPNewDevice createState() => _OTPNewDevice();
+}
+
+class _OTPNewDevice extends State<OTPNewDeviceScreen> {
   final TextEditingController _controller = new TextEditingController();
   bool isLoading = false;
 
@@ -58,17 +71,16 @@ class _RequireNumberPhone extends State<RequireNumberPhoneScreen> {
         color2: Colors.redAccent,
         fontSize2: 14.0,
         fontWeight2: FontWeight.bold,
-        onTap2: () {
-        },
+        onTap2: () {},
       )
       ..show();
   }
 
-  _editPhone() async {
+  _verifyPhone() async {
     setState(() {
       isLoading = true;
     });
-    var url = '$SERVER_NAME/user/verify-phone';
+    var url = '$SERVER_NAME/user/verify-device-otp';
     var requestBody = new Map<String, dynamic>();
 
     Token token = new Token();
@@ -76,7 +88,7 @@ class _RequireNumberPhone extends State<RequireNumberPhoneScreen> {
     Map<String, String> requestHeaders = {
       "Authorization": "Bearer " + tokenValue,
     };
-    requestBody["phone"] = _controller.text;
+    requestBody["otp"] = _controller.text;
 
     var response =
         await http.post(url, body: requestBody, headers: requestHeaders);
@@ -88,26 +100,36 @@ class _RequireNumberPhone extends State<RequireNumberPhoneScreen> {
       });
       var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (c, a1, a2) => new OTPScreen(phoneNumber: _controller.text),
-              transitionsBuilder: (c, anim, a2, child) =>
-                  FadeTransition(opacity: anim, child: child),
-              transitionDuration: Duration(milliseconds: 2000),
-            ),
-          );
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (c, a1, a2) => new HomeScreen(),
+            transitionsBuilder: (c, anim, a2, child) =>
+                FadeTransition(opacity: anim, child: child),
+            transitionDuration: Duration(milliseconds: 2000),
+          ),
+        );
       } else {
         _showDialog(context);
       }
     }
+
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (c, a1, a2) => new HomeScreen(),
+        transitionsBuilder: (c, anim, a2, child) =>
+            FadeTransition(opacity: anim, child: child),
+        transitionDuration: Duration(milliseconds: 2000),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: isLoading ? _createProgress() : _createBody());
+    return Scaffold(body: isLoading ? _createProgress() : _createBody());
   }
+
   Widget _createBody() {
     return new SingleChildScrollView(
       child: new Container(
@@ -120,22 +142,11 @@ class _RequireNumberPhone extends State<RequireNumberPhoneScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               new Container(
-                width: 100.0,
-                height: 100.0,
-                alignment: Alignment.center,
-                decoration: new BoxDecoration(
-                  image: new DecorationImage(
-                    image: new ExactAssetImage('assets/fork.png'),
-                    fit: BoxFit.fill,
-                  ),
-                ),
-              ),
-              new Container(
                 margin: const EdgeInsets.only(bottom: 20.0),
-                child: new Text("UIT Căn tin",
+                child: new Text("Xác thực OTP",
                     style: TextStyle(
                         fontFamily: 'Roboto',
-                        fontSize: 50.0,
+                        fontSize: 40.0,
                         color: Colors.white,
                         fontWeight: FontWeight.bold)),
               ),
@@ -145,21 +156,22 @@ class _RequireNumberPhone extends State<RequireNumberPhoneScreen> {
                 keyboardType: TextInputType.number,
                 controller: _controller,
                 decoration: new InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 17.0),
                     border: new OutlineInputBorder(
                         borderRadius: const BorderRadius.all(
                           const Radius.circular(30.0),
                         ),
                         borderSide:
-                        new BorderSide(color: Colors.white, width: 1.0)),
+                            new BorderSide(color: Colors.white, width: 1.0)),
                     focusedBorder: OutlineInputBorder(
                         borderRadius: const BorderRadius.all(
                           const Radius.circular(30.0),
                         ),
                         borderSide:
-                        new BorderSide(color: Colors.white, width: 1.0)),
+                            new BorderSide(color: Colors.white, width: 1.0)),
                     filled: true,
                     hintStyle: new TextStyle(color: Colors.grey, fontSize: 18),
-                    hintText: "Nhập số điện thoại",
+                    hintText: "Mã xác thực",
                     fillColor: Colors.white),
                 style: const TextStyle(color: Colors.black, fontSize: 18.0),
               ),
@@ -168,7 +180,7 @@ class _RequireNumberPhone extends State<RequireNumberPhoneScreen> {
               ),
               new GestureDetector(
                   onTap: () {
-                    _editPhone();
+                    _verifyPhone();
                   },
                   child: new Container(
                     width: 320.0,
@@ -177,7 +189,7 @@ class _RequireNumberPhone extends State<RequireNumberPhoneScreen> {
                     decoration: new BoxDecoration(
                       color: const Color(0xFF3B0B17),
                       borderRadius:
-                      new BorderRadius.all(const Radius.circular(30.0)),
+                          new BorderRadius.all(const Radius.circular(30.0)),
                     ),
                     child: new Text(
                       "TIẾP TỤC",
@@ -189,9 +201,15 @@ class _RequireNumberPhone extends State<RequireNumberPhoneScreen> {
                       ),
                     ),
                   )),
-              SizedBox(height: 10.0),
-              new Container(
-                child: new Text("Mã xác thực sẽ được gửi cho bạn", style: TextStyle(color: Colors.white, fontSize: 16)),
+              SizedBox(height: 15),
+              new GestureDetector(
+                child: new Container(
+                  alignment: Alignment.topRight,
+                  child: new Text(
+                    "GỬI LẠI OTP",
+                    style: TextStyle(color: Colors.white, fontSize: 15),
+                  ),
+                ),
               )
             ],
           )),

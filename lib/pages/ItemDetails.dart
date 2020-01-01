@@ -15,7 +15,7 @@ import 'package:rich_alert/rich_alert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:uit_cantin/pages/DeliveryMethod.dart';
-import 'package:device_info/device_info.dart';
+
 
 
 
@@ -45,16 +45,7 @@ class _ItemDetails extends State<ItemDetails> {
   bool isLoading;
 
   FoodInfo foodInfo = new FoodInfo();
-  Future<String> _getId() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    if (Theme.of(context).platform == TargetPlatform.iOS) {
-      IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
-      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
-    } else {
-      AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
-      return androidDeviceInfo.androidId; // unique ID on Android
-    }
-  }
+
 
   @override
   initState() {
@@ -212,12 +203,6 @@ class _ItemDetails extends State<ItemDetails> {
     }
   }
   _addToCard() async {
-    _getId().then((id) {
-      String deviceId = id;
-      print("-------------------------------------------");
-      print(deviceId);
-    });
-
     CardInfo cardInfo = new CardInfo();
     cardInfo.foodId = foodInfo.foodId.toString();
     cardInfo.note = note.toString();
