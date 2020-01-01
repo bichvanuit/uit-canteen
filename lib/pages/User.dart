@@ -11,8 +11,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
-import 'package:uit_cantin/pages/Wallet.dart';
-
+import 'package:uit_cantin/pages/Login.dart';
+import 'package:image/image.dart' as ImageProcess;
 
 Future<UserInfo>_fetchUserInfo() async {
   Token token = new Token();
@@ -42,34 +42,38 @@ class _UserState extends State<UserScreen> {
       image = await ImagePicker.pickImage(source: ImageSource.gallery);
     }
 
-    setState(() async {
-      _image = image;
+    final _imageFile = ImageProcess.decodeImage(
+      image.readAsBytesSync(),
+    );
 
-      List<int> imageBytes = _image.readAsBytesSync();
-      print(base64Encode(imageBytes));
-      print("-------------------");
+    String base64Image = base64Encode(ImageProcess.encodePng(_imageFile));
+    print(base64Image);
+    Navigator.of(context).pop();
 
-      var url = '$SERVER_NAME/user/edit-avatar';
-      Token token = new Token();
-      final tokenValue = await token.getMobileToken();
-      Map<String, String> requestHeaders = {
-        "Authorization": "Bearer " + tokenValue,
-      };
-
-      var requestBody = new Map<String, dynamic>();
-      requestBody["image"] = base64Encode(imageBytes);
-
-      var response =
-      await http.post(url, body: requestBody, headers: requestHeaders);
-      var statusCode = response.statusCode;
-      if (statusCode == STATUS_CODE_SUCCESS) {
-        var responseBody = json.decode(response.body);
-        print(responseBody);
-      }
-
-    });
-
-
+//    setState(() async {
+//      _image = image;
+//
+//      String base64Image = base64Encode(image.readAsBytesSync());
+//
+//      var url = '$SERVER_NAME/user/edit-avatar';
+//      Token token = new Token();
+//      final tokenValue = await token.getMobileToken();
+//      Map<String, String> requestHeaders = {
+//        "Authorization": "Bearer " + tokenValue,
+//      };
+//
+//      var requestBody = new Map<String, dynamic>();
+//      requestBody["image"] = base64Image;
+//
+//      var response =
+//      await http.post(url, body: requestBody, headers: requestHeaders);
+//      var statusCode = response.statusCode;
+//      print(statusCode);
+//      if (statusCode == STATUS_CODE_SUCCESS) {
+//        var responseBody = json.decode(response.body);
+//        print(responseBody);
+//      }
+//    });
   }
 
   void _showDialogEditAvatar() {
@@ -121,7 +125,7 @@ class _UserState extends State<UserScreen> {
       showDialog(
           barrierDismissible: false,
           context: context,
-          builder: (BuildContext context) {
+          builder: (BuildContext context)  {
             return AlertDialog(
               title: new Text("Bạn có muốn thoát khỏi tài khoản?"),
            //   content: new Text("Call 0352107018"),
@@ -129,8 +133,18 @@ class _UserState extends State<UserScreen> {
                 // usually buttons at the bottom of the dialog
                 new FlatButton(
                   child: new Text("Có"),
-                  onPressed: () {
+                  onPressed: () async {
+                    Token token = new Token();
+                    await token.removeMobileToken();
                     Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (c, a1, a2) => new LoginScreen(),
+                        transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                        transitionDuration: Duration(milliseconds: 2000),
+                      ),
+                    );
                   },
                 ),
                 new FlatButton(
@@ -143,19 +157,6 @@ class _UserState extends State<UserScreen> {
             );
           }
       );
-    }
-
-    void _payment() {
-      setState(() {
-        Navigator.push(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (c, a1, a2) => new WalletScreen(),
-            transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-            transitionDuration: Duration(milliseconds: 2000),
-          ),
-        );
-      });
     }
 
     return new Scaffold(
@@ -288,13 +289,6 @@ class _UserState extends State<UserScreen> {
                                     builder: (context) => ContactUsScreen()));
                           });
                         },
-                      ),
-                      ListTile(
-                          title: Text('Thanh toán',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          onTap: () {
-                            _payment();
-                          }
                       ),
                       ListTile(
                           title: Text('Đăng xuất',

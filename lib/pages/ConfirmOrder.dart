@@ -253,8 +253,6 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
     var requestBody = new Map<String, dynamic>();
     requestBody["payment_method_id"] = paymentMethod;
 
-    print(timeRemaining);
-
     if (timeRemaining == "0") {
       DateTime date = DateTime.now();
       isWaiting = false;
@@ -263,8 +261,6 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
       isWaiting = true;
     }
     requestBody["time_remaining"] = timeRemaining;
-    print(isWaiting);
-    print(timeRemaining);
 
     var response = await http.post(url,
         body: requestBody, headers: requestHeaders);

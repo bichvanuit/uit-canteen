@@ -41,6 +41,9 @@ dependencies:
   rich_alert: ^0.1.32
   flutter_custom_dialog: ^1.0.1
   connectivity:
+  image: ^2.1.10
+  url_launcher: ^4.1.0
+  device_info:
 
 dev_dependencies:
   flutter_test:

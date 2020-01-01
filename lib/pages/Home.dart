@@ -15,6 +15,7 @@ import 'package:uit_cantin/pages/DeliveryMethod.dart';
 import 'package:uit_cantin/compoments/StopServingWidget.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 import 'package:flutter/services.dart';
+import 'package:device_info/device_info.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -26,6 +27,8 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   int bottomSelectedIndex = 0;
   AnimationController animationController;
+
+
 
   Widget createDialog() {
     return Dialog(
@@ -144,7 +147,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   @override
-  void initState() {
+  void initState()  {
     Token token = new Token();
 
     token.getMobileWaiting().then((value) {

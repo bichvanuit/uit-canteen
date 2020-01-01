@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContactUsScreen extends StatefulWidget {
   @override
@@ -7,6 +8,12 @@ class ContactUsScreen extends StatefulWidget {
 }
 
 class _ContactUs extends State<ContactUsScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     void _showDialog() {
@@ -27,8 +34,14 @@ class _ContactUs extends State<ContactUsScreen> {
                 ),
                 new FlatButton(
                   child: new Text("Gọi"),
-                  onPressed: () {
+                  onPressed: () async  {
+                    if (await canLaunch("tel:+84352107018")) {
+                    await launch("tel:+84352107018");
+                    } else {
+                    throw 'Could not Call Phone';
+                    }
                     Navigator.of(context).pop();
+
                   },
                 ),
               ],

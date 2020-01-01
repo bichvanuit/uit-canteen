@@ -5,7 +5,6 @@ import 'package:uit_cantin/compoments/DialogMethodRecharge.dart';
 import 'package:uit_cantin/services/FormatPrice.dart';
 import 'package:uit_cantin/models/BankLinked.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
-import 'package:uit_cantin/pages/WalletInfo.dart';
 import 'package:uit_cantin/pages/RechargeSuccess.dart';
 
 import 'dart:convert';
@@ -53,7 +52,8 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
           });
         }));
     super.initState();
-    _showPersBottomSheetCallBack = _showBottomSheet;
+    _showPersBottomSheetCallBack = _showBottomSheet
+    ;
   }
 
   @override
@@ -63,7 +63,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
   }
 
   TextEditingController _textFieldController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+//  TextEditingController _passwordController = TextEditingController();
 
   void _showBottomSheet() {
     setState(() {

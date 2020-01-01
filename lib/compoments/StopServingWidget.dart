@@ -25,7 +25,7 @@ class _StopServingWidget extends State<StopServingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
+    return !isService ? new Container(
         width: MediaQuery.of(context).size.width,
         //    height: 50,
         margin: const EdgeInsets.only(left: 10.0, right: 10.0),
@@ -50,6 +50,6 @@ class _StopServingWidget extends State<StopServingWidget> {
                     fontWeight: FontWeight.bold,
                     color: CanteenAppTheme.main)),
           ],
-        ));
+        )) : new Container();
   }
 }

@@ -177,6 +177,113 @@ class _WalletInfoState extends State<WalletInfoScreen> {
       }
     }
   }
+  Widget createDialogConfirm() {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      elevation: 0.0,
+      backgroundColor: Colors.transparent,
+      child: dialogContentConfirm(context),
+    );
+  }
+
+  dialogContentConfirm(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(16.0),
+          margin: EdgeInsets.only(top: 66.0),
+          decoration: new BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(16.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+                offset: const Offset(0.0, 10.0),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // To make the card compact
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "Bạn có chắc chắn muốn hủy liên kết với " + bankSelect.bankName,
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(height: 15.0),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: new GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: new Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(color: Colors.white),
+                        child: new Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: 45.0,
+                            alignment: FractionalOffset.center,
+                            decoration: new BoxDecoration(
+                                borderRadius: new BorderRadius.all(
+                                    const Radius.circular(5.0)),
+                                border:
+                                Border.all(color: Colors.grey, width: 2.0)),
+                            child: new Text("Thoát",
+                                style: new TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.3,
+                                ))),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 5.0),
+                  Expanded(
+                    child: new GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _unLink();
+                      },
+                      child: new Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(color: Colors.white),
+                        child: new Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: 45.0,
+                            alignment: FractionalOffset.center,
+                            decoration: new BoxDecoration(
+                                color: const Color.fromRGBO(229, 32, 32, 1.0),
+                                borderRadius: new BorderRadius.all(
+                                    const Radius.circular(5.0))),
+                            child: new Text("TIếp tục",
+                                style: new TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.3,
+                                ))),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget createDialog() {
     return Dialog(
@@ -243,7 +350,12 @@ class _WalletInfoState extends State<WalletInfoScreen> {
                               setState(() {
                                 bankSelect = listBank[position];
                                 Navigator.of(context).pop();
-                                _showDialog();
+
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        createDialogConfirm(),
+                                );
                               });
                             },
                             child: new Container(

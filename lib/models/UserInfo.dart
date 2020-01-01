@@ -7,6 +7,7 @@ class UserInfo {
   String fullName;
   String avatar;
   String username;
+  String phone;
 
   UserInfo({
     this.userId,
@@ -14,7 +15,8 @@ class UserInfo {
     this.userGroupId,
     this.fullName,
     this.avatar,
-    this.username
+    this.username,
+    this.phone
   });
 
 //  factory UserInfo.fromJson(Map<String, dynamic> json) {
@@ -33,6 +35,7 @@ class UserInfo {
     this.fullName =  json["fullname"];
     this.avatar =  ROOT_IMAGE + json["avatar"];
     this.username = json["username"];
+    this.phone = json["phone"];
   }
 
   Map toMap() {
@@ -43,6 +46,7 @@ class UserInfo {
     map["fullname"] = fullName;
     map["avatar"] = avatar;
     map["username"] = username;
+    map["phone"] = phone;
     return map;
   }
 }

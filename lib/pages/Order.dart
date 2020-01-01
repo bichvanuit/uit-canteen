@@ -581,12 +581,12 @@ class _OrderState extends State<OrderScreen> {
                             new GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  if (card.amount > 1) {
+                                  if (card.amount > 0) {
                                     card.amount = card.amount - 1;
                                     totalOrder = totalOrder -
                                         int.parse(card.discountPrice);
                                   }
-                                  if (card.amount == 1) {
+                                  if (card.amount == 0) {
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) =>

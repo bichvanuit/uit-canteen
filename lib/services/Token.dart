@@ -41,4 +41,10 @@ class Token {
     return prefs.remove(_storageKeyMobileWating);
   }
 
+  Future<bool> removeMobileToken() async {
+    final SharedPreferences prefs = await _prefs;
+
+    return prefs.remove(_storageKeyMobileToken);
+  }
+
 }
