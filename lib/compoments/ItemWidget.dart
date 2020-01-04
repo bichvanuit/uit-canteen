@@ -3,6 +3,7 @@ import 'package:uit_cantin/pages/ItemDetails.dart';
 import 'package:uit_cantin/models/FoodInfo.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 class ItemWidget extends StatefulWidget {
   final FoodInfo food;
@@ -51,14 +52,10 @@ class _ItemWidgetState extends State<ItemWidget> {
               return;
             } else {
             Navigator.push(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (c, a1, a2) =>
-                new ItemDetails(foodId: widget.food.foodId),
-                transitionsBuilder: (c, anim, a2, child) =>
-                    FadeTransition(opacity: anim, child: child),
-                transitionDuration: Duration(milliseconds: 2000),
-              ),
+                context,
+                SlideFromLeftPageRoute(
+                    widget: ItemDetails(foodId: widget.food.foodId)
+                )
             );
           }
 

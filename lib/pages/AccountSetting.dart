@@ -7,6 +7,7 @@ import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
 import 'package:uit_cantin/pages/User.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 class AccountSettingScreen extends StatefulWidget {
   final String fullName;
@@ -42,12 +43,10 @@ class _AccountSettingState extends State<AccountSettingScreen> {
         setState(() {
           isLoading = true;
           Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (c, a1, a2) => new UserScreen(),
-              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-              transitionDuration: Duration(milliseconds: 2000),
-            ),
+              context,
+              SlideFromLeftPageRoute(
+                  widget: UserScreen()
+              )
           );
         });
       } else {}

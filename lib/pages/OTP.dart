@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:uit_cantin/pages/Home.dart';
 import 'package:flutter/services.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
-import 'package:uit_cantin/models/UserInfo.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 import 'package:uit_cantin/pages/OTPNewDevice.dart';
 
@@ -11,18 +10,7 @@ import 'package:uit_cantin/services/Token.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
-
-Future<UserInfo>_fetchUserInfo() async {
-  Token token = new Token();
-  final tokenValue = await token.getMobileToken();
-  Map<String, String> requestHeaders = {
-    "Authorization": "Bearer " + tokenValue,
-  };
-  final response = await http.get('$SERVER_NAME/user/get-detail-user',
-      headers: requestHeaders);
-  final parsed = json.decode(response.body)["data"];
-  return UserInfo.fromJson(parsed);
-}
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 class OTPScreen extends StatefulWidget {
   final String phoneNumber;
@@ -217,15 +205,11 @@ class _OTPScreen extends State<OTPScreen> {
       if (status == STATUS_SUCCESS) {
         Navigator.of(context).pop();
         Navigator.push(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (c, a1, a2) => new OTPNewDeviceScreen(),
-            transitionsBuilder: (c, anim, a2, child) =>
-                FadeTransition(opacity: anim, child: child),
-            transitionDuration: Duration(milliseconds: 2000),
-          ),
+            context,
+            SlideFromLeftPageRoute(
+                widget: OTPNewDeviceScreen()
+            )
         );
-
       } else {
 //        _showDialog(context);
       }
@@ -266,15 +250,11 @@ class _OTPScreen extends State<OTPScreen> {
         _showDialog(context);
       }
     }
-
     Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (c, a1, a2) => new HomeScreen(),
-        transitionsBuilder: (c, anim, a2, child) =>
-            FadeTransition(opacity: anim, child: child),
-        transitionDuration: Duration(milliseconds: 2000),
-      ),
+        context,
+        SlideFromLeftPageRoute(
+            widget: HomeScreen()
+        )
     );
   }
 

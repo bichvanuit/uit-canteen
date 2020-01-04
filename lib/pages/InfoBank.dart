@@ -10,6 +10,7 @@ import 'package:uit_cantin/models/BankInfo.dart';
 import 'package:uit_cantin/models/BankInfoLink.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
 import 'package:uit_cantin/pages/WalletInfo.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 List<BankInfo> _parseBank(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -101,13 +102,10 @@ class _InfoBankState extends State<InfoBankScreen> {
       if (status == STATUS_SUCCESS) {
         setState(() {
           Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (c, a1, a2) => new WalletInfoScreen(),
-              transitionsBuilder: (c, anim, a2, child) =>
-                  FadeTransition(opacity: anim, child: child),
-              transitionDuration: Duration(milliseconds: 2000),
-            ),
+              context,
+              SlideFromLeftPageRoute(
+                  widget: WalletInfoScreen()
+              )
           );
         });
       } else {

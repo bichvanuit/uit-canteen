@@ -12,13 +12,14 @@ import 'package:uit_cantin/models/DeliveryPlace.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
 import 'package:uit_cantin/compoments/CustomDialog.dart';
 import 'package:uit_cantin/pages/Recharge.dart';
-import 'package:uit_cantin/pages/Wallet.dart';
 import 'package:uit_cantin/pages/test.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:uit_cantin/pages/DeliveryMethod.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uit_cantin/pages/Home.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
+import 'package:uit_cantin/pages/Bank.dart';
 
 List<PaymentMethod> _parseMethod(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -152,21 +153,17 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
                 onTap: () {
                   if (isActived) {
                     Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (c, a1, a2) => new RechargeScreen(),
-                        transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                        transitionDuration: Duration(milliseconds: 2000),
-                      ),
+                        context,
+                        SlideFromLeftPageRoute(
+                            widget: RechargeScreen()
+                        )
                     );
                   } else {
                     Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (c, a1, a2) => new WalletScreen(),
-                        transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                        transitionDuration: Duration(milliseconds: 2000),
-                      ),
+                        context,
+                        SlideFromLeftPageRoute(
+                            widget: BankScreen()
+                        )
                     );
                   }
                 },
@@ -232,12 +229,10 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
       isLoading = false;
       Navigator.of(context).pop();
       Navigator.push(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (c, a1, a2) => new HomeScreen(),
-          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-          transitionDuration: Duration(milliseconds: 2000),
-        ),
+          context,
+          SlideFromLeftPageRoute(
+              widget: HomeScreen()
+          )
       );
     });
   }
@@ -308,12 +303,10 @@ class _ConfirmOrder extends State<ConfirmOrderScreen> {
 
         } else {
           Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (c, a1, a2) => new DeliveryMethodScreen(),
-              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-              transitionDuration: Duration(milliseconds: 2000),
-            ),
+              context,
+              SlideFromLeftPageRoute(
+                  widget: DeliveryMethodScreen()
+              )
           );
         }
       } else {

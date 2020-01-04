@@ -9,6 +9,7 @@ import 'package:uit_cantin/services/Token.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 class RequireNumberPhoneScreen extends StatefulWidget {
   @override
@@ -88,15 +89,12 @@ class _RequireNumberPhone extends State<RequireNumberPhoneScreen> {
       });
       var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
-          Navigator.push(
+        Navigator.push(
             context,
-            PageRouteBuilder(
-              pageBuilder: (c, a1, a2) => new OTPScreen(phoneNumber: _controller.text),
-              transitionsBuilder: (c, anim, a2, child) =>
-                  FadeTransition(opacity: anim, child: child),
-              transitionDuration: Duration(milliseconds: 2000),
-            ),
-          );
+            SlideFromLeftPageRoute(
+                widget: OTPScreen(phoneNumber: _controller.text)
+            )
+        );
       } else {
         _showDialog(context);
       }

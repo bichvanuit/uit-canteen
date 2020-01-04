@@ -10,18 +10,7 @@ import 'package:uit_cantin/services/Token.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
-
-Future<UserInfo> _fetchUserInfo() async {
-  Token token = new Token();
-  final tokenValue = await token.getMobileToken();
-  Map<String, String> requestHeaders = {
-    "Authorization": "Bearer " + tokenValue,
-  };
-  final response = await http.get('$SERVER_NAME/user/get-detail-user',
-      headers: requestHeaders);
-  final parsed = json.decode(response.body)["data"];
-  return UserInfo.fromJson(parsed);
-}
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 class OTPNewDeviceScreen extends StatefulWidget {
   @override
@@ -101,13 +90,10 @@ class _OTPNewDevice extends State<OTPNewDeviceScreen> {
       var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
         Navigator.push(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (c, a1, a2) => new HomeScreen(),
-            transitionsBuilder: (c, anim, a2, child) =>
-                FadeTransition(opacity: anim, child: child),
-            transitionDuration: Duration(milliseconds: 2000),
-          ),
+            context,
+            SlideFromLeftPageRoute(
+                widget: HomeScreen()
+            )
         );
       } else {
         _showDialog(context);
@@ -115,13 +101,10 @@ class _OTPNewDevice extends State<OTPNewDeviceScreen> {
     }
 
     Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (c, a1, a2) => new HomeScreen(),
-        transitionsBuilder: (c, anim, a2, child) =>
-            FadeTransition(opacity: anim, child: child),
-        transitionDuration: Duration(milliseconds: 2000),
-      ),
+        context,
+        SlideFromLeftPageRoute(
+            widget: HomeScreen()
+        )
     );
   }
 

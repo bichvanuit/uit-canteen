@@ -13,6 +13,7 @@ import 'package:uit_cantin/models/DeliveryPlace.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
 import 'package:uit_cantin/compoments/CustomDialog.dart';
 import 'package:uit_cantin/pages/appBar/AppBarDelivery.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 List<DeliveryPlace> _parsePlace(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -191,15 +192,12 @@ class _DeliveryMethod extends State<DeliveryMethodScreen> {
       });
       var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
-        bool aaa = await token.removeMobileWaiting();
-        print(aaa);
+        await token.removeMobileWaiting();
         Navigator.push(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (c, a1, a2) => new OrderSuccessScreen(),
-            transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-            transitionDuration: Duration(milliseconds: 2000),
-          ),
+            context,
+            SlideFromLeftPageRoute(
+                widget: OrderSuccessScreen()
+            )
         );
       } else {
         showDialog(

@@ -15,6 +15,7 @@ import 'package:uit_cantin/pages/test.dart';
 import 'package:uit_cantin/models/BankLinked.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
 import 'package:uit_cantin/services/FormatVND.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 Future<WalletInfo> _fetchWallet() async {
   Token token = new Token();
@@ -1049,12 +1050,10 @@ class _RechargeState extends State<RechargeScreen> {
             onTap: () {
               setState(() {
                 Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (c, a1, a2) => new RechargeInfoScreen(),
-                    transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                    transitionDuration: Duration(milliseconds: 2000),
-                  ),
+                    context,
+                    SlideFromLeftPageRoute(
+                        widget: RechargeInfoScreen()
+                    )
                 );
               });
             },

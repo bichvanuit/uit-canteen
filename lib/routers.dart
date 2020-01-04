@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uit_cantin/pages/Login.dart';
 import 'package:uit_cantin/pages/Home.dart';
-import 'package:uit_cantin/pages/Menu.dart';
 
 class Routes {
   Routes() {
@@ -20,11 +19,6 @@ class Routes {
           case '/home':
             return new MyCustomRoute(
               builder: (_) => new HomeScreen(),
-              settings: settings,
-            );
-          case '/menu':
-            return new MyCustomRoute(
-              builder: (_) => new MenuScreen(),
               settings: settings,
             );
         }

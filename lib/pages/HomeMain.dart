@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:uit_cantin/models/TabIconData.dart';
-import 'package:uit_cantin/pages/Wallet.dart';
 import 'package:uit_cantin/compoments/SpecialOffer.dart';
 import 'package:uit_cantin/compoments/TodayOrder.dart';
 import 'package:uit_cantin/compoments/AdvertisementWall.dart';
@@ -9,6 +8,29 @@ import 'package:uit_cantin/pages/DeliveryMethod.dart';
 import 'package:uit_cantin/compoments/StopServingWidget.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 import 'package:flutter/services.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:uit_cantin/config.dart';
+import 'package:uit_cantin/models/CardGet.dart';
+import 'package:uit_cantin/canteenAppTheme.dart';
+import 'package:uit_cantin/pages/Bank.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
+
+List<CardGet> _parseCard(String responseBody) {
+  final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
+  return parsed.map<CardGet>((json) => CardGet.fromJson(json)).toList();
+}
+
+Future<List<CardGet>> _fetchCard() async {
+  Token token = new Token();
+  final tokenValue = await token.getMobileToken();
+  Map<String, String> requestHeaders = {
+    "Authorization": "Bearer " + tokenValue,
+  };
+  final response = await http.get('$SERVER_NAME/order/get-processing-order',
+      headers: requestHeaders);
+  return _parseCard(response.body);
+}
 
 class HomeMainScreen extends StatefulWidget {
 
@@ -18,8 +40,17 @@ class HomeMainScreen extends StatefulWidget {
 
 class _HomeMainState extends State<HomeMainScreen>  {
 
+  List<CardGet> listCard;
+  int lengthCard = 0;
+
   @override
   void initState() {
+    _fetchCard().then((data) => setState(() {
+      setState(() {
+        listCard = data;
+        lengthCard = listCard.length;
+      });
+    }));
     Token token = new Token();
 
     token.getMobileWaiting().then((value) {
@@ -89,13 +120,10 @@ class _HomeMainState extends State<HomeMainScreen>  {
                 onTap: () {
                   Navigator.of(context).pop();
                   Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (c, a1, a2) => new DeliveryMethodScreen(),
-                      transitionsBuilder: (c, anim, a2, child) =>
-                          FadeTransition(opacity: anim, child: child),
-                      transitionDuration: Duration(milliseconds: 2000),
-                    ),
+                      context,
+                      SlideFromLeftPageRoute(
+                          widget: DeliveryMethodScreen()
+                      )
                   );
                 },
                 child: new Container(
@@ -190,17 +218,10 @@ class _HomeMainState extends State<HomeMainScreen>  {
                               onTap: () {
                                 setState(() {
                                   Navigator.push(
-                                    context,
-                                    PageRouteBuilder(
-                                      pageBuilder: (c, a1,
-                                          a2) => new WalletScreen(),
-                                      transitionsBuilder: (c, anim, a2,
-                                          child) =>
-                                          FadeTransition(
-                                              opacity: anim, child: child),
-                                      transitionDuration: Duration(
-                                          milliseconds: 2000),
-                                    ),
+                                      context,
+                                      SlideFromLeftPageRoute(
+                                          widget: BankScreen()
+                                      )
                                   );
                                 });
                               },
@@ -218,6 +239,45 @@ class _HomeMainState extends State<HomeMainScreen>  {
                               child: new TodayOffer())
                         ],
                       )))),
+          floatingActionButton: lengthCard > 0 ?  FloatingActionButton(
+            onPressed: () {
+
+            },
+            child: new Stack(
+              children: <Widget>[
+                new IconButton(
+                  icon: new Icon(
+                    Icons.shopping_basket,
+                    color: Colors.white,
+                    size: 35,
+                  ),
+                  onPressed: null,
+                ),
+                new Positioned(
+                    top: 20.0,
+                    left: 14.0,
+                    child: new Stack(
+                      children: <Widget>[
+                        new Icon(Icons.brightness_1,
+                            size: 20.0, color: CanteenAppTheme.main),
+                        new Positioned(
+                            top: 3.0,
+                            left: 7.0,
+                            child: new Center(
+                              child: new Text(
+                                lengthCard.toString(),
+                                style: new TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11.0,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            )),
+                      ],
+                    )),
+              ],
+            ),
+            backgroundColor: CanteenAppTheme.main,
+          ) : null,
         ));
   }
 }

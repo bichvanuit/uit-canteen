@@ -10,6 +10,7 @@ import 'package:uit_cantin/services/FormatPrice.dart';
 import 'package:uit_cantin/compoments/DialogMethodRecharge.dart';
 import 'package:uit_cantin/pages/ItemDetails.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 List<History> _parseHistory(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -216,14 +217,12 @@ class _HistoryState extends State<HistoryScreen> {
                                                                   GestureDetector(
                                                                     onTap:
                                                                         () {
-                                                                      Navigator.push(
-                                                                        context,
-                                                                        PageRouteBuilder(
-                                                                          pageBuilder: (c, a1, a2) => new ItemDetails(foodId: listHistory[position].foodInfo[position1].foodId,),
-                                                                          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                                                                          transitionDuration: Duration(milliseconds: 2000),
-                                                                        ),
-                                                                      );
+                                                                          Navigator.push(
+                                                                              context,
+                                                                              SlideFromLeftPageRoute(
+                                                                                  widget: ItemDetails(foodId: listHistory[position].foodInfo[position1].foodId)
+                                                                              )
+                                                                          );
                                                                     },
                                                                     child: new Container(
                                                                       //    padding: const EdgeInsets.only(right: 5.0),

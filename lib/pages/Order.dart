@@ -9,6 +9,7 @@ import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:uit_cantin/services/FormatPrice.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
 import 'package:uit_cantin/pages/Home.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 List<CardGet> _parseCard(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -348,10 +349,10 @@ class _OrderState extends State<OrderScreen> {
       if (status == STATUS_SUCCESS) {
         Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => ConfirmOrderScreen(
-                      totalOrder: totalOrder,
-                    )));
+            SlideFromLeftPageRoute(
+                widget: ConfirmOrderScreen(totalOrder: totalOrder)
+            )
+        );
       } else {
         //    _showDialogSuccess();
       }
@@ -385,8 +386,12 @@ class _OrderState extends State<OrderScreen> {
             color: Color.fromRGBO(229, 32, 32, 1.0),
             onPressed: () {
               setState(() {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()));
+                Navigator.push(
+                    context,
+                    SlideFromLeftPageRoute(
+                        widget: HomeScreen()
+                    )
+                );
               });
             },
             child: Text(
@@ -423,8 +428,10 @@ class _OrderState extends State<OrderScreen> {
                     setState(() {
                       Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => HomeScreen()));
+                          SlideFromLeftPageRoute(
+                              widget: HomeScreen()
+                          )
+                      );
                     });
                   },
                   child: new Container(

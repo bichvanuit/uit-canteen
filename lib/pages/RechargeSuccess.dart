@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:uit_cantin/pages/Home.dart';
 import 'package:uit_cantin/services/FormatVND.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 class RechargeSuccessScreen extends StatefulWidget {
   final String amount;
@@ -116,12 +117,10 @@ class _RechargeSuccessState extends State<RechargeSuccessScreen> {
                         child: new GestureDetector(
                           onTap: () {
                             Navigator.push(
-                              context,
-                              PageRouteBuilder(
-                                pageBuilder: (c, a1, a2) => new HomeScreen(),
-                                transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                                transitionDuration: Duration(milliseconds: 2000),
-                              ),
+                                context,
+                                SlideFromLeftPageRoute(
+                                    widget: HomeScreen()
+                                )
                             );
                           },
                           child: new Container(

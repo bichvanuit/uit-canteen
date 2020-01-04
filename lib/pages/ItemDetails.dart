@@ -3,21 +3,15 @@ import 'package:uit_cantin/models/FoodInfo.dart';
 import 'package:uit_cantin/pages/Order.dart';
 import 'package:uit_cantin/pages/Home.dart';
 import 'package:uit_cantin/models/CartInfo.dart';
-
 import 'package:uit_cantin/services/Token.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/FormatPrice.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
-import 'package:uit_cantin/services/Token.dart';
-import 'package:rich_alert/rich_alert.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:uit_cantin/pages/DeliveryMethod.dart';
-
-
-
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 Future<FoodInfo> _fetchProduct(int foodId) async {
   Token token = new Token();
@@ -122,12 +116,10 @@ class _ItemDetails extends State<ItemDetails> {
                 onTap: () {
                   Navigator.of(context).pop();
                   Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (c, a1, a2) => new DeliveryMethodScreen(),
-                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                      transitionDuration: Duration(milliseconds: 2000),
-                    ),
+                      context,
+                      SlideFromLeftPageRoute(
+                          widget: DeliveryMethodScreen()
+                      )
                   );
                 },
                 child: new Container(
@@ -225,12 +217,10 @@ class _ItemDetails extends State<ItemDetails> {
         Navigator.of(context).pop();
         setState(() {
           Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (c, a1, a2) => new OrderScreen(),
-              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-              transitionDuration: Duration(milliseconds: 2000),
-            ),
+              context,
+              SlideFromLeftPageRoute(
+                  widget: OrderScreen()
+              )
           );
         });
       } else {
@@ -264,12 +254,10 @@ class _ItemDetails extends State<ItemDetails> {
           icon: const Icon(Icons.shopping_basket, color: Colors.white),
           onPressed: () {
             Navigator.push(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (c, a1, a2) => new OrderScreen(),
-                transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                transitionDuration: Duration(milliseconds: 2000),
-              ),
+                context,
+                SlideFromLeftPageRoute(
+                    widget: OrderScreen()
+                )
             );
           }),
     ];
@@ -290,12 +278,10 @@ class _ItemDetails extends State<ItemDetails> {
                   Navigator.of(context).pop();
                   setState(() {
                     Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (c, a1, a2) => new HomeScreen(),
-                        transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                        transitionDuration: Duration(milliseconds: 2000),
-                      ),
+                        context,
+                        SlideFromLeftPageRoute(
+                            widget: HomeScreen()
+                        )
                     );
                   });
                 },
@@ -306,12 +292,10 @@ class _ItemDetails extends State<ItemDetails> {
                   Navigator.of(context).pop();
                   setState(() {
                     Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (c, a1, a2) => OrderScreen(),
-                        transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                        transitionDuration: Duration(milliseconds: 2000),
-                      ),
+                        context,
+                        SlideFromLeftPageRoute(
+                            widget: OrderScreen()
+                        )
                     );
                   });
                 },

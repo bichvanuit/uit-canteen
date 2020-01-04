@@ -11,6 +11,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 List<BankLinked> _parseBankLinked(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -558,18 +559,16 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
             " " +
             bankSelect.cardNumber);
         Navigator.push(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (c, a1, a2) => RechargeSuccessScreen(
-                amount:
-                _textFieldController.text,
-                method:
-                bankSelect.bankName +
-                    " " +
-                    bankSelect.cardNumber.toString().substring(0, 4)),
-            transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-            transitionDuration: Duration(milliseconds: 2000),
-          ),
+            context,
+            SlideFromLeftPageRoute(
+                widget: RechargeSuccessScreen(
+                    amount:
+                    _textFieldController.text,
+                    method:
+                    bankSelect.bankName +
+                        " " +
+                        bankSelect.cardNumber.toString().substring(0, 4))
+            )
         );
       } else {
         showDialog(

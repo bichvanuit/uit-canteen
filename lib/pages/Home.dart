@@ -6,6 +6,8 @@ import 'package:uit_cantin/pages/HomeMain.dart';
 import 'package:uit_cantin/pages/Order.dart';
 import 'package:uit_cantin/pages/History.dart';
 import 'package:uit_cantin/pages/User.dart';
+import 'package:uit_cantin/models/CardGet.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -22,6 +24,9 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     HistoryScreen(),
     UserScreen()
   ];
+
+  List<CardGet> listCard;
+  int lengthCard = 0;
 
   @override
   void initState() {
@@ -40,45 +45,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     YYDialog.init(context);
     return Scaffold(
         body: _children[_currentIndex],
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-
-          },
-          child: new Stack(
-            children: <Widget>[
-              new IconButton(
-                icon: new Icon(
-                  Icons.shopping_basket,
-                  color: Colors.white,
-                  size: 35,
-                ),
-                onPressed: null,
-              ),
-              new Positioned(
-                  top: 20.0,
-                  left: 14.0,
-                  child: new Stack(
-                    children: <Widget>[
-                      new Icon(Icons.brightness_1,
-                          size: 20.0, color: CanteenAppTheme.main),
-                      new Positioned(
-                          top: 3.0,
-                          left: 7.0,
-                          child: new Center(
-                            child: new Text(
-                              "5",
-                              style: new TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11.0,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          )),
-                    ],
-                  )),
-            ],
-          ),
-          backgroundColor: CanteenAppTheme.main,
-        ),
         bottomNavigationBar: new Theme(
           data: Theme.of(context).copyWith(
             // sets the background color of the `BottomNavigationBar`

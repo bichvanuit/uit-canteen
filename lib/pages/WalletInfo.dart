@@ -13,6 +13,7 @@ import 'package:uit_cantin/services/FormatVND.dart';
 import 'package:uit_cantin/models/BankLinked.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 Future<WalletInfo> _fetchWallet() async {
   Token token = new Token();
@@ -453,8 +454,10 @@ class _WalletInfoState extends State<WalletInfoScreen> {
                   setState(() {
                     Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => RechargeScreen()));
+                        SlideFromLeftPageRoute(
+                            widget: RechargeScreen()
+                        )
+                    );
                   });
                 },
                 child: new Container(
@@ -629,8 +632,10 @@ class _WalletInfoState extends State<WalletInfoScreen> {
                       setState(() {
                         Navigator.push(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => HomeScreen()));
+                            SlideFromLeftPageRoute(
+                                widget: HomeScreen()
+                            )
+                        );
                       });
                     },
                     child: new Container(

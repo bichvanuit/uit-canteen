@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
-import 'package:uit_cantin/compoments/WhiteTick.dart';
 import 'package:uit_cantin/models/User.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'dart:convert';
@@ -16,8 +15,9 @@ import 'package:device_info/device_info.dart';
 import 'package:uit_cantin/models/UserInfo.dart';
 import 'package:uit_cantin/pages/OTPNewDevice.dart';
 import 'package:uit_cantin/pages/Home.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
-Future<UserInfo>_fetchUserInfo() async {
+Future<UserInfo> _fetchUserInfo() async {
   Token token = new Token();
   final tokenValue = await token.getMobileToken();
   Map<String, String> requestHeaders = {
@@ -101,11 +101,11 @@ class LoginScreenState extends State<LoginScreen> {
         fontSize2: 14.0,
         fontWeight2: FontWeight.bold,
         onTap2: () {
-            setState(() {
-              isLoading = false;
-            });
-            _controllerUsername.clear();
-            _controllerPassword.clear();
+          setState(() {
+            isLoading = false;
+          });
+          _controllerUsername.clear();
+          _controllerPassword.clear();
         },
       )
       ..show();
@@ -116,7 +116,7 @@ class LoginScreenState extends State<LoginScreen> {
     timeDilation = 0.4;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     return new Scaffold(
-        body: isLoading == true ? _createProgress() : _createBody(),
+      body: isLoading == true ? _createProgress() : _createBody(),
     );
   }
 
@@ -132,8 +132,7 @@ class LoginScreenState extends State<LoginScreen> {
       "Authorization": "Bearer " + tokenValue,
     };
 
-    var response =
-    await http.post(url, headers: requestHeaders);
+    var response = await http.post(url, headers: requestHeaders);
     var statusCode = response.statusCode;
     if (statusCode == STATUS_CODE_SUCCESS) {
       var responseBody = json.decode(response.body);
@@ -144,14 +143,7 @@ class LoginScreenState extends State<LoginScreen> {
       print(status);
       Navigator.of(context).pop();
       Navigator.push(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (c, a1, a2) => new OTPNewDeviceScreen(),
-          transitionsBuilder: (c, anim, a2, child) =>
-              FadeTransition(opacity: anim, child: child),
-          transitionDuration: Duration(milliseconds: 2000),
-        ),
-      );
+          context, SlideFromLeftPageRoute(widget: OTPNewDeviceScreen()));
     }
   }
 
@@ -172,25 +164,12 @@ class LoginScreenState extends State<LoginScreen> {
         await token.setMobileToken(responseBody["data"]);
         UserInfo user = await _fetchUserInfo();
         if (user.phone == null) {
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (c, a1, a2) => new RequireNumberPhoneScreen(),
-              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-              transitionDuration: Duration(milliseconds: 2000),
-            ),
-          );
+          Navigator.push(context,
+              SlideFromLeftPageRoute(widget: RequireNumberPhoneScreen()));
         } else if (user.newDevice) {
           _newDevice();
         } else {
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (c, a1, a2) => new HomeScreen(),
-              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-              transitionDuration: Duration(milliseconds: 2000),
-            ),
-          );
+          Navigator.push(context, SlideFromLeftPageRoute(widget: HomeScreen()));
         }
       } else {
         _showDialog(context);
@@ -200,22 +179,22 @@ class LoginScreenState extends State<LoginScreen> {
 
   Future<bool> _onWillPop() {
     return showDialog(
-      context: context,
-      child: new AlertDialog(
-        title: new Text('Bạn có chắc chắn muốn thoát khỏi ứng dụng'),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('Không'),
+          context: context,
+          child: new AlertDialog(
+            title: new Text('Bạn có chắc chắn muốn thoát khỏi ứng dụng'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('Không'),
+              ),
+              new FlatButton(
+                onPressed: () =>
+                    SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+                child: new Text('Thoát ứng dụng'),
+              ),
+            ],
           ),
-          new FlatButton(
-            onPressed: () =>
-                SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
-            child: new Text('Thoát ứng dụng'),
-          ),
-        ],
-      ),
-    ) ??
+        ) ??
         false;
   }
 
@@ -226,7 +205,8 @@ class LoginScreenState extends State<LoginScreen> {
           body: new Container(
               decoration: new BoxDecoration(
                 image: new DecorationImage(
-                  image: new NetworkImage('https://toinayangi.vn/wp-content/uploads/2016/05/C%C3%A1ch-l%C3%A0m-c%C6%A1m-chi%C3%AAn-th%E1%BB%8Bt-g%C3%A0-quay-%C4%91%C6%A1n-gi%E1%BA%A3n1.jpg'),
+                  image: new NetworkImage(
+                      'https://toinayangi.vn/wp-content/uploads/2016/05/C%C3%A1ch-l%C3%A0m-c%C6%A1m-chi%C3%AAn-th%E1%BB%8Bt-g%C3%A0-quay-%C4%91%C6%A1n-gi%E1%BA%A3n1.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -251,10 +231,20 @@ class LoginScreenState extends State<LoginScreen> {
                           new Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                new Tick(image: new DecorationImage(
-                                  image: new ExactAssetImage('assets/fork.png'),
-                                  fit: BoxFit.fill,
-                                )),
+                                new Container(
+                                  margin: const EdgeInsets.fromLTRB(
+                                      0, 100.0, 0, 15.0),
+                                  width: 100.0,
+                                  height: 100.0,
+                                  alignment: Alignment.center,
+                                  decoration: new BoxDecoration(
+                                    image: DecorationImage(
+                                      image: new ExactAssetImage(
+                                          'assets/fork.png'),
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                ),
                                 new Container(
                                   margin: const EdgeInsets.only(bottom: 20.0),
                                   child: new Text("UIT Căn tin",
@@ -268,43 +258,43 @@ class LoginScreenState extends State<LoginScreen> {
                                     margin: new EdgeInsets.symmetric(
                                         horizontal: 20.0),
                                     padding:
-                                    const EdgeInsets.only(bottom: 200.0),
+                                        const EdgeInsets.only(bottom: 200.0),
                                     child: new Column(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                            MainAxisAlignment.spaceEvenly,
                                         children: <Widget>[
-                                        new Form(
+                                          new Form(
                                               key: _formKey,
                                               child: new Column(
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceAround,
+                                                      MainAxisAlignment
+                                                          .spaceAround,
                                                   children: <Widget>[
                                                     new TextFormField(
                                                         controller:
-                                                        _controllerUsername,
+                                                            _controllerUsername,
                                                         style: TextStyle(
                                                             color:
-                                                            Colors.white),
+                                                                Colors.white),
                                                         decoration:
-                                                        InputDecoration(
+                                                            InputDecoration(
                                                           labelText:
-                                                          "Mã số sinh viên",
+                                                              "Mã số sinh viên",
                                                           labelStyle: TextStyle(
                                                               color:
-                                                              Colors.white),
+                                                                  Colors.white),
                                                           icon: Icon(
                                                               Icons
                                                                   .person_outline,
                                                               color:
-                                                              Colors.white),
+                                                                  Colors.white),
                                                           enabledBorder:
-                                                          const UnderlineInputBorder(
+                                                              const UnderlineInputBorder(
                                                             borderSide:
-                                                            const BorderSide(
-                                                                color: Colors
-                                                                    .white,
-                                                                width: 0.0),
+                                                                const BorderSide(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    width: 0.0),
                                                           ),
                                                         ),
                                                         validator:
@@ -315,36 +305,36 @@ class LoginScreenState extends State<LoginScreen> {
                                                         }),
                                                     new Container(
                                                       margin:
-                                                      const EdgeInsets.only(
-                                                          top: 8.0),
+                                                          const EdgeInsets.only(
+                                                              top: 8.0),
                                                     ),
                                                     new TextFormField(
                                                         controller:
-                                                        _controllerPassword,
+                                                            _controllerPassword,
                                                         style: TextStyle(
                                                             color:
-                                                            Colors.white),
+                                                                Colors.white),
                                                         obscureText: true,
                                                         decoration:
-                                                        InputDecoration(
-                                                            labelText:
-                                                            "Mật khẩu",
-                                                            labelStyle: TextStyle(
-                                                                color: Colors
-                                                                    .white),
-                                                            icon: Icon(
-                                                                Icons
-                                                                    .lock_outline,
-                                                                color: Colors
-                                                                    .white),
-                                                            enabledBorder:
-                                                            const UnderlineInputBorder(
-                                                              borderSide: const BorderSide(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  width:
-                                                                  0.0),
-                                                            )),
+                                                            InputDecoration(
+                                                                labelText:
+                                                                    "Mật khẩu",
+                                                                labelStyle: TextStyle(
+                                                                    color: Colors
+                                                                        .white),
+                                                                icon: Icon(
+                                                                    Icons
+                                                                        .lock_outline,
+                                                                    color: Colors
+                                                                        .white),
+                                                                enabledBorder:
+                                                                    const UnderlineInputBorder(
+                                                                  borderSide: const BorderSide(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      width:
+                                                                          0.0),
+                                                                )),
                                                         validator:
                                                             (String value) {
                                                           if (value.isEmpty)

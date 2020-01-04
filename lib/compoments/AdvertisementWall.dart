@@ -3,13 +3,13 @@ import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:uit_cantin/services/FormatVND.dart';
 import 'package:uit_cantin/models/WalletInfo.dart';
 import 'package:uit_cantin/pages/Recharge.dart';
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/pages/WalletInfo.dart';
 import 'package:uit_cantin/pages/InfoBank.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 Future<WalletInfo> _fetchWallet() async {
   Token token = new Token();
@@ -127,13 +127,10 @@ class _AdvertisementWall extends State<AdvertisementWall> {
                 onTap: () {
                   setState(() {
                     Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (c, a1, a2) => new RechargeScreen(),
-                        transitionsBuilder: (c, anim, a2, child) =>
-                            FadeTransition(opacity: anim, child: child),
-                        transitionDuration: Duration(milliseconds: 2000),
-                      ),
+                        context,
+                        SlideFromLeftPageRoute(
+                            widget: RechargeScreen()
+                        )
                     );
                   });
                 },
@@ -156,12 +153,10 @@ class _AdvertisementWall extends State<AdvertisementWall> {
               new GestureDetector(
                   onTap: () {
                     Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (c, a1, a2) => new WalletInfoScreen(),
-                        transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                        transitionDuration: Duration(milliseconds: 2000),
-                      ),
+                        context,
+                        SlideFromLeftPageRoute(
+                            widget: WalletInfoScreen()
+                        )
                     );
                   },
                   child: new Container(
@@ -181,13 +176,10 @@ class _AdvertisementWall extends State<AdvertisementWall> {
                 onTap: () {
                   setState(() {
                     Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (c, a1, a2) => new InfoBankScreen(),
-                        transitionsBuilder: (c, anim, a2, child) =>
-                            FadeTransition(opacity: anim, child: child),
-                        transitionDuration: Duration(milliseconds: 2000),
-                      ),
+                        context,
+                        SlideFromLeftPageRoute(
+                            widget: InfoBankScreen()
+                        )
                     );
                   });
                 },

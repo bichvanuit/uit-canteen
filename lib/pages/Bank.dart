@@ -7,6 +7,7 @@ import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
 import 'package:uit_cantin/canteenAppTheme.dart';
+import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 class BankScreen extends StatefulWidget {
   @override
@@ -495,13 +496,10 @@ class _BankState extends State<BankScreen> {
       var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
         Navigator.push(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (c, a1, a2) => new InfoBankScreen(),
-            transitionsBuilder: (c, anim, a2, child) =>
-                FadeTransition(opacity: anim, child: child),
-            transitionDuration: Duration(milliseconds: 2000),
-          ),
+            context,
+            SlideFromLeftPageRoute(
+                widget: InfoBankScreen()
+            )
         );
       } else {}
     }
