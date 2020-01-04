@@ -15,7 +15,7 @@ import 'package:uit_cantin/pages/RequireNumberPhone.dart';
 import 'package:device_info/device_info.dart';
 import 'package:uit_cantin/models/UserInfo.dart';
 import 'package:uit_cantin/pages/OTPNewDevice.dart';
-import 'package:uit_cantin/pages/HomeMain.dart';
+import 'package:uit_cantin/pages/Home.dart';
 
 Future<UserInfo>_fetchUserInfo() async {
   Token token = new Token();
@@ -181,13 +181,12 @@ class LoginScreenState extends State<LoginScreen> {
             ),
           );
         } else if (user.newDevice) {
-
           _newDevice();
         } else {
           Navigator.push(
             context,
             PageRouteBuilder(
-              pageBuilder: (c, a1, a2) => new HomeMainScreen(),
+              pageBuilder: (c, a1, a2) => new HomeScreen(),
               transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
               transitionDuration: Duration(milliseconds: 2000),
             ),

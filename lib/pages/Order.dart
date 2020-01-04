@@ -446,7 +446,7 @@ class _OrderState extends State<OrderScreen> {
                     children: <Widget>[
                       listCard != null
                           ? new Container(
-                              height: 440,
+                              height: 383,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 physics: BouncingScrollPhysics(),

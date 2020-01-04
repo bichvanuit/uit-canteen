@@ -51,12 +51,12 @@ class _CategoryViewState extends State<CategoryView> {
 //        ),
         child: InkWell(
       onTap: () {
-        if (!isService ||
-            (widget.foodInfo == null ||
-                widget.foodInfo.quantity == null ||
-                widget.foodInfo.quantity <= 0)) {
-          return;
-        } else {
+//        if (!isService ||
+//            (widget.foodInfo == null ||
+//                widget.foodInfo.quantity == null ||
+//                widget.foodInfo.quantity <= 0)) {
+//          return;
+//        } else {
           Navigator.push(
             context,
             PageRouteBuilder(
@@ -67,7 +67,7 @@ class _CategoryViewState extends State<CategoryView> {
               transitionDuration: Duration(milliseconds: 2000),
             ),
           );
-        }
+//        }
       },
       splashColor: Colors.transparent,
       child: Stack(
@@ -162,18 +162,18 @@ class _CategoryViewState extends State<CategoryView> {
                               ])))
                         ])))
               ])),
-          !isService ||
-                  (widget.foodInfo == null ||
-                      widget.foodInfo.quantity == null ||
-                      widget.foodInfo.quantity <= 0)
-              ? new Container(
-                  width: MediaQuery.of(context).size.width * 0.75,
-                  margin: const EdgeInsets.only(right: 12.0, left: 35.0),
-                  decoration: BoxDecoration(
-                      // color: Colors.red
-                      color: Color.fromRGBO(255, 255, 255, 0.7)),
-                )
-              : new Container(),
+//          !isService ||
+//                  (widget.foodInfo == null ||
+//                      widget.foodInfo.quantity == null ||
+//                      widget.foodInfo.quantity <= 0)
+//              ? new Container(
+//                  width: MediaQuery.of(context).size.width * 0.75,
+//                  margin: const EdgeInsets.only(right: 12.0, left: 35.0),
+//                  decoration: BoxDecoration(
+//                      // color: Colors.red
+//                      color: Color.fromRGBO(255, 255, 255, 0.7)),
+//                )
+//              : new Container(),
           new Container(
               margin: const EdgeInsets.only(top: 20.0),
               height: 70.0,
@@ -187,21 +187,21 @@ class _CategoryViewState extends State<CategoryView> {
                     : null,
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               )),
-          !isService ||
-                  (widget.foodInfo == null ||
-                      widget.foodInfo.quantity == null ||
-                      widget.foodInfo.quantity <= 0)
-              ? new Container(
-                  margin: const EdgeInsets.only(top: 20.0),
-                  height: 70.0,
-                  width: 90.0,
-                  decoration: BoxDecoration(
-                    // color: Colors.red
-                    color: Color.fromRGBO(255, 255, 255, 0.7),
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                )
-              : new Container(),
+//          !isService ||
+//                  (widget.foodInfo == null ||
+//                      widget.foodInfo.quantity == null ||
+//                      widget.foodInfo.quantity <= 0)
+//              ? new Container(
+//                  margin: const EdgeInsets.only(top: 20.0),
+//                  height: 70.0,
+//                  width: 90.0,
+//                  decoration: BoxDecoration(
+//                    // color: Colors.red
+//                    color: Color.fromRGBO(255, 255, 255, 0.7),
+//                    borderRadius: BorderRadius.all(Radius.circular(10)),
+//                  ),
+//                )
+//              : new Container(),
         ],
       ),
     ));

@@ -9,6 +9,7 @@ import 'package:uit_cantin/canteenAppTheme.dart';
 import 'package:uit_cantin/services/FormatPrice.dart';
 import 'package:uit_cantin/compoments/DialogMethodRecharge.dart';
 import 'package:uit_cantin/pages/ItemDetails.dart';
+import 'package:uit_cantin/compoments/LoadingWidget.dart';
 
 List<History> _parseHistory(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -34,15 +35,16 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryState extends State<HistoryScreen> {
-  bool isLoading = false;
+  bool isLoading;
   List<History> listHistory;
 
   @override
   void initState() {
-    isLoading = false;
+    isLoading = true;
     _fetchHistory().then((data) => setState(() {
           setState(() {
             listHistory = data;
+            isLoading = false;
           });
         }));
 
@@ -65,21 +67,26 @@ class _HistoryState extends State<HistoryScreen> {
           //  leading: _isSearching ? const BackButton() : null,
           title: Text("Hoạt động của tôi"),
         ),
-        body: SingleChildScrollView(
-          child: new Container(
-            margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
-            child: new Column(
-              children: <Widget>[
-                new Container(
-                    margin: const EdgeInsets.only(top: 5.0),
-                    child: new ListView.builder(
-                        shrinkWrap: true,
-                        physics: BouncingScrollPhysics(),
-                        itemCount: listHistory.length,
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (context, position) {
-                          return Container(
-                              child: new Column(
+        body: isLoading ? _createProgress() : _createBody()
+    );
+  }
+
+  Widget _createBody() {
+    return SingleChildScrollView(
+      child: new Container(
+        margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
+        child: new Column(
+          children: <Widget>[
+            listHistory != null && listHistory.length > 0 ? new Container(
+                margin: const EdgeInsets.only(top: 5.0),
+                child: new ListView.builder(
+                    shrinkWrap: true,
+                    physics: BouncingScrollPhysics(),
+                    itemCount: listHistory.length,
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (context, position) {
+                      return Container(
+                          child: new Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
@@ -96,7 +103,7 @@ class _HistoryState extends State<HistoryScreen> {
                                     physics: BouncingScrollPhysics(),
                                     shrinkWrap: true,
                                     itemCount:
-                                        listHistory[position].foodInfo.length,
+                                    listHistory[position].foodInfo.length,
                                     scrollDirection: Axis.vertical,
                                     itemBuilder: (context, position1) {
                                       return GestureDetector(
@@ -106,7 +113,7 @@ class _HistoryState extends State<HistoryScreen> {
                                             builder: (BuildContext context) =>
                                                 DialogRating(
                                                     foodInfo: listHistory[
-                                                            position]
+                                                    position]
                                                         .foodInfo[position1]),
                                           );
                                         },
@@ -128,24 +135,24 @@ class _HistoryState extends State<HistoryScreen> {
                                                             height: 90,
                                                             decoration: new BoxDecoration(
                                                                 color:
-                                                                    CanteenAppTheme
-                                                                        .white,
+                                                                CanteenAppTheme
+                                                                    .white,
                                                                 borderRadius:
-                                                                    BorderRadius.all(
-                                                                        Radius.circular(
-                                                                            16.0)),
+                                                                BorderRadius.all(
+                                                                    Radius.circular(
+                                                                        16.0)),
                                                                 boxShadow: <
                                                                     BoxShadow>[
                                                                   BoxShadow(
                                                                       color: CanteenAppTheme
                                                                           .grey
                                                                           .withOpacity(
-                                                                              0.2),
+                                                                          0.2),
                                                                       offset: Offset(
                                                                           1.1,
                                                                           1.1),
                                                                       blurRadius:
-                                                                          5.0),
+                                                                      5.0),
                                                                 ]),
                                                             child: Row(
                                                                 children: <
@@ -209,21 +216,21 @@ class _HistoryState extends State<HistoryScreen> {
                                                                   GestureDetector(
                                                                     onTap:
                                                                         () {
-                                                                          Navigator.push(
-                                                                            context,
-                                                                            PageRouteBuilder(
-                                                                              pageBuilder: (c, a1, a2) => new ItemDetails(foodId: listHistory[position].foodInfo[position1].foodId,),
-                                                                              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                                                                              transitionDuration: Duration(milliseconds: 2000),
-                                                                            ),
-                                                                          );
-                                                                        },
+                                                                      Navigator.push(
+                                                                        context,
+                                                                        PageRouteBuilder(
+                                                                          pageBuilder: (c, a1, a2) => new ItemDetails(foodId: listHistory[position].foodInfo[position1].foodId,),
+                                                                          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                                                                          transitionDuration: Duration(milliseconds: 2000),
+                                                                        ),
+                                                                      );
+                                                                    },
                                                                     child: new Container(
-                                                                    //    padding: const EdgeInsets.only(right: 5.0),
+                                                                      //    padding: const EdgeInsets.only(right: 5.0),
                                                                         child: new Text(
                                                                           "Đặt hàng lại",
                                                                           style:
-                                                                              TextStyle(color: CanteenAppTheme.main, fontSize: 16.0,
+                                                                          TextStyle(color: CanteenAppTheme.main, fontSize: 16.0,
                                                                               fontWeight: FontWeight.bold),
                                                                         )),
                                                                   ),
@@ -239,15 +246,15 @@ class _HistoryState extends State<HistoryScreen> {
                                                     image: new DecorationImage(
                                                         image: new NetworkImage(
                                                             listHistory[
-                                                                    position]
+                                                            position]
                                                                 .foodInfo[
-                                                                    position1]
+                                                            position1]
                                                                 .image),
                                                         fit: BoxFit.cover),
                                                     borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                10)),
+                                                    BorderRadius.all(
+                                                        Radius.circular(
+                                                            10)),
                                                   )),
                                             ],
                                           ),
@@ -257,11 +264,19 @@ class _HistoryState extends State<HistoryScreen> {
                               )
                             ],
                           ));
-                        })),
-              ],
-            ),
-          ),
-        ));
+                    })) : new Container()
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _createProgress() {
+    return new Container(
+      child: new Stack(
+        children: <Widget>[_createBody(), new LoadingWidget()],
+      ),
+    );
   }
 }
 
