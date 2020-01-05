@@ -16,6 +16,9 @@ import 'package:uit_cantin/models/BankLinked.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
 import 'package:uit_cantin/services/FormatVND.dart';
 import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
+import 'package:uit_cantin/pages/OTPWalletWithdraw.dart';
+import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
+import 'package:flutter/services.dart';
 
 Future<WalletInfo> _fetchWallet() async {
   Token token = new Token();
@@ -54,14 +57,38 @@ class RechargeScreen extends StatefulWidget {
 class _RechargeState extends State<RechargeScreen> {
 
   String balance = "0";
-  BankLinked listBank = new BankLinked();
+  BankLinked bankSelect = new BankLinked();
   TextEditingController _textFieldController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   String moneyWithDraw = "0";
   bool isLoading;
+  List<BankLinked> listBank = [];
 
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   VoidCallback _showPersBottomSheetCallBack;
+
+  @override
+  void initState() {
+    isLoading = false;
+    _fetchBanked().then((data) => setState(() {
+      setState(() {
+        listBank = data;
+        bankSelect = data[0];
+      });
+    }));
+    _fetchWallet().then((data) => setState(() {
+      setState(() {
+        balance = data.balance;
+      });
+    }));
+    super.initState();
+    _showPersBottomSheetCallBack = _showBottomSheet;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   void _showBottomSheet() {
     setState(() {
@@ -503,65 +530,181 @@ class _RechargeState extends State<RechargeScreen> {
     });
   }
 
-  @override
-  void initState() {
-    isLoading = false;
-    _fetchBanked().then((data) => setState(() {
-      setState(() {
-        listBank = data[0];
-      });
-    }));
-    _fetchWallet().then((data) => setState(() {
-      setState(() {
-        balance = data.balance;
-      });
-    }));
-    super.initState();
-    _showPersBottomSheetCallBack = _showBottomSheet;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   _topUp() async {
-    var url = '$SERVER_BANK/bank/withdraw';
+    setState(() {
+      isLoading = true;
+    });
+    var url = '$SERVER_NAME/user/request-otp';
     Token token = new Token();
     final tokenValue = await token.getMobileToken();
     Map<String, String> requestHeaders = {
       "Authorization": "Bearer " + tokenValue,
     };
 
-    var requestBody = new Map<String, dynamic>();
-    requestBody["amount"] = _textFieldController.text;
-    requestBody["card_id"] = listBank.cardId.toString();
-    requestBody["password"] = _passwordController.text;
-
-    var response =
-        await http.post(url, body: requestBody, headers: requestHeaders);
+    var response = await http.get(url, headers: requestHeaders);
     var statusCode = response.statusCode;
     if (statusCode == STATUS_CODE_SUCCESS) {
       var responseBody = json.decode(response.body);
-      //  isLoading = false;
-      var status = responseBody["status"];
       setState(() {
         isLoading = false;
       });
+      var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
-
-       setState(() {
-         balance =  ( double.parse(balance) - double.parse( _textFieldController.text)).toString();
-       });
-
+        Navigator.push(
+            context,
+            SlideFromLeftPageRoute(
+                widget: OTPWalletTopUpScreen(
+                    amount: _textFieldController.text,
+                    bankSelect: bankSelect,
+                    password: _passwordController.text)));
       } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) =>
-              createError(responseBody["message"]),
-        );
+        _showDialog(context, responseBody["message"]);
       }
     }
+  }
+
+  YYDialog _showDialog(BuildContext context, String msg) {
+    return YYDialog().build(context)
+      ..width = 230
+      ..borderRadius = 4.0
+      ..animatedFunc = (child, animation) {
+        return ScaleTransition(
+          child: child,
+          scale: Tween(begin: 0.0, end: 1.0).animate(animation),
+        );
+      }
+      ..text(
+        padding: EdgeInsets.all(25.0),
+        alignment: Alignment.center,
+        text: msg,
+        color: Colors.black,
+        fontSize: 17.0,
+        fontWeight: FontWeight.w500,
+      )
+      ..divider()
+      ..doubleButton(
+        padding: EdgeInsets.only(top: 10.0),
+        gravity: Gravity.center,
+        withDivider: true,
+        text1: "Thoát ứng dụng",
+        color1: Colors.redAccent,
+        fontSize1: 14.0,
+        fontWeight1: FontWeight.bold,
+        onTap1: () {
+          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        },
+        text2: "Nhập lại",
+        color2: Colors.redAccent,
+        fontSize2: 14.0,
+        fontWeight2: FontWeight.bold,
+        onTap2: () {},
+      )
+      ..show();
+  }
+  Widget createDialog() {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      elevation: 0.0,
+      backgroundColor: Colors.transparent,
+      child: dialogContent(context),
+    );
+  }
+
+  dialogContent(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(16.0),
+          margin: EdgeInsets.only(top: 66.0),
+          decoration: new BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(16.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+                offset: const Offset(0.0, 10.0),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // To make the card compact
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "Chọn ngân hàng",
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              Text(
+                "Chọn thẻ",
+                style: TextStyle(
+                    fontSize: 17,
+                    color: CanteenAppTheme.main,
+                    fontWeight: FontWeight.bold),
+              ),
+              new Container(
+                child: new Column(
+                  children: <Widget>[
+                    new ListView.builder(
+                        shrinkWrap: true,
+                        physics: BouncingScrollPhysics(),
+                        itemCount: listBank.length,
+                        scrollDirection: Axis.vertical,
+                        itemBuilder: (context, position) {
+                          return new GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                bankSelect = listBank[position];
+                                Navigator.of(context).pop();
+                              });
+                            },
+                            child: new Container(
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          color: CanteenAppTheme.myGrey,
+                                          width: 0.5))),
+                              child: new Row(
+                                children: <Widget>[
+                                  new Image.network(
+                                    listBank[position]
+                                        .logo,
+                                    width: 50,
+                                    height: 40,
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  new Text(listBank[position]
+                                      .cardNumber
+                                      .substring(0, 4) +
+                                      " **** **** ****"),
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget createError(message) {
@@ -733,13 +876,13 @@ class _RechargeState extends State<RechargeScreen> {
                                 color: CanteenAppTheme.myGrey, width: 0.5))),
                     child: new Row(
                       children: <Widget>[
-                        listBank != null ? new Image.network(
-                          listBank.logo != null ? listBank.logo : "",
+                        bankSelect != null ? new Image.network(
+                          bankSelect.logo != null ? bankSelect.logo : "",
                           width: 50,
                           height: 40,
                         ) : new Container(),
                         SizedBox(width: 20),
-                        new Text(listBank.cardNumber != null ?listBank.cardNumber.substring(0, 4) : ""),
+                        new Text(bankSelect.cardNumber != null ?bankSelect.cardNumber.substring(0, 4) : ""),
                         new Expanded(
                             child: new GestureDetector(
                               onTap: () {
@@ -875,13 +1018,22 @@ class _RechargeState extends State<RechargeScreen> {
                                     color: CanteenAppTheme.myGrey, width: 0.5))),
                         child: new Row(
                           children: <Widget>[
-                            listBank != null ? new Image.network(
-                              listBank.logo != null ? listBank.logo : "",
+                            bankSelect != null ? new Image.network(
+                              bankSelect.logo != null ? bankSelect.logo : "",
                               width: 50,
                               height: 40,
                             ) : new Container(),
                             SizedBox(width: 20),
-                            new Text(listBank.cardNumber != null ?listBank.cardNumber.substring(0, 4) + " ****" : ""),
+                            GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      createDialog(),
+                                );
+                              },
+                              child: new Text(bankSelect.cardNumber != null ?bankSelect.cardNumber.substring(0, 4) + " ****" : ""),
+                            ),
                             new Expanded(
                                 child: new GestureDetector(
                                   onTap: () {

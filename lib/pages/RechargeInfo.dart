@@ -5,12 +5,14 @@ import 'package:uit_cantin/compoments/DialogMethodRecharge.dart';
 import 'package:uit_cantin/services/FormatPrice.dart';
 import 'package:uit_cantin/models/BankLinked.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
-import 'package:uit_cantin/pages/RechargeSuccess.dart';
+import 'package:uit_cantin/pages/OTPWalletTopUp.dart';
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
+import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
+import 'package:flutter/services.dart';
 import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
 
 List<BankLinked> _parseBankLinked(String responseBody) {
@@ -53,8 +55,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
           });
         }));
     super.initState();
-    _showPersBottomSheetCallBack = _showBottomSheet
-    ;
+    _showPersBottomSheetCallBack = _showBottomSheet;
   }
 
   @override
@@ -64,6 +65,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
   }
 
   TextEditingController _textFieldController = TextEditingController();
+
 //  TextEditingController _passwordController = TextEditingController();
 
   void _showBottomSheet() {
@@ -73,84 +75,86 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
 
     _scaffoldKey.currentState
         .showBottomSheet((context) {
-      return new Container(
-          decoration: new BoxDecoration(
-              color: CanteenAppTheme.white,
-              borderRadius:
-              BorderRadius.all(Radius.circular(16.0)),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                    color: CanteenAppTheme.grey.withOpacity(0.2),
-                    offset: Offset(1.1, 1.1),
-                    blurRadius: 5.0),
-              ]),
-          height: MediaQuery.of(context).size.height - 200,
-          child: new Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              new Container(
-                height: 40,
-                decoration: BoxDecoration(color: Colors.white),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: new Row(
-                  children: <Widget>[
-                    new Expanded(
-                        child: new Text(
+          return new Container(
+              decoration: new BoxDecoration(
+                  color: CanteenAppTheme.white,
+                  borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                        color: CanteenAppTheme.grey.withOpacity(0.2),
+                        offset: Offset(1.1, 1.1),
+                        blurRadius: 5.0),
+                  ]),
+              height: MediaQuery.of(context).size.height - 200,
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  new Container(
+                    height: 40,
+                    decoration: BoxDecoration(color: Colors.white),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: new Row(
+                      children: <Widget>[
+                        new Expanded(
+                            child: new Text(
                           "MW",
                           style: TextStyle(
                               color: CanteenAppTheme.main,
                               fontWeight: FontWeight.bold,
                               fontSize: 25),
                         )),
-                    new Expanded(
-                        child: new GestureDetector(
-                            onTap: () {
-                              textController.text = "";
-                              Navigator.of(context).pop();
-                            },
-                            child: new Text(
-                              "Hủy",
-                              textAlign: TextAlign.right,
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                            )))
-                  ],
-                ),
-              ),
-              new Container(
-                  padding: const EdgeInsets.only(
-                      left: 20, right: 20, bottom: 15),
-                  decoration: BoxDecoration(color: Colors.white),
-                  child: new TextField(
-                      textAlign: TextAlign.center,
-                      enabled: false,
-                      controller: textController,
-                      obscureText: true,
-                      autofocus: false,
-                      decoration: const InputDecoration(
-                        hintStyle: const TextStyle(color: Colors.grey),
-                      ),
-                      style: const TextStyle(
-                          color: Colors.black, fontSize: 30.0),
-                      onChanged: (String value) {
-                        // note = value;
-                      })),
-              new Container(
-                margin: const EdgeInsets.symmetric(horizontal: 60),
-                child: new Column(
-                  children: <Widget>[
-                    new Row(
-                      children: <Widget>[
                         new Expanded(
                             child: new GestureDetector(
+                                onTap: () {
+                                  textController.text = "";
+                                  Navigator.of(context).pop();
+                                },
+                                child: new Text(
+                                  "Hủy",
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                )))
+                      ],
+                    ),
+                  ),
+                  new Container(
+                      padding: const EdgeInsets.only(
+                          left: 20, right: 20, bottom: 15),
+                      decoration: BoxDecoration(color: Colors.white),
+                      child: new TextField(
+                          textAlign: TextAlign.center,
+                          enabled: false,
+                          controller: textController,
+                          obscureText: true,
+                          autofocus: false,
+                          decoration: const InputDecoration(
+                            hintStyle: const TextStyle(color: Colors.grey),
+                          ),
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 30.0),
+                          onChanged: (String value) {
+                            // note = value;
+                          })),
+                  new Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 60),
+                    child: new Column(
+                      children: <Widget>[
+                        new Row(
+                          children: <Widget>[
+                            new Expanded(
+                                child: new GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  textController.text = textController.text + "1";
+                                  textController.text =
+                                      textController.text + "1";
                                 });
                               },
                               child: new Container(
                                 height: 60,
                                 margin:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
@@ -166,17 +170,18 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 ),
                               ),
                             )),
-                        new Expanded(
-                            child: new GestureDetector(
+                            new Expanded(
+                                child: new GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  textController.text = textController.text + "2";
+                                  textController.text =
+                                      textController.text + "2";
                                 });
                               },
                               child: new Container(
                                 height: 60,
                                 margin:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
@@ -192,17 +197,18 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 ),
                               ),
                             )),
-                        new Expanded(
-                            child: new GestureDetector(
+                            new Expanded(
+                                child: new GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  textController.text = textController.text + "3";
+                                  textController.text =
+                                      textController.text + "3";
                                 });
                               },
                               child: new Container(
                                 height: 60,
                                 margin:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
@@ -218,21 +224,22 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 ),
                               ),
                             ))
-                      ],
-                    ),
-                    new Row(
-                      children: <Widget>[
-                        new Expanded(
-                            child: new GestureDetector(
+                          ],
+                        ),
+                        new Row(
+                          children: <Widget>[
+                            new Expanded(
+                                child: new GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  textController.text = textController.text + "4";
+                                  textController.text =
+                                      textController.text + "4";
                                 });
                               },
                               child: new Container(
                                 height: 60,
                                 margin:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
@@ -248,17 +255,18 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 ),
                               ),
                             )),
-                        new Expanded(
-                            child: new GestureDetector(
+                            new Expanded(
+                                child: new GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  textController.text = textController.text + "5";
+                                  textController.text =
+                                      textController.text + "5";
                                 });
                               },
                               child: new Container(
                                 height: 60,
                                 margin:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
@@ -274,17 +282,18 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 ),
                               ),
                             )),
-                        new Expanded(
-                            child: new GestureDetector(
+                            new Expanded(
+                                child: new GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  textController.text = textController.text + "6";
+                                  textController.text =
+                                      textController.text + "6";
                                 });
                               },
                               child: new Container(
                                 height: 60,
                                 margin:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
@@ -300,21 +309,22 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 ),
                               ),
                             ))
-                      ],
-                    ),
-                    new Row(
-                      children: <Widget>[
-                        new Expanded(
-                            child: new GestureDetector(
+                          ],
+                        ),
+                        new Row(
+                          children: <Widget>[
+                            new Expanded(
+                                child: new GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  textController.text = textController.text + "7";
+                                  textController.text =
+                                      textController.text + "7";
                                 });
                               },
                               child: new Container(
                                 height: 60,
                                 margin:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
@@ -330,17 +340,18 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 ),
                               ),
                             )),
-                        new Expanded(
-                            child: new GestureDetector(
+                            new Expanded(
+                                child: new GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  textController.text = textController.text + "8";
+                                  textController.text =
+                                      textController.text + "8";
                                 });
                               },
                               child: new Container(
                                 height: 60,
                                 margin:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
@@ -356,17 +367,18 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 ),
                               ),
                             )),
-                        new Expanded(
-                            child: new GestureDetector(
+                            new Expanded(
+                                child: new GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  textController.text = textController.text + "9";
+                                  textController.text =
+                                      textController.text + "9";
                                 });
                               },
                               child: new Container(
                                 height: 60,
                                 margin:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
@@ -382,12 +394,12 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 ),
                               ),
                             ))
-                      ],
-                    ),
-                    new Row(
-                      children: <Widget>[
-                        new Expanded(
-                            child: new GestureDetector(
+                          ],
+                        ),
+                        new Row(
+                          children: <Widget>[
+                            new Expanded(
+                                child: new GestureDetector(
                               onTap: () {
                                 setState(() {
                                   textController.text = "";
@@ -396,7 +408,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                               child: new Container(
                                 height: 60,
                                 margin:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
@@ -412,17 +424,18 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 ),
                               ),
                             )),
-                        new Expanded(
-                            child: new GestureDetector(
+                            new Expanded(
+                                child: new GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  textController.text = textController.text + "0";
+                                  textController.text =
+                                      textController.text + "0";
                                 });
                               },
                               child: new Container(
                                 height: 60,
                                 margin:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
@@ -438,17 +451,19 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 ),
                               ),
                             )),
-                        new Expanded(
-                            child: new GestureDetector(
+                            new Expanded(
+                                child: new GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  textController.text = textController.text.substring(0, textController.text.length - 1);
+                                  textController.text = textController.text
+                                      .substring(
+                                          0, textController.text.length - 1);
                                 });
                               },
                               child: new Container(
                                 height: 60,
                                 margin:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
@@ -459,52 +474,51 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 ),
                               ),
                             ))
+                          ],
+                        ),
                       ],
                     ),
-
-                  ],
-                ),
-              ),
-              new GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop();
-                  setState(() {
-                    isLoading = true;
-                    _topUp();
-                  });
-
-                },
-                child: new Container(
-                  margin: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(color: Colors.white),
-                  child: new Container(
-                      height: 45.0,
-                      alignment: FractionalOffset.center,
-                      decoration: new BoxDecoration(
-                          color: const Color.fromRGBO(229, 32, 32, 1.0),
-                          borderRadius:
-                          new BorderRadius.all(const Radius.circular(5.0))),
-                      child: new Text("Xác nhận",
-                          style: new TextStyle(
-                            color: Colors.white,
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.3,
-                          ))),
-                ),
-              )
-            ],
-          ));
-    })
+                  ),
+                  new GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      setState(() {
+                        isLoading = true;
+                        _topUp();
+                      });
+                    },
+                    child: new Container(
+                      margin: const EdgeInsets.only(
+                          top: 20.0, left: 20.0, right: 20.0),
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(color: Colors.white),
+                      child: new Container(
+                          height: 45.0,
+                          alignment: FractionalOffset.center,
+                          decoration: new BoxDecoration(
+                              color: const Color.fromRGBO(229, 32, 32, 1.0),
+                              borderRadius: new BorderRadius.all(
+                                  const Radius.circular(5.0))),
+                          child: new Text("Xác nhận",
+                              style: new TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.3,
+                              ))),
+                    ),
+                  )
+                ],
+              ));
+        })
         .closed
         .whenComplete(() {
-      if (mounted) {
-        setState(() {
-          _showPersBottomSheetCallBack = _showBottomSheet;
+          if (mounted) {
+            setState(() {
+              _showPersBottomSheetCallBack = _showBottomSheet;
+            });
+          }
         });
-      }
-    });
   }
 
   List<Color> listColor = [Colors.white, Colors.white, Colors.white];
@@ -530,54 +544,75 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
   }
 
   _topUp() async {
-    var url = '$SERVER_BANK/bank/top-up';
+    setState(() {
+      isLoading = true;
+    });
+    var url = '$SERVER_NAME/user/request-otp';
     Token token = new Token();
     final tokenValue = await token.getMobileToken();
     Map<String, String> requestHeaders = {
       "Authorization": "Bearer " + tokenValue,
     };
 
-    var requestBody = new Map<String, dynamic>();
-    requestBody["amount"] = _textFieldController.text;
-    requestBody["card_id"] = bankSelect.cardId.toString();
-    requestBody["password"] = textController.text;
-
-    var response =
-        await http.post(url, body: requestBody, headers: requestHeaders);
+    var response = await http.get(url, headers: requestHeaders);
     var statusCode = response.statusCode;
     if (statusCode == STATUS_CODE_SUCCESS) {
       var responseBody = json.decode(response.body);
-      //  isLoading = false;
-      var status = responseBody["status"];
       setState(() {
         isLoading = false;
       });
+      var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
-
-        print( _textFieldController.text);
-        print(bankSelect.bankName +
-            " " +
-            bankSelect.cardNumber);
         Navigator.push(
             context,
             SlideFromLeftPageRoute(
-                widget: RechargeSuccessScreen(
-                    amount:
-                    _textFieldController.text,
-                    method:
-                    bankSelect.bankName +
-                        " " +
-                        bankSelect.cardNumber.toString().substring(0, 4))
-            )
-        );
+                widget: OTPWalletTopUpScreen(
+                    amount: _textFieldController.text,
+                    bankSelect: bankSelect,
+                    password: textController.text)));
       } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) =>
-              createError(responseBody["message"]),
-        );
+        _showDialog(context, responseBody["message"]);
       }
     }
+  }
+
+  YYDialog _showDialog(BuildContext context, String msg) {
+    return YYDialog().build(context)
+      ..width = 230
+      ..borderRadius = 4.0
+      ..animatedFunc = (child, animation) {
+        return ScaleTransition(
+          child: child,
+          scale: Tween(begin: 0.0, end: 1.0).animate(animation),
+        );
+      }
+      ..text(
+        padding: EdgeInsets.all(25.0),
+        alignment: Alignment.center,
+        text: msg,
+        color: Colors.black,
+        fontSize: 17.0,
+        fontWeight: FontWeight.w500,
+      )
+      ..divider()
+      ..doubleButton(
+        padding: EdgeInsets.only(top: 10.0),
+        gravity: Gravity.center,
+        withDivider: true,
+        text1: "Thoát ứng dụng",
+        color1: Colors.redAccent,
+        fontSize1: 14.0,
+        fontWeight1: FontWeight.bold,
+        onTap1: () {
+          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        },
+        text2: "Nhập lại",
+        color2: Colors.redAccent,
+        fontSize2: 14.0,
+        fontWeight2: FontWeight.bold,
+        onTap2: () {},
+      )
+      ..show();
   }
 
   Widget createError(message) {
@@ -748,8 +783,7 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                               child: new Row(
                                 children: <Widget>[
                                   new Image.network(
-                                    listBank[position]
-                                        .logo,
+                                    listBank[position].logo,
                                     width: 50,
                                     height: 40,
                                   ),
@@ -796,13 +830,17 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                 color: CanteenAppTheme.myGrey, width: 0.5))),
                     child: new Row(
                       children: <Widget>[
-                        bankSelect != null ? new Image.network(
-                          bankSelect.logo != null ? bankSelect.logo : "",
-                          width: 50,
-                          height: 40,
-                        ) : new Container(),
+                        bankSelect != null
+                            ? new Image.network(
+                                bankSelect.logo != null ? bankSelect.logo : "",
+                                width: 50,
+                                height: 40,
+                              )
+                            : new Container(),
                         SizedBox(width: 20),
-                        new Text(bankSelect.cardNumber != null ?bankSelect.cardNumber.substring(0, 4) : ""),
+                        new Text(bankSelect.cardNumber != null
+                            ? bankSelect.cardNumber.substring(0, 4)
+                            : ""),
                         new Expanded(
                             child: new GestureDetector(
                           onTap: () {
@@ -901,10 +939,10 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                         height: 45.0,
                         alignment: FractionalOffset.center,
                         decoration: new BoxDecoration(
-                            color:
-                                bankSelect == null || _textFieldController.text == ""
-                                    ? Colors.grey
-                                    : const Color.fromRGBO(229, 32, 32, 1.0),
+                            color: bankSelect == null ||
+                                    _textFieldController.text == ""
+                                ? Colors.grey
+                                : const Color.fromRGBO(229, 32, 32, 1.0),
                             borderRadius: new BorderRadius.all(
                                 const Radius.circular(5.0))),
                         child: new Text("XÁC NHẬN",
@@ -1060,14 +1098,20 @@ class _RechargeInfoState extends State<RechargeInfoScreen> {
                                       width: 0.5))),
                           child: new Row(
                             children: <Widget>[
-                          bankSelect != null ?new Image.network(
-                            bankSelect.logo != null ? bankSelect.logo : "",
-                                width: 50,
-                                height: 40,
-                              ) : new Container(),
+                              bankSelect != null
+                                  ? new Image.network(
+                                      bankSelect.logo != null
+                                          ? bankSelect.logo
+                                          : "",
+                                      width: 50,
+                                      height: 40,
+                                    )
+                                  : new Container(),
                               SizedBox(width: 20),
-                              new Text(bankSelect.cardNumber != null ? bankSelect.cardNumber.substring(0, 4) +
-                                  " **** **** ****" : ""),
+                              new Text(bankSelect.cardNumber != null
+                                  ? bankSelect.cardNumber.substring(0, 4) +
+                                      " **** **** ****"
+                                  : ""),
                             ],
                           ),
                         ),

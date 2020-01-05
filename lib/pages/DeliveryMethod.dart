@@ -264,7 +264,7 @@ class _DeliveryMethod extends State<DeliveryMethodScreen> {
       children: <Widget>[
         Container(
             width: double.infinity,
-            margin: EdgeInsets.only(right: 10.0, bottom: 10.0),
+            margin: EdgeInsets.only(bottom: 10.0),
             padding: EdgeInsets.all(10.0),
             decoration: BoxDecoration(
                 color: CanteenAppTheme.white,
@@ -320,8 +320,9 @@ class _DeliveryMethod extends State<DeliveryMethodScreen> {
                                     width: 30,
                                     height: 30,
                                     decoration: BoxDecoration(
+                                      color: Colors.grey,
                                       border: Border.all(
-                                          color: Colors.black, width: 1.5),
+                                          color: Colors.grey, width: 1.5),
                                       borderRadius:
                                       BorderRadius.all(Radius.circular(5.0)),
                                     ),
@@ -350,8 +351,9 @@ class _DeliveryMethod extends State<DeliveryMethodScreen> {
                                     width: 30,
                                     height: 30,
                                     decoration: BoxDecoration(
+                                      color: Colors.grey,
                                       border: Border.all(
-                                          color: Colors.black, width: 1.5),
+                                          color: Colors.grey, width: 1.5),
                                       borderRadius:
                                       BorderRadius.all(Radius.circular(5.0)),
                                     ),
@@ -411,7 +413,8 @@ class _DeliveryMethod extends State<DeliveryMethodScreen> {
               ],
             ),
           ),
-          new AnimatedContainer(duration: const Duration(milliseconds: 1000),
+          listCard != null && listCard.length != 0
+              ? new AnimatedContainer(duration: const Duration(milliseconds: 1000),
             child: new Container(
               height: 383,
               child: ListView.builder(
@@ -427,7 +430,7 @@ class _DeliveryMethod extends State<DeliveryMethodScreen> {
               ),
             ),
             height: _animatedHeight,
-          ),
+          ) : new Container(),
           Container(
             margin: EdgeInsets.only(bottom: 15, top: 10),
             child: Text(
@@ -531,7 +534,7 @@ class _DeliveryMethod extends State<DeliveryMethodScreen> {
               });
             },
             child: new Container(
-              margin: EdgeInsets.only(top: 210),
+              margin: EdgeInsets.only(top: 160),
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(color: Colors.white),
               child: new Container(

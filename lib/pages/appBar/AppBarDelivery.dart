@@ -52,7 +52,7 @@ Widget fullAppbar(BuildContext context, String fullname) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Bạn có đơn hàng đã thanh toán',
+                'Bạn có đơn hàng',
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
