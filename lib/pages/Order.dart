@@ -10,6 +10,8 @@ import 'package:uit_cantin/services/FormatPrice.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
 import 'package:uit_cantin/pages/Home.dart';
 import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
+import 'package:uit_cantin/models/UserInfo.dart';
+import 'package:uit_cantin/pages/OrderSuccess.dart';
 
 List<CardGet> _parseCard(String responseBody) {
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
@@ -27,6 +29,18 @@ Future<List<CardGet>> _fetchCard() async {
   return _parseCard(response.body);
 }
 
+Future<UserInfo> _fetchUserInfo() async {
+  Token token = new Token();
+  final tokenValue = await token.getMobileToken();
+  Map<String, String> requestHeaders = {
+    "Authorization": "Bearer " + tokenValue,
+  };
+  final response = await http.get('$SERVER_NAME/user/get-detail-user',
+      headers: requestHeaders);
+  final parsed = json.decode(response.body)["data"];
+  return UserInfo.fromJson(parsed);
+}
+
 class OrderScreen extends StatefulWidget {
   @override
   _OrderState createState() => _OrderState();
@@ -37,6 +51,7 @@ class _OrderState extends State<OrderScreen> {
   List<CardGet> listCard;
   bool isLoading;
   TextEditingController _textFieldController = TextEditingController();
+  UserInfo userInfo = new UserInfo();
 
   @override
   void initState() {
@@ -51,7 +66,11 @@ class _OrderState extends State<OrderScreen> {
               .map<double>((m) => double.parse(m.discountPrice) * m.amount)
               .reduce((a, b) => a + b);
         }));
-
+    _fetchUserInfo().then((data) => setState(() {
+      setState(() {
+        userInfo = data;
+      });
+    }));
     super.initState();
   }
 
@@ -347,11 +366,39 @@ class _OrderState extends State<OrderScreen> {
       var responseBody = json.decode(response.body);
       var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
+        if (userInfo.userGroupId == GROUP_REP) {
+          _checkOutRep();
+        } else {
+          Navigator.push(
+              context,
+              SlideFromLeftPageRoute(
+                  widget: ConfirmOrderScreen(totalOrder: totalOrder)));
+        }
+      } else {
+        //    _showDialogSuccess();
+      }
+    }
+  }
+
+  _checkOutRep() async {
+    var url = '$SERVER_NAME/order/receptionist-check-out';
+    Token token = new Token();
+    final tokenValue = await token.getMobileToken();
+    Map<String, String> requestHeaders = {
+      "Authorization": "Bearer " + tokenValue,
+    };
+
+    var response =
+        await http.post(url, headers: requestHeaders);
+    var statusCode = response.statusCode;
+    if (statusCode == STATUS_CODE_SUCCESS) {
+      var responseBody = json.decode(response.body);
+      var status = responseBody["status"];
+      if (status == STATUS_SUCCESS) {
         Navigator.push(
             context,
             SlideFromLeftPageRoute(
-                widget: ConfirmOrderScreen(totalOrder: totalOrder)
-            )
+                widget: OrderSuccessScreen())
         );
       } else {
         //    _showDialogSuccess();
@@ -387,11 +434,7 @@ class _OrderState extends State<OrderScreen> {
             onPressed: () {
               setState(() {
                 Navigator.push(
-                    context,
-                    SlideFromLeftPageRoute(
-                        widget: HomeScreen()
-                    )
-                );
+                    context, SlideFromLeftPageRoute(widget: HomeScreen()));
               });
             },
             child: Text(
@@ -426,12 +469,8 @@ class _OrderState extends State<OrderScreen> {
                     child: GestureDetector(
                   onTap: () {
                     setState(() {
-                      Navigator.push(
-                          context,
-                          SlideFromLeftPageRoute(
-                              widget: HomeScreen()
-                          )
-                      );
+                      Navigator.push(context,
+                          SlideFromLeftPageRoute(widget: HomeScreen()));
                     });
                   },
                   child: new Container(
@@ -467,29 +506,45 @@ class _OrderState extends State<OrderScreen> {
                               ),
                             )
                           : new LoadingWidget(),
-                      Container(
+                    ],
+                  )
+                : isLoading ? new Container() : _noProduct(),
+    listCard != null && listCard.length != 0 ? Expanded(
+                child: Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 0),
+                      child: Container(
                           width: double.infinity,
+                          height: 130.0,
                           padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
                           decoration: BoxDecoration(
                               color: Colors.white,
                               boxShadow: <BoxShadow>[
                                 BoxShadow(
-                                    color: CanteenAppTheme.grey.withOpacity(0.8),
+                                    color:
+                                    CanteenAppTheme.grey.withOpacity(0.8),
                                     offset: Offset(1.1, 1.1),
                                     blurRadius: 5.0),
-                              ]
-                          ),
+                              ]),
                           child: Column(
                             children: <Widget>[
                               Row(
                                 children: <Widget>[
-                                  new Expanded(child: new Text("Tổng cộng", style: TextStyle(fontSize: 18.0),)),
                                   new Expanded(
                                       child: new Text(
-
-                                          FormatPrice.getFormatPrice(
-                                              totalOrder.toString()), style: TextStyle(fontWeight: FontWeight.bold,
-                                          fontSize: 18.0), textAlign: TextAlign.right,),
+                                        "Tổng cộng",
+                                        style: TextStyle(fontSize: 18.0),
+                                      )),
+                                  new Expanded(
+                                    child: new Text(
+                                      FormatPrice.getFormatPrice(
+                                          totalOrder.toString()),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18.0),
+                                      textAlign: TextAlign.right,
+                                    ),
                                   )
                                 ],
                               ),
@@ -516,10 +571,8 @@ class _OrderState extends State<OrderScreen> {
                                 ),
                               )
                             ],
-                          ))
-                    ],
-                  )
-                : isLoading ? new Container() : _noProduct()
+                          )),
+                    ))) : new Container(),
           ]),
     );
   }

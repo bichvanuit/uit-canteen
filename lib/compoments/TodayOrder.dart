@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/services/Token.dart';
 import 'package:uit_cantin/compoments/CategoryView.dart';
+import 'package:uit_cantin/compoments/LoadingWidget.dart';
 
 // A function that converts a response body into a List<Photo>
 List<FoodList> _parseFoodToday(String responseBody) {
@@ -64,7 +65,13 @@ class _TodayOffer extends State<TodayOffer>{
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                     case ConnectionState.waiting:
-                    return new Text("loading");
+                    return new Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        new LoadingWidget()
+                      ],
+                    );
                     default:
                       if (snapshot.hasError)
                         return new Text('Error: ${snapshot.error}');

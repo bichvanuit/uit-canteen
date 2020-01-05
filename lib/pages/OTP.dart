@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:uit_cantin/pages/Home.dart';
 import 'package:flutter/services.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
@@ -11,6 +10,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uit_cantin/config.dart';
 import 'package:uit_cantin/compoments/SlideFromLeftPageRoute.dart';
+import 'package:uit_cantin/models/UserInfo.dart';
+import 'package:uit_cantin/pages/Home.dart';
 
 class OTPScreen extends StatefulWidget {
   final String phoneNumber;
@@ -25,13 +26,14 @@ class _OTPScreen extends State<OTPScreen> {
   final TextEditingController _controller = new TextEditingController();
   bool isLoading = false;
   String text = "";
+  UserInfo userInfo = new UserInfo();
 
   @override
   void initState() {
     super.initState();
   }
 
-  YYDialog _showDialog(BuildContext context) {
+  YYDialog _showDialog(BuildContext context, String msg) {
     return YYDialog().build(context)
       ..width = 230
       ..borderRadius = 4.0
@@ -44,7 +46,7 @@ class _OTPScreen extends State<OTPScreen> {
       ..text(
         padding: EdgeInsets.all(25.0),
         alignment: Alignment.center,
-        text: "Đã xảy ra lỗi",
+        text: msg,
         color: Colors.black,
         fontSize: 17.0,
         fontWeight: FontWeight.w500,
@@ -61,7 +63,7 @@ class _OTPScreen extends State<OTPScreen> {
         onTap1: () {
           SystemChannels.platform.invokeMethod('SystemNavigator.pop');
         },
-        text2: "Thử lại",
+        text2: "Nhập lại",
         color2: Colors.redAccent,
         fontSize2: 14.0,
         fontWeight2: FontWeight.bold,
@@ -203,7 +205,6 @@ class _OTPScreen extends State<OTPScreen> {
       });
       var status = responseBody["status"];
       if (status == STATUS_SUCCESS) {
-        Navigator.of(context).pop();
         Navigator.push(
             context,
             SlideFromLeftPageRoute(
@@ -211,7 +212,7 @@ class _OTPScreen extends State<OTPScreen> {
             )
         );
       } else {
-//        _showDialog(context);
+        _showDialog(context, responseBody["message"]);
       }
     }
   }
@@ -240,22 +241,48 @@ class _OTPScreen extends State<OTPScreen> {
         isLoading = false;
       });
       var status = responseBody["status"];
-
       if (status == STATUS_SUCCESS) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) => createDialog(),
+        Navigator.push(
+            context,
+            SlideFromLeftPageRoute(
+                widget: HomeScreen()
+            )
         );
       } else {
-        _showDialog(context);
+        _controller.text = "";
+        _showDialog(context, responseBody["message"]);
       }
     }
-    Navigator.push(
-        context,
-        SlideFromLeftPageRoute(
-            widget: HomeScreen()
-        )
-    );
+  }
+
+  _reSendOTP() async {
+    setState(() {
+      isLoading = true;
+    });
+    var url = '$SERVER_NAME/user/verify-phone';
+    var requestBody = new Map<String, dynamic>();
+
+    Token token = new Token();
+    final tokenValue = await token.getMobileToken();
+    Map<String, String> requestHeaders = {
+      "Authorization": "Bearer " + tokenValue,
+    };
+    requestBody["phone"] = widget.phoneNumber;
+
+    var response =
+    await http.post(url, body: requestBody, headers: requestHeaders);
+    var statusCode = response.statusCode;
+    if (statusCode == STATUS_CODE_SUCCESS) {
+      var responseBody = json.decode(response.body);
+      setState(() {
+        isLoading = false;
+      });
+      var status = responseBody["status"];
+      if (status == STATUS_SUCCESS) {
+      } else {
+        _showDialog(context, responseBody["message"]);
+      }
+    }
   }
 
   @override
@@ -338,6 +365,9 @@ class _OTPScreen extends State<OTPScreen> {
                   )),
               SizedBox(height: 15),
               new GestureDetector(
+                onTap: () {
+                  _reSendOTP();
+                },
                 child: new Container(
                   alignment: Alignment.topRight,
                   child: new Text("GỬI LẠI OTP", style: TextStyle(color: Colors.white, fontSize: 15),),

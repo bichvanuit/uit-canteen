@@ -140,14 +140,13 @@ class LoginScreenState extends State<LoginScreen> {
         isLoading = false;
       });
       var status = responseBody["status"];
-      print(status);
       Navigator.of(context).pop();
       Navigator.push(
           context, SlideFromLeftPageRoute(widget: OTPNewDeviceScreen()));
     }
   }
 
-  Future<Null> _login() async {
+  _loginUser() async {
     var devideId = await _getId();
     userInfo.username = _controllerUsername.text;
     userInfo.password = _controllerPassword.text;
@@ -162,6 +161,7 @@ class LoginScreenState extends State<LoginScreen> {
       if (status == STATUS_SUCCESS) {
         Token token = new Token();
         await token.setMobileToken(responseBody["data"]);
+//        Navigator.push(context, SlideFromLeftPageRoute(widget: HomeScreen()));
         UserInfo user = await _fetchUserInfo();
         if (user.phone == null) {
           Navigator.push(context,
@@ -174,6 +174,37 @@ class LoginScreenState extends State<LoginScreen> {
       } else {
         _showDialog(context);
       }
+    }
+  }
+
+  _loginRep() async {
+    var requestBody = new Map<String, dynamic>();
+    requestBody["username"] = _controllerUsername.text;
+    requestBody["password"] = _controllerPassword.text;
+
+    var url = '$SERVER_NAME/login-receptionist';
+    var response = await http.post(url, body: requestBody);
+    var statusCode = response.statusCode;
+    if (statusCode == STATUS_CODE_SUCCESS) {
+      var responseBody = json.decode(response.body);
+      var status = responseBody["status"];
+      isLoading = false;
+      if (status == STATUS_SUCCESS) {
+        Token token = new Token();
+        await token.setMobileToken(responseBody["data"]);
+        Navigator.push(context, SlideFromLeftPageRoute(widget: HomeScreen()));
+      } else {
+        _showDialog(context);
+      }
+    }
+  }
+
+  _login()  {
+    print(_controllerUsername.text);
+    if (_controllerUsername.text.contains('rep.') ) {
+      _loginRep();
+    } else {
+      _loginUser();
     }
   }
 

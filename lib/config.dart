@@ -7,6 +7,8 @@ const IMAGE_DEFAULT = 'https://uit-canteen.s3-ap-southeast-1.amazonaws.com/asset
 const STATUS_CODE_SUCCESS = 200;
 const STATUS_SUCCESS = 1;
 
+const GROUP_REP = 4;
+
 const URL_API = {
   'Login': '/login'
 };

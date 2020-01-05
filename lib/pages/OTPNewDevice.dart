@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:uit_cantin/pages/Home.dart';
 import 'package:flutter/services.dart';
 import 'package:uit_cantin/compoments/LoadingWidget.dart';
-import 'package:uit_cantin/models/UserInfo.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 
 import 'package:uit_cantin/services/Token.dart';
@@ -26,7 +25,7 @@ class _OTPNewDevice extends State<OTPNewDeviceScreen> {
     super.initState();
   }
 
-  YYDialog _showDialog(BuildContext context) {
+  YYDialog _showDialog(BuildContext context, String msg) {
     return YYDialog().build(context)
       ..width = 230
       ..borderRadius = 4.0
@@ -39,7 +38,7 @@ class _OTPNewDevice extends State<OTPNewDeviceScreen> {
       ..text(
         padding: EdgeInsets.all(25.0),
         alignment: Alignment.center,
-        text: "Đã xảy ra lỗi",
+        text: msg,
         color: Colors.black,
         fontSize: 17.0,
         fontWeight: FontWeight.w500,
@@ -96,16 +95,40 @@ class _OTPNewDevice extends State<OTPNewDeviceScreen> {
             )
         );
       } else {
-        _showDialog(context);
+        _controller.text = "";
+        _showDialog(context, responseBody["message"]);
       }
     }
+  }
 
-    Navigator.push(
-        context,
-        SlideFromLeftPageRoute(
-            widget: HomeScreen()
-        )
-    );
+  _reSendOTP() async {
+    setState(() {
+      isLoading = true;
+    });
+    var url = '$SERVER_NAME/user/verify-device';
+
+    Token token = new Token();
+    final tokenValue = await token.getMobileToken();
+    Map<String, String> requestHeaders = {
+      "Authorization": "Bearer " + tokenValue,
+    };
+
+    var response =
+    await http.post(url, headers: requestHeaders);
+    var statusCode = response.statusCode;
+
+    if (statusCode == STATUS_CODE_SUCCESS) {
+      var responseBody = json.decode(response.body);
+      setState(() {
+        isLoading = false;
+      });
+      var status = responseBody["status"];
+      if (status == STATUS_SUCCESS) {
+
+      } else {
+        _showDialog(context, responseBody["message"]);
+      }
+    }
   }
 
   @override
@@ -186,6 +209,9 @@ class _OTPNewDevice extends State<OTPNewDeviceScreen> {
                   )),
               SizedBox(height: 15),
               new GestureDetector(
+                onTap: () {
+                  _reSendOTP();
+                },
                 child: new Container(
                   alignment: Alignment.topRight,
                   child: new Text(

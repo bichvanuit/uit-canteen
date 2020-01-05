@@ -35,7 +35,7 @@ class UserInfo {
     this.email =  json["email"];
     this.userGroupId =  json["user_group_id"];
     this.fullName =  json["fullname"];
-    this.avatar =  ROOT_IMAGE + json["avatar"];
+    this.avatar =  json["avatar"] != null ? ROOT_IMAGE + json["avatar"] : "";
     this.username = json["username"];
     this.phone = json["phone"];
     this.newDevice = json["is_new_device"];
